@@ -228,6 +228,11 @@
   visibility: visible;
 }
 
+/* Move trainer name down in trainer card mode (not party mode) */
+.trainer-card:not(.party-mode) .trainer-name-display h2 {
+  margin-top: 0.5rem;
+}
+
 .edit-name-btn {
   background: none;
   border: none;

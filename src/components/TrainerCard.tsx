@@ -196,7 +196,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           }
         });
 
-        // Set the background directly on the card clone for mobile
+        // Apply background styling only if needed for mobile
         if (isMobile) {
           if (backgroundImage) {
             cardClone.style.background = `url(${backgroundImage})`;
@@ -305,8 +305,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         }
         
         const canvas = await html2canvas(cardClone, {
-          backgroundColor: backgroundColor,
-          scale: isMobile ? 2 : 4, // Lower scale on mobile for better performance
+          backgroundColor: null,
+          scale: isMobile ? 2 : 4,
           useCORS: true,
           allowTaint: true,
           imageTimeout: 0,
