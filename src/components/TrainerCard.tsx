@@ -177,6 +177,38 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             h2.textContent = trainerName;
           }
         });
+
+        // Detect if we're on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // Force trainer name to be visible on mobile
+        const trainerNameContainers = cardClone.querySelectorAll('.trainer-name-display');
+        trainerNameContainers.forEach(container => {
+          const h2 = container.querySelector('h2');
+          if (h2) {
+            h2.style.color = 'white';
+            h2.style.display = 'block';
+            h2.style.visibility = 'visible';
+            h2.style.fontSize = '1.75rem';
+            h2.style.fontWeight = '700';
+            h2.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+            h2.style.margin = '0';
+          }
+        });
+
+        // Set the background directly on the card clone for mobile
+        if (isMobile) {
+          if (backgroundImage) {
+            cardClone.style.background = `url(${backgroundImage})`;
+            cardClone.style.backgroundSize = 'cover';
+            cardClone.style.backgroundPosition = 'center';
+            cardClone.style.backgroundRepeat = 'no-repeat';
+          } else if (isGradient) {
+            cardClone.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+          } else {
+            cardClone.style.background = cardColor;
+          }
+        }
         
         // Temporarily add the clone to the DOM (hidden)
         cardClone.style.position = 'absolute';
@@ -248,9 +280,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         // Wait a bit for the DOM to update
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Detect if we're on mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
         // Get the actual background from the card
         const cardStyle = window.getComputedStyle(cardClone);
         const cardBackground = cardStyle.background || cardStyle.backgroundColor;
@@ -263,8 +292,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             // If there's a background image, use a fallback color
             backgroundColor = cardColor || '#667eea';
           } else if (isGradient) {
-            // For gradients, use the first gradient color as fallback
-            backgroundColor = gradientColor || cardColor || '#667eea';
+            // For gradients, try to use the computed background, otherwise use gradient color
+            if (cardBackground && cardBackground !== 'rgba(0, 0, 0, 0)' && !cardBackground.includes('gradient')) {
+              backgroundColor = cardBackground;
+            } else {
+              backgroundColor = gradientColor || cardColor || '#667eea';
+            }
           } else {
             // For solid colors, use the actual card color
             backgroundColor = cardColor || '#667eea';
