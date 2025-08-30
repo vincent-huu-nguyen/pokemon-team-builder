@@ -227,7 +227,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   text-align: center;
 }
 
@@ -348,6 +348,8 @@
 
 .pokemon-grid {
   display: grid;
+  padding-left: 2rem;
+  padding-right: 2rem;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 1rem 0rem;

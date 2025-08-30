@@ -951,7 +951,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                   }}
                 >
                   <img src={sprite.src} alt={sprite.name} />
-                  <span>{sprite.name}</span>
                 </div>
               ))}
               
