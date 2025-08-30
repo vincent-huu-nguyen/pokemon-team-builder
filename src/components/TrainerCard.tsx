@@ -48,6 +48,9 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
+  const [showBubbles, setShowBubbles] = useState(true);
+  const [flippedItems, setFlippedItems] = useState<{ [key: string]: boolean }>({});
+  const [rotatedItems, setRotatedItems] = useState<{ [key: string]: number }>({});
 
   const convertImageToDataURL = async (imageUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -477,6 +480,44 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     }
   };
 
+  const handleFlipItem = () => {
+    if (selectedPokemonIndex !== null) {
+      const itemKey = `pokemon-${selectedPokemonIndex}`;
+      setFlippedItems(prev => ({
+        ...prev,
+        [itemKey]: !prev[itemKey]
+      }));
+    } else if (isTrainerSelected) {
+      setFlippedItems(prev => ({
+        ...prev,
+        'trainer': !prev['trainer']
+      }));
+    }
+  };
+
+  const handleRotateItem = (direction: 'clockwise' | 'counterclockwise') => {
+    if (selectedPokemonIndex !== null) {
+      const itemKey = `pokemon-${selectedPokemonIndex}`;
+      const currentRotation = rotatedItems[itemKey] || 0;
+      const newRotation = direction === 'clockwise' 
+        ? currentRotation + 10 
+        : currentRotation - 10;
+      setRotatedItems(prev => ({
+        ...prev,
+        [itemKey]: newRotation
+      }));
+    } else if (isTrainerSelected) {
+      const currentRotation = rotatedItems['trainer'] || 0;
+      const newRotation = direction === 'clockwise' 
+        ? currentRotation + 10 
+        : currentRotation - 10;
+      setRotatedItems(prev => ({
+        ...prev,
+        'trainer': newRotation
+      }));
+    }
+  };
+
   const handleRemovePokemon = (index: number) => {
     // Clean up size data for the removed Pokemon
     setPokemonSizes(prev => {
@@ -581,7 +622,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       
       <div 
         ref={cardRef} 
-        className={`trainer-card ${layoutMode === 'party' ? 'party-mode' : ''}`}
+        className={`trainer-card ${layoutMode === 'party' ? 'party-mode' : ''} ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
         style={{
           background: backgroundImage 
             ? `url(${backgroundImage})`
@@ -698,7 +739,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                     className="trainer-sprite"
                     style={{ 
                       width: trainerSize, 
-                      height: trainerSize 
+                      height: trainerSize,
+                      transform: `${flippedItems['trainer'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainer'] ? `rotate(${rotatedItems['trainer']}deg)` : ''}`.trim()
                     }}
                     onError={(e) => {
                       e.currentTarget.src = trainerVincent;
@@ -735,7 +777,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                     style={{ 
                       width: currentSize, 
                       height: currentSize,
-                      cursor: 'grab'
+                      cursor: 'grab',
+                      transform: `${flippedItems[`pokemon-${index}`] ? 'scaleX(-1)' : ''} ${rotatedItems[`pokemon-${index}`] ? `rotate(${rotatedItems[`pokemon-${index}`]}deg)` : ''}`.trim()
                     }}
                   />
                   {selectedPokemonIndex === index && (
@@ -829,6 +872,29 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               Click on a Pokemon to adjust its size
             </p>
           </div>
+          <div className="transform-controls">
+            <button 
+              onClick={handleFlipItem}
+              className="flip-btn"
+              title="Flip Pokemon"
+            >
+              🔄 Flip
+            </button>
+            <button 
+              onClick={() => handleRotateItem('counterclockwise')}
+              className="rotate-btn"
+              title="Rotate Counter-clockwise"
+            >
+              ↶ Rotate Left
+            </button>
+            <button 
+              onClick={() => handleRotateItem('clockwise')}
+              className="rotate-btn"
+              title="Rotate Clockwise"
+            >
+              ↷ Rotate Right
+            </button>
+          </div>
         </div>
       )}
       
@@ -853,20 +919,54 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               Click on the trainer to adjust its size
             </p>
           </div>
+          <div className="transform-controls">
+            <button 
+              onClick={handleFlipItem}
+              className="flip-btn"
+              title="Flip Trainer"
+            >
+              🔄 Flip
+            </button>
+            <button 
+              onClick={() => handleRotateItem('counterclockwise')}
+              className="rotate-btn"
+              title="Rotate Counter-clockwise"
+            >
+              ↶ Rotate Left
+            </button>
+            <button 
+              onClick={() => handleRotateItem('clockwise')}
+              className="rotate-btn"
+              title="Rotate Clockwise"
+            >
+              ↷ Rotate Right
+            </button>
+          </div>
         </div>
       )}
       
       <div className="card-customization">
         <div className="customization-header">
           <h4>Card Customization</h4>
-          <div className="gradient-toggle">
-            <input
-              type="checkbox"
-              id="gradient-toggle"
-              checked={isGradient}
-              onChange={(e) => setIsGradient(e.target.checked)}
-            />
-            <label htmlFor="gradient-toggle">Gradient</label>
+          <div className="customization-toggles">
+            <div className="gradient-toggle">
+              <input
+                type="checkbox"
+                id="gradient-toggle"
+                checked={isGradient}
+                onChange={(e) => setIsGradient(e.target.checked)}
+              />
+              <label htmlFor="gradient-toggle">Gradient</label>
+            </div>
+            <div className="bubbles-toggle">
+              <input
+                type="checkbox"
+                id="bubbles-toggle"
+                checked={showBubbles}
+                onChange={(e) => setShowBubbles(e.target.checked)}
+              />
+              <label htmlFor="bubbles-toggle">Bubbles</label>
+            </div>
           </div>
         </div>
         
