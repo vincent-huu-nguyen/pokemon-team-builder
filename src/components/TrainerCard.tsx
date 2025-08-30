@@ -196,18 +196,16 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           }
         });
 
-        // Apply background styling only if needed for mobile
-        if (isMobile) {
-          if (backgroundImage) {
-            cardClone.style.background = `url(${backgroundImage})`;
-            cardClone.style.backgroundSize = 'cover';
-            cardClone.style.backgroundPosition = 'center';
-            cardClone.style.backgroundRepeat = 'no-repeat';
-          } else if (isGradient) {
-            cardClone.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
-          } else {
-            cardClone.style.background = cardColor;
-          }
+        // Apply background styling to ensure proper capture on all devices
+        if (backgroundImage) {
+          cardClone.style.background = `url(${backgroundImage})`;
+          cardClone.style.backgroundSize = 'cover';
+          cardClone.style.backgroundPosition = 'center';
+          cardClone.style.backgroundRepeat = 'no-repeat';
+        } else if (isGradient) {
+          cardClone.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+        } else {
+          cardClone.style.background = cardColor;
         }
         
         // Temporarily add the clone to the DOM (hidden)
@@ -314,6 +312,22 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           removeContainer: true,
           width: cardClone.offsetWidth,
           height: cardClone.offsetHeight,
+          onclone: (clonedDoc) => {
+            // Ensure the cloned element has the correct background
+            const clonedCard = clonedDoc.querySelector('.trainer-card') as HTMLElement;
+            if (clonedCard) {
+              if (backgroundImage) {
+                clonedCard.style.background = `url(${backgroundImage})`;
+                clonedCard.style.backgroundSize = 'cover';
+                clonedCard.style.backgroundPosition = 'center';
+                clonedCard.style.backgroundRepeat = 'no-repeat';
+              } else if (isGradient) {
+                clonedCard.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+              } else {
+                clonedCard.style.background = cardColor;
+              }
+            }
+          }
         });
         
         // Remove the clone from DOM
