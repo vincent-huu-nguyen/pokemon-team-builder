@@ -510,8 +510,39 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               Trainer Party
             </label>
           </div>
-
         </div>
+        
+        {/* Trainer Controls - Outside the card */}
+        <div className="trainer-controls">
+          <div className="trainer-name-edit">
+            {isEditingName ? (
+              <input
+                type="text"
+                value={trainerName}
+                onChange={(e) => setTrainerName(e.target.value)}
+                onKeyDown={handleNameSave}
+                onBlur={() => setIsEditingName(false)}
+                className="trainer-name-input"
+                autoFocus
+                placeholder="Enter trainer name"
+              />
+            ) : (
+              <div className="trainer-name-display">
+                <span>{trainerName}</span>
+                <button onClick={handleNameEdit} className="edit-name-btn">
+                  <Edit3 size={14} />
+                </button>
+              </div>
+            )}
+          </div>
+          <button 
+            onClick={() => setShowSpriteSelector(true)}
+            className="sprite-change-btn"
+          >
+            Change Sprite
+          </button>
+        </div>
+
         <button onClick={downloadCard} className="download-btn" disabled={isDownloading}>
           <Download size={16} />
           {isDownloading ? 'Processing...' : 'Download Card'}
@@ -555,32 +586,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                     className="sprite-upload"
                     id="sprite-upload"
                   />
-                  <button 
-                    onClick={() => setShowSpriteSelector(true)}
-                    className="sprite-upload-label"
-                  >
-                    Change Sprite
-                  </button>
                 </div>
                 <div className="trainer-name-container">
-                  {isEditingName ? (
-                    <input
-                      type="text"
-                      value={trainerName}
-                      onChange={(e) => setTrainerName(e.target.value)}
-                      onKeyDown={handleNameSave}
-                      onBlur={() => setIsEditingName(false)}
-                      className="trainer-name-input"
-                      autoFocus
-                    />
-                  ) : (
-                    <div className="trainer-name-display">
-                      <h2>{trainerName}</h2>
-                      <button onClick={handleNameEdit} className="edit-name-btn">
-                        <Edit3 size={14} />
-                      </button>
-                    </div>
-                  )}
+                  <div className="trainer-name-display">
+                    <h2>{trainerName}</h2>
+                  </div>
                 </div>
               </div>
             </div>
@@ -590,19 +600,17 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 {Array.from({ length: 6 }, (_, index) => (
                   <div key={index} className="pokemon-slot">
                     {selectedPokemon[index] ? (
-                      <div className="pokemon-item">
+                      <div 
+                        className="pokemon-item clickable"
+                        onClick={() => handleRemovePokemon(index)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <img 
                           src={selectedPokemon[index].image} 
                           alt={selectedPokemon[index].name}
                           className="pokemon-sprite"
                         />
                         <p className="pokemon-name">{selectedPokemon[index].name}</p>
-                                            <button 
-                      onClick={() => handleRemovePokemon(index)}
-                      className="remove-pokemon-btn"
-                    >
-                          <X size={12} />
-                        </button>
                       </div>
                     ) : (
                       <div className="empty-slot">
@@ -631,38 +639,10 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             {/* Party Header - Fixed at top */}
             <div className="party-header">
               <div className="trainer-name-container">
-                {isEditingName ? (
-                  <input
-                    type="text"
-                    value={trainerName}
-                    onChange={(e) => setTrainerName(e.target.value)}
-                    onKeyDown={handleNameSave}
-                    onBlur={() => setIsEditingName(false)}
-                    className="trainer-name-input"
-                    autoFocus
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <div className="trainer-name-display">
-                    <h2>{trainerName}</h2>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleNameEdit();
-                      }} 
-                      className="edit-name-btn"
-                    >
-                      <Edit3 size={14} />
-                    </button>
-                  </div>
-                )}
+                <div className="trainer-name-display">
+                  <h2>{trainerName}</h2>
+                </div>
               </div>
-              <button 
-                onClick={() => setShowSpriteSelector(true)}
-                className="sprite-change-btn"
-              >
-                Change Sprite
-              </button>
             </div>
 
             {/* Draggable Trainer Sprite Only */}
