@@ -144,7 +144,7 @@
 
 .card-header {
   margin-bottom: 2rem;
-  padding-top: 2rem;
+  padding-top: 3rem;
 }
 
 .trainer-info {
@@ -329,6 +329,11 @@
   text-transform: capitalize;
 }
 
+/* Hide Pokemon names in trainer card mode (not party mode) */
+.trainer-card:not(.party-mode) .pokemon-name {
+  display: none;
+}
+
 .remove-pokemon-btn {
   position: absolute;
   top: -8px;
@@ -419,8 +424,8 @@
   
   .pokemon-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem 0.5rem;
-    row-gap: 0.25rem;
+    gap: 1rem 1rem;
+    row-gap: 1rem;
   }
   
   .pokemon-slot {
