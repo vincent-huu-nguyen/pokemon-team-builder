@@ -385,6 +385,40 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     // Don't clear the selection - keep it for size adjustment
   };
 
+  // Touch event handlers for mobile dragging
+  const handleTouchStart = (e: React.TouchEvent, index?: number) => {
+    e.preventDefault(); // Prevent default touch behavior
+    setIsDragging(true);
+    if (index !== undefined) {
+      setSelectedPokemonIndex(index);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    e.preventDefault(); // Prevent scrolling while dragging
+    
+    const cardRect = cardRef.current?.getBoundingClientRect();
+    if (!cardRect) return;
+
+    const touch = e.touches[0];
+    const x = ((touch.clientX - cardRect.left) / cardRect.width) * 100;
+    const y = ((touch.clientY - cardRect.top) / cardRect.height) * 100;
+
+    if (selectedPokemonIndex !== null) {
+      const newPositions = [...pokemonPositions];
+      newPositions[selectedPokemonIndex] = { x, y };
+      setPokemonPositions(newPositions);
+    } else {
+      setTrainerPosition({ x, y });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    // Don't clear the selection - keep it for size adjustment
+  };
+
   const handlePokemonClick = (index: number) => {
     // Toggle selection: if already selected, deselect it
     if (selectedPokemonIndex === index) {
@@ -627,6 +661,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             className="party-layout"
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             onClick={(e) => {
               // Only unselect if clicking directly on the party layout (empty space)
               if (e.target === e.currentTarget) {
@@ -655,6 +691,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 zIndex: getZIndex('trainer')
               }}
               onMouseDown={(e) => handleMouseDown(e)}
+              onTouchStart={(e) => handleTouchStart(e)}
               onClick={handleTrainerClick}
             >
               <div className="trainer-sprite-container">
@@ -692,6 +729,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                     zIndex: getZIndex(index)
                   }}
                   onMouseDown={(e) => handleMouseDown(e, index)}
+                  onTouchStart={(e) => handleTouchStart(e, index)}
                   onClick={() => handlePokemonClick(index)}
                 >
                                     <img 

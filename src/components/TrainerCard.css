@@ -954,6 +954,11 @@
   padding: 0.5rem;
   border-radius: 12px;
   border: 2px solid transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 
 .draggable-trainer.selected {
@@ -1014,6 +1019,11 @@
   padding: 0.5rem;
   border-radius: 8px;
   border: 2px solid transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 
 .draggable-pokemon:hover {
