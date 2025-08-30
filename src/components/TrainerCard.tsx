@@ -251,8 +251,28 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         // Detect if we're on mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
+        // Get the actual background from the card
+        const cardStyle = window.getComputedStyle(cardClone);
+        const cardBackground = cardStyle.background || cardStyle.backgroundColor;
+        
+        // Determine background color for html2canvas
+        let backgroundColor = null;
+        if (isMobile) {
+          // On mobile, use the actual card background if it's a solid color
+          if (backgroundImage) {
+            // If there's a background image, use a fallback color
+            backgroundColor = cardColor || '#667eea';
+          } else if (isGradient) {
+            // For gradients, use the first gradient color as fallback
+            backgroundColor = gradientColor || cardColor || '#667eea';
+          } else {
+            // For solid colors, use the actual card color
+            backgroundColor = cardColor || '#667eea';
+          }
+        }
+        
         const canvas = await html2canvas(cardClone, {
-          backgroundColor: isMobile ? '#667eea' : null, // Use background color on mobile
+          backgroundColor: backgroundColor,
           scale: isMobile ? 2 : 4, // Lower scale on mobile for better performance
           useCORS: true,
           allowTaint: true,

@@ -431,7 +431,7 @@
   .pokemon-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem 1rem;
-    row-gap: 1rem;
+    row-gap: 1.5rem;
   }
   
   .pokemon-slot {
