@@ -166,8 +166,16 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           const inputElement = input as HTMLInputElement;
           const displayDiv = document.createElement('div');
           displayDiv.className = 'trainer-name-display';
-          displayDiv.innerHTML = `<h2>${inputElement.value}</h2>`;
+          displayDiv.innerHTML = `<h2>${inputElement.value || trainerName}</h2>`;
           inputElement.parentNode?.replaceChild(displayDiv, inputElement);
+        });
+
+        // Ensure trainer name is visible even if not in input field
+        const trainerNameDisplays = cardClone.querySelectorAll('.trainer-name-display h2');
+        trainerNameDisplays.forEach(h2 => {
+          if (!h2.textContent || h2.textContent.trim() === '') {
+            h2.textContent = trainerName;
+          }
         });
         
         // Temporarily add the clone to the DOM (hidden)
@@ -240,14 +248,19 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         // Wait a bit for the DOM to update
         await new Promise(resolve => setTimeout(resolve, 100));
 
+        // Detect if we're on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
         const canvas = await html2canvas(cardClone, {
-          backgroundColor: null,
-          scale: 4, // Increased scale for maximum quality
+          backgroundColor: isMobile ? '#667eea' : null, // Use background color on mobile
+          scale: isMobile ? 2 : 4, // Lower scale on mobile for better performance
           useCORS: true,
           allowTaint: true,
           imageTimeout: 0,
           logging: false,
           removeContainer: true,
+          width: cardClone.offsetWidth,
+          height: cardClone.offsetHeight,
         });
         
         // Remove the clone from DOM

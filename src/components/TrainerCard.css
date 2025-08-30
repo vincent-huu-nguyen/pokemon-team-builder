@@ -223,6 +223,9 @@
   font-size: 1.75rem;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: white;
+  display: block;
+  visibility: visible;
 }
 
 .edit-name-btn {
@@ -415,6 +418,9 @@
   
   .trainer-name-display h2 {
     font-size: 1.5rem;
+    color: white !important;
+    display: block !important;
+    visibility: visible !important;
   }
   
   .card-header {
