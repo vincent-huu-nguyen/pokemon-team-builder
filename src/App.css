@@ -20,6 +20,14 @@
   background-clip: text;
 }
 
+.App-header .credit {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0.5rem 0 0 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .App-main {
   display: grid;
   grid-template-columns: 1fr 1fr;

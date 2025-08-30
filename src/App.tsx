@@ -71,6 +71,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Pokemon Team Builder</h1>
+        <p className="credit">Created by Vincent Nguyen</p>
       </header>
       <main className="App-main">
         <div className="left-panel">
