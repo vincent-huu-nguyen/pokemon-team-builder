@@ -1,0 +1,1131 @@
+.trainer-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.card-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.layout-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.layout-toggle {
+  display: flex;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.layout-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.layout-toggle label:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.layout-toggle input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
+.size-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.size-control label {
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.size-control input[type="range"] {
+  width: 150px;
+  accent-color: #667eea;
+}
+
+.size-hint {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.download-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.download-btn:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.trainer-card {
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  height: 711px; /* 9:16 aspect ratio (400 * 16/9 = 711) */
+  color: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trainer-card.party-mode {
+  min-width: 600px;
+  max-width: 700px;
+  padding: 3rem;
+}
+
+.trainer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/><circle cx="15" cy="15" r="0.8" fill="white" opacity="0.08"/><circle cx="85" cy="85" r="0.8" fill="white" opacity="0.08"/><circle cx="35" cy="45" r="0.6" fill="white" opacity="0.09"/><circle cx="65" cy="65" r="0.6" fill="white" opacity="0.09"/><circle cx="5" cy="35" r="0.4" fill="white" opacity="0.07"/><circle cx="95" cy="65" r="0.4" fill="white" opacity="0.07"/><circle cx="45" cy="80" r="0.7" fill="white" opacity="0.08"/><circle cx="80" cy="20" r="0.7" fill="white" opacity="0.08"/><circle cx="20" cy="80" r="0.5" fill="white" opacity="0.06"/><circle cx="70" cy="5" r="0.5" fill="white" opacity="0.06"/><circle cx="30" cy="70" r="0.3" fill="white" opacity="0.05"/><circle cx="60" cy="30" r="0.3" fill="white" opacity="0.05"/><circle cx="40" cy="5" r="0.4" fill="white" opacity="0.07"/><circle cx="55" cy="95" r="0.4" fill="white" opacity="0.07"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.card-header {
+  margin-bottom: 2rem;
+  padding-top: 2rem;
+}
+
+.trainer-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.trainer-sprite-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 140px;
+  height: 140px;
+  justify-content: center;
+  overflow: visible;
+}
+
+.sprite-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+}
+
+.trainer-sprite {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.sprite-upload {
+  display: none;
+}
+
+.sprite-upload-label {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sprite-upload-label:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.trainer-name-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.trainer-name-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trainer-name-display h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.edit-name-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.edit-name-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.trainer-name-input {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 700;
+  width: 100%;
+  outline: none;
+}
+
+.trainer-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pokemon-team h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1rem 1rem;
+  row-gap: 0.5rem;
+}
+
+.pokemon-slot {
+  position: relative;
+  min-height: 110px;
+}
+
+.pokemon-item {
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.pokemon-item:hover {
+  transform: translateY(-2px);
+}
+
+.pokemon-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--pokeball-image);
+  background-size: 80px 80px;
+  background-position: center 5%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 12px;
+}
+
+.pokemon-sprite {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  position: relative;
+  z-index: 2;
+}
+
+.pokemon-name {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-transform: capitalize;
+}
+
+.remove-pokemon-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.remove-pokemon-btn:hover {
+  background: #ff3742;
+  transform: scale(1.1);
+}
+
+.empty-slot {
+  border-radius: 12px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  font-weight: 500;
+  position: relative;
+}
+
+.empty-slot::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--pokeball-image);
+  background-size: 80px 80px;
+  background-position: center 25%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .trainer-card {
+    width: 300px;
+    height: 533px; /* 9:16 aspect ratio (300 * 16/9 = 533) */
+    padding: 1rem;
+  }
+  
+  .trainer-card.party-mode {
+    min-width: 350px;
+    max-width: 400px;
+    padding: 2rem;
+  }
+  
+  .trainer-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .trainer-sprite-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .sprite-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .trainer-name-display h2 {
+    font-size: 1.5rem;
+  }
+  
+  .card-header {
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+  }
+  
+  .pokemon-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 0.5rem;
+    row-gap: 0.25rem;
+  }
+  
+  .pokemon-slot {
+    min-height: 80px;
+  }
+  
+  .empty-slot {
+    height: 80px;
+  }
+  
+  .pokemon-sprite {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .pokemon-name {
+    font-size: 0.75rem;
+  }
+  
+  .pokemon-item {
+    gap: 0.15rem;
+  }
+  
+  .sprite-upload-label {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.65rem;
+    border-radius: 12px;
+  }
+}
+
+.card-customization {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.customization-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.customization-header h4 {
+  margin: 0;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gradient-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.gradient-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
+.gradient-toggle label {
+  cursor: pointer;
+}
+
+.color-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.color-picker label {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.color-input {
+  width: 60px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.color-input:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Background Controls */
+.background-controls {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.background-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.background-upload label {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.background-upload-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.background-upload-input {
+  display: none;
+}
+
+.background-upload-label {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-width: 120px;
+}
+
+.background-upload-label:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.remove-background-btn {
+  padding: 0.5rem 1rem;
+  background: #ff4757;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-background-btn:hover {
+  background: #ff3742;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .card-customization {
+    padding: 1rem;
+  }
+  
+  .customization-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .color-controls {
+    justify-content: center;
+  }
+}
+
+/* Sprite Selector Modal */
+.sprite-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.sprite-selector-modal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.sprite-selector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sprite-selector-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sprite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.sprite-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sprite-option:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.sprite-option.selected {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.sprite-option img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sprite-option span {
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.custom-upload input[type="file"] {
+  display: none;
+}
+
+.custom-upload label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-icon {
+  width: 80px;
+  height: 80px;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+}
+
+.custom-upload:hover .upload-icon {
+  border-color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 768px) {
+  .sprite-selector-modal {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .sprite-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .sprite-option img,
+  .upload-icon {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Party Layout Styles */
+.party-layout {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+
+.party-layout:active {
+  cursor: grabbing;
+}
+
+/* Party Header - Fixed at top */
+.party-header {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  min-width: 250px;
+}
+
+.party-header .trainer-name-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.party-header .trainer-name-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.party-header .trainer-name-display h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.party-header .trainer-name-input {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+  min-width: 150px;
+}
+
+.party-header .edit-name-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s ease;
+}
+
+.party-header .edit-name-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.party-header .sprite-change-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.party-header .sprite-change-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.draggable-trainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: grab;
+  z-index: 10;
+  transition: none;
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 2px solid transparent;
+}
+
+.draggable-trainer.selected {
+  z-index: 25;
+}
+
+.draggable-trainer .trainer-sprite-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.draggable-trainer .sprite-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.draggable-trainer .trainer-sprite {
+  object-fit: contain;
+  object-position: center;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: all 0.2s ease;
+  user-select: none;
+  pointer-events: none;
+  /* Remove max-width and max-height constraints for draggable trainer */
+  max-width: none;
+  max-height: none;
+}
+
+.draggable-trainer:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.draggable-trainer.selected {
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+}
+
+.draggable-trainer:active {
+  cursor: grabbing;
+}
+
+.draggable-pokemon {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: grab;
+  z-index: 5;
+  transition: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+.draggable-pokemon:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.draggable-pokemon.selected {
+  border-color: #667eea;
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+  z-index: 25;
+}
+
+
+
+.draggable-pokemon:active {
+  cursor: grabbing;
+}
+
+.party-pokemon-sprite {
+  object-fit: contain;
+  object-position: center;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: all 0.2s ease;
+  user-select: none;
+  pointer-events: none;
+}
+
+.party-pokemon-name {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-transform: capitalize;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Size Control Overlay - Positioned at bottom of card */
+.size-control-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 0rem;
+  backdrop-filter: blur(10px);
+  min-width: 300px;
+}
+
+.size-control-overlay .size-control {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.size-control-overlay .size-control label {
+  color: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.size-control-overlay .size-control input[type="range"] {
+  width: 200px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  cursor: pointer;
+}
+
+.size-control-overlay .size-control input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+.size-control-overlay .size-control input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+.size-control-overlay .size-hint {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.65rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Selection Bar */
+.selection-bar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.selection-btn {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.selection-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.selection-btn.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.2);
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+.selection-btn-sprite {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.empty-slot-indicator {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: bold;
+}
+
+/* Selection Bar Hint */
+.selection-bar-hint {
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.selection-bar-hint p {
+  color: white;
+  font-size: 0.75rem;
+  margin: 0;
+  text-align: center;
+  opacity: 0.8;
+  line-height: 1.3;
+}
+
+/* Responsive adjustments for party mode */
+@media (max-width: 768px) {
+  .trainer-card.party-mode {
+    min-width: 350px;
+    max-width: 400px;
+    padding: 2rem;
+  }
+  
+  .party-layout {
+    height: 400px;
+  }
+  
+  .draggable-trainer {
+    padding: 0.5rem;
+  }
+  
+  .draggable-pokemon {
+    padding: 0.25rem;
+  }
+  
+  .party-pokemon-name {
+    font-size: 0.7rem;
+  }
+}
