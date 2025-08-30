@@ -558,11 +558,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 onBlur={() => setIsEditingName(false)}
                 className="trainer-name-input"
                 autoFocus
-                placeholder="Enter trainer name"
+                placeholder="Type your trainer name here..."
               />
             ) : (
               <div className="trainer-name-display">
-                <span>{trainerName}</span>
+                <span>{trainerName || 'Name'}</span>
                 <button onClick={handleNameEdit} className="edit-name-btn">
                   <Edit3 size={14} />
                 </button>
@@ -577,10 +577,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           </button>
         </div>
 
-        <button onClick={downloadCard} className="download-btn" disabled={isDownloading}>
-          <Download size={16} />
-          {isDownloading ? 'Processing...' : 'Download Card'}
-        </button>
       </div>
       
       <div 
@@ -924,6 +920,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           </div>
         </div>
       </div>
+      
+      <button onClick={downloadCard} className="download-btn" disabled={isDownloading}>
+        <Download size={16} />
+        {isDownloading ? 'Processing...' : 'Download Card'}
+      </button>
       
       {/* Sprite Selector Modal */}
       {showSpriteSelector && (
