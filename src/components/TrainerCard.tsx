@@ -52,6 +52,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [trainerSize, setTrainerSize] = useState(140);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartTime, setDragStartTime] = useState(0);
+  const [initialPinchDistance, setInitialPinchDistance] = useState(0);
+  const [initialSize, setInitialSize] = useState(0);
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
@@ -496,8 +498,29 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
     e.preventDefault(); // Prevent scrolling while dragging
+    
+    // Handle pinch gestures for resizing
+    if (e.touches.length === 2 && initialPinchDistance > 0) {
+      const currentDistance = getTouchDistance(e.touches);
+      const scale = currentDistance / initialPinchDistance;
+      const newSize = Math.max(40, Math.min(300, initialSize * scale));
+      
+      if (selectedPokemonIndex !== null) {
+        setPokemonSizes(prev => ({
+          ...prev,
+          [selectedPokemonIndex]: Math.round(newSize)
+        }));
+      } else if (isTrainerSelected) {
+        setTrainerSize(Math.round(newSize));
+      } else if (isTrainerNameSelected) {
+        setTrainerNameSize(Math.round(newSize));
+      }
+      return;
+    }
+    
+    // Handle single touch dragging
+    if (!isDragging) return;
     
     const cardRect = cardRef.current?.getBoundingClientRect();
     if (!cardRect) return;
@@ -519,7 +542,20 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
 
   const handleTouchEnd = () => {
     setIsDragging(false);
+    // Reset pinch state
+    setInitialPinchDistance(0);
+    setInitialSize(0);
     // Don't clear the selection - keep it for size adjustment
+  };
+
+  // Calculate distance between two touch points
+  const getTouchDistance = (touches: React.TouchList): number => {
+    if (touches.length < 2) return 0;
+    const touch1 = touches[0];
+    const touch2 = touches[1];
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
   };
 
   const handlePokemonClick = (index: number) => {
@@ -827,6 +863,22 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             onMouseUp={handleMouseUp}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTouchStart={(e) => {
+              // Handle pinch gestures for resizing
+              if (e.touches.length === 2) {
+                const distance = getTouchDistance(e.touches);
+                setInitialPinchDistance(distance);
+                
+                // Set initial size based on what's selected
+                if (selectedPokemonIndex !== null) {
+                  setInitialSize(pokemonSizes[selectedPokemonIndex] || 60);
+                } else if (isTrainerSelected) {
+                  setInitialSize(trainerSize);
+                } else if (isTrainerNameSelected) {
+                  setInitialSize(trainerNameSize);
+                }
+              }
+            }}
             onClick={(e) => {
               // Only unselect if clicking directly on the party layout (empty space)
               if (e.target === e.currentTarget) {
