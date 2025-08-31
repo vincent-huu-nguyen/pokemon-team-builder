@@ -650,6 +650,26 @@
   cursor: pointer;
 }
 
+.background-sync-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.background-sync-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
+.background-sync-toggle label {
+  cursor: pointer;
+}
+
 .color-controls {
   display: flex;
   gap: 1rem;

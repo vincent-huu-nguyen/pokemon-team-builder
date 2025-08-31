@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Download, Edit3, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { Pokemon } from '../types/Pokemon';
@@ -53,8 +53,53 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
+  const [syncPageBackground, setSyncPageBackground] = useState(true);
   const [flippedItems, setFlippedItems] = useState<{ [key: string]: boolean }>({});
   const [rotatedItems, setRotatedItems] = useState<{ [key: string]: number }>({});
+
+  // Function to update page background to match card colors
+  const updatePageBackground = () => {
+    const body = document.body;
+    if (!syncPageBackground) {
+      // Reset to default if sync is disabled
+      body.style.background = '';
+      body.style.backgroundSize = '';
+      body.style.backgroundPosition = '';
+      body.style.backgroundRepeat = '';
+      body.style.backgroundAttachment = '';
+      return;
+    }
+    
+    if (backgroundImage) {
+      // If there's a background image, use a subtle overlay
+      body.style.background = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${backgroundImage})`;
+      body.style.backgroundSize = 'cover';
+      body.style.backgroundPosition = 'center';
+      body.style.backgroundRepeat = 'no-repeat';
+      body.style.backgroundAttachment = 'fixed';
+    } else if (isGradient) {
+      // If gradient is enabled, use the gradient colors
+      body.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+      body.style.backgroundAttachment = 'fixed';
+    } else {
+      // If solid color, use the primary color
+      body.style.background = cardColor;
+    }
+  };
+
+  // Update page background whenever colors change
+  useEffect(() => {
+    updatePageBackground();
+    
+    // Cleanup function to reset background when component unmounts
+    return () => {
+      document.body.style.background = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundPosition = '';
+      document.body.style.backgroundRepeat = '';
+      document.body.style.backgroundAttachment = '';
+    };
+  }, [cardColor, gradientColor, isGradient, backgroundImage, syncPageBackground]);
 
   const convertImageToDataURL = async (imageUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -1086,6 +1131,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 onChange={(e) => setShowBubbles(e.target.checked)}
               />
               <label htmlFor="bubbles-toggle">Bubbles</label>
+            </div>
+            <div className="background-sync-toggle">
+              <input
+                type="checkbox"
+                id="background-sync-toggle"
+                checked={syncPageBackground}
+                onChange={(e) => setSyncPageBackground(e.target.checked)}
+              />
+              <label htmlFor="background-sync-toggle">Sync Page Background</label>
             </div>
           </div>
         </div>
