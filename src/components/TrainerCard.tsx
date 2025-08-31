@@ -54,6 +54,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [dragStartTime, setDragStartTime] = useState(0);
   const [initialPinchDistance, setInitialPinchDistance] = useState(0);
   const [initialSize, setInitialSize] = useState(0);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
@@ -454,10 +455,22 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const handleMouseDown = (e: React.MouseEvent, index?: number, type?: 'trainer' | 'trainerName') => {
     setIsDragging(true);
     setDragStartTime(Date.now());
+    
+    const cardRect = cardRef.current?.getBoundingClientRect();
+    if (!cardRect) return;
+    
+    const mouseX = ((e.clientX - cardRect.left) / cardRect.width) * 100;
+    const mouseY = ((e.clientY - cardRect.top) / cardRect.height) * 100;
+    
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
+      const position = pokemonPositions[index] || { x: 20 + (index * 12), y: 70 };
+      setDragOffset({ x: mouseX - position.x, y: mouseY - position.y });
     } else if (type === 'trainerName') {
       setIsTrainerNameSelected(true);
+      setDragOffset({ x: mouseX - trainerNamePosition.x, y: mouseY - trainerNamePosition.y });
+    } else if (type === 'trainer') {
+      setDragOffset({ x: mouseX - trainerPosition.x, y: mouseY - trainerPosition.y });
     }
   };
 
@@ -467,17 +480,26 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     const cardRect = cardRef.current?.getBoundingClientRect();
     if (!cardRect) return;
 
-    const x = ((e.clientX - cardRect.left) / cardRect.width) * 100;
-    const y = ((e.clientY - cardRect.top) / cardRect.height) * 100;
+    const mouseX = ((e.clientX - cardRect.left) / cardRect.width) * 100;
+    const mouseY = ((e.clientY - cardRect.top) / cardRect.height) * 100;
 
     if (selectedPokemonIndex !== null) {
       const newPositions = [...pokemonPositions];
-      newPositions[selectedPokemonIndex] = { x, y };
+      newPositions[selectedPokemonIndex] = { 
+        x: mouseX - dragOffset.x, 
+        y: mouseY - dragOffset.y 
+      };
       setPokemonPositions(newPositions);
     } else if (isTrainerNameSelected) {
-      setTrainerNamePosition({ x, y });
-    } else {
-      setTrainerPosition({ x, y });
+      setTrainerNamePosition({ 
+        x: mouseX - dragOffset.x, 
+        y: mouseY - dragOffset.y 
+      });
+    } else if (isTrainerSelected) {
+      setTrainerPosition({ 
+        x: mouseX - dragOffset.x, 
+        y: mouseY - dragOffset.y 
+      });
     }
   };
 
@@ -490,10 +512,23 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const handleTouchStart = (e: React.TouchEvent, index?: number, type?: 'trainer' | 'trainerName') => {
     e.preventDefault(); // Prevent default touch behavior
     setIsDragging(true);
+    
+    const cardRect = cardRef.current?.getBoundingClientRect();
+    if (!cardRect) return;
+    
+    const touch = e.touches[0];
+    const touchX = ((touch.clientX - cardRect.left) / cardRect.width) * 100;
+    const touchY = ((touch.clientY - cardRect.top) / cardRect.height) * 100;
+    
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
+      const position = pokemonPositions[index] || { x: 20 + (index * 12), y: 70 };
+      setDragOffset({ x: touchX - position.x, y: touchY - position.y });
     } else if (type === 'trainerName') {
       setIsTrainerNameSelected(true);
+      setDragOffset({ x: touchX - trainerNamePosition.x, y: touchY - trainerNamePosition.y });
+    } else if (type === 'trainer') {
+      setDragOffset({ x: touchX - trainerPosition.x, y: touchY - trainerPosition.y });
     }
   };
 
@@ -526,17 +561,26 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     if (!cardRect) return;
 
     const touch = e.touches[0];
-    const x = ((touch.clientX - cardRect.left) / cardRect.width) * 100;
-    const y = ((touch.clientY - cardRect.top) / cardRect.height) * 100;
+    const touchX = ((touch.clientX - cardRect.left) / cardRect.width) * 100;
+    const touchY = ((touch.clientY - cardRect.top) / cardRect.height) * 100;
 
     if (selectedPokemonIndex !== null) {
       const newPositions = [...pokemonPositions];
-      newPositions[selectedPokemonIndex] = { x, y };
+      newPositions[selectedPokemonIndex] = { 
+        x: touchX - dragOffset.x, 
+        y: touchY - dragOffset.y 
+      };
       setPokemonPositions(newPositions);
     } else if (isTrainerNameSelected) {
-      setTrainerNamePosition({ x, y });
-    } else {
-      setTrainerPosition({ x, y });
+      setTrainerNamePosition({ 
+        x: touchX - dragOffset.x, 
+        y: touchY - dragOffset.y 
+      });
+    } else if (isTrainerSelected) {
+      setTrainerPosition({ 
+        x: touchX - dragOffset.x, 
+        y: touchY - dragOffset.y 
+      });
     }
   };
 
