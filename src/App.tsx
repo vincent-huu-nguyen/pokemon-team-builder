@@ -39,9 +39,9 @@ function App() {
     { name: 'Cassie', src: trainerCassie },
     { name: 'Maeve', src: trainerMaeve },
     { name: 'Destiny', src: trainerDestiny },
-    { name: 'Pierce', src: trainerPierce },
     { name: 'Noah', src: trainerNoah },
     { name: 'Vivian', src: trainerVivian },
+    { name: 'Pierce', src: trainerPierce },
     { name: 'Axel', src: trainerAxel },
     { name: 'Kaz', src: trainerKaz },
   ];
