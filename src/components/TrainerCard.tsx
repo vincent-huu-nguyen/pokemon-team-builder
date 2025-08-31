@@ -30,6 +30,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   pokeballImage,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const selectionBarRef = useRef<HTMLDivElement>(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [cardColor, setCardColor] = useState('#667eea');
@@ -50,6 +51,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [trainerNameColor, setTrainerNameColor] = useState('#ffffff');
   const [trainerSize, setTrainerSize] = useState(140);
   const [isDragging, setIsDragging] = useState(false);
+  const [dragStartTime, setDragStartTime] = useState(0);
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
@@ -100,6 +102,43 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       document.body.style.backgroundAttachment = '';
     };
   }, [cardColor, gradientColor, isGradient, backgroundImage, syncPageBackground]);
+
+  // Auto-scroll selection bar when items are selected on the card
+  useEffect(() => {
+    if (selectionBarRef.current) {
+      let itemIndex = -1;
+      
+      if (isTrainerNameSelected) {
+        itemIndex = 0; // Name is first
+      } else if (isTrainerSelected) {
+        itemIndex = 1; // Trainer is second
+      } else if (selectedPokemonIndex !== null) {
+        itemIndex = selectedPokemonIndex + 2; // Pokemon start at index 2
+      }
+      
+      if (itemIndex >= 0) {
+        const buttonWidth = 50; // Width of each selection button
+        const gap = 8; // Gap between buttons (0.5rem = 8px)
+        const totalItemWidth = buttonWidth + gap;
+        const scrollPosition = itemIndex * totalItemWidth;
+        
+        // Only scroll if the item is not visible (beyond the first 7 items)
+        const visibleWidth = 7 * totalItemWidth;
+        if (scrollPosition >= visibleWidth) {
+          selectionBarRef.current.scrollTo({
+            left: scrollPosition - visibleWidth + totalItemWidth,
+            behavior: 'smooth'
+          });
+        } else if (itemIndex === 0) {
+          // Scroll to beginning for first item
+          selectionBarRef.current.scrollTo({
+            left: 0,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }
+  }, [selectedPokemonIndex, isTrainerSelected, isTrainerNameSelected]);
 
   const convertImageToDataURL = async (imageUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -412,6 +451,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent, index?: number, type?: 'trainer' | 'trainerName') => {
     setIsDragging(true);
+    setDragStartTime(Date.now());
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
     } else if (type === 'trainerName') {
@@ -483,55 +523,48 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   };
 
   const handlePokemonClick = (index: number) => {
-    // Toggle selection: if already selected, deselect it
-    if (selectedPokemonIndex === index) {
-      setSelectedPokemonIndex(null);
-      setIsTrainerSelected(false);
-      setIsTrainerNameSelected(false);
-      setLastSelectedItem(null);
-      // Don't remove from selection history - keep z-index layers unchanged
-    } else {
-      setSelectedPokemonIndex(index);
-      setIsTrainerSelected(false);
-      setIsTrainerNameSelected(false);
-      setLastSelectedItem(index);
-      // Always move the selected item to the front of z-index layers
-      setSelectionHistory(prev => [...prev.filter(item => item !== index), index]);
+    // Don't handle click if we were dragging
+    if (isDragging && Date.now() - dragStartTime > 100) {
+      return;
     }
+    
+    // Always select the Pokemon when clicked on the card
+    setSelectedPokemonIndex(index);
+    setIsTrainerSelected(false);
+    setIsTrainerNameSelected(false);
+    setLastSelectedItem(index);
+    // Always move the selected item to the front of z-index layers
+    setSelectionHistory(prev => [...prev.filter(item => item !== index), index]);
   };
 
   const handleTrainerClick = () => {
-    // Toggle selection: if already selected, deselect it
-    if (isTrainerSelected) {
-      setSelectedPokemonIndex(null);
-      setIsTrainerSelected(false);
-      setLastSelectedItem(null);
-      // Don't remove from selection history - keep z-index layers unchanged
-    } else {
-      setSelectedPokemonIndex(null);
-      setIsTrainerSelected(true);
-      setIsTrainerNameSelected(false);
-      setLastSelectedItem('trainer');
-      // Always move the selected item to the front of z-index layers
-      setSelectionHistory(prev => [...prev.filter(item => item !== 'trainer'), 'trainer']);
+    // Don't handle click if we were dragging
+    if (isDragging && Date.now() - dragStartTime > 100) {
+      return;
     }
+    
+    // Always select the trainer when clicked on the card
+    setSelectedPokemonIndex(null);
+    setIsTrainerSelected(true);
+    setIsTrainerNameSelected(false);
+    setLastSelectedItem('trainer');
+    // Always move the selected item to the front of z-index layers
+    setSelectionHistory(prev => [...prev.filter(item => item !== 'trainer'), 'trainer']);
   };
 
   const handleTrainerNameClick = () => {
-    // Toggle selection: if already selected, deselect it
-    if (isTrainerNameSelected) {
-      setSelectedPokemonIndex(null);
-      setIsTrainerNameSelected(false);
-      setLastSelectedItem(null);
-      // Don't remove from selection history - keep z-index layers unchanged
-    } else {
-      setSelectedPokemonIndex(null);
-      setIsTrainerNameSelected(true);
-      setIsTrainerSelected(false);
-      setLastSelectedItem('trainerName');
-      // Always move the selected item to the front of z-index layers
-      setSelectionHistory(prev => [...prev.filter(item => item !== 'trainerName'), 'trainerName']);
+    // Don't handle click if we were dragging
+    if (isDragging && Date.now() - dragStartTime > 100) {
+      return;
     }
+    
+    // Always select the trainer name when clicked on the card
+    setSelectedPokemonIndex(null);
+    setIsTrainerNameSelected(true);
+    setIsTrainerSelected(false);
+    setLastSelectedItem('trainerName');
+    // Always move the selected item to the front of z-index layers
+    setSelectionHistory(prev => [...prev.filter(item => item !== 'trainerName'), 'trainerName']);
   };
 
   const getZIndex = (item: 'trainer' | 'trainerName' | number): number => {
@@ -916,7 +949,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       
       {/* Selection Bar - Quick select buttons */}
       {layoutMode === 'party' && (
-        <div className="selection-bar">
+        <div className="selection-bar" ref={selectionBarRef}>
           <button 
             className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''}`}
             onClick={handleTrainerNameClick}
