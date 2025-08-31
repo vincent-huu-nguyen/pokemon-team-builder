@@ -71,7 +71,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Pokemon Team Builder <img src={pancham} alt="Pancham" className="title-pancham" /></h1>
+        <h1><img src={pancham} alt="Pancham" className="title-pancham title-pancham-left" /> Pokemon Team Builder <img src={pancham} alt="Pancham" className="title-pancham" /></h1>
         <p className="credit">Created by Vincent Nguyen</p>
         <p className="screenshot-hint">📸 Screenshot your masterpiece and share your card with friends!</p>
       </header>
