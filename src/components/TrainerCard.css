@@ -234,6 +234,7 @@
   min-width: 600px;
   max-width: 700px;
   padding: 3rem;
+  position: relative;
 }
 
 .trainer-card.show-bubbles::before {
@@ -683,6 +684,8 @@
   transition: all 0.2s ease;
 }
 
+
+
 /* Background Controls */
 .background-controls {
   margin-top: 1rem;
@@ -922,92 +925,24 @@
 
 /* Party Layout Styles */
 .party-layout {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  height: 500px;
-  overflow: hidden;
+  height: 100%;
+  overflow: visible;
   cursor: grab;
   user-select: none;
+  z-index: 1;
 }
 
 .party-layout:active {
   cursor: grabbing;
 }
 
-/* Party Header - Fixed at top */
-.party-header {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 25;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  min-width: 250px;
-}
 
-.party-header .trainer-name-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.party-header .trainer-name-display {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.party-header .trainer-name-display h2 {
-  color: white;
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.party-header .trainer-name-input {
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: center;
-  color: #333;
-  min-width: 150px;
-}
-
-.party-header .edit-name-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: 4px;
-  padding: 0.25rem;
-  cursor: pointer;
-  color: white;
-  transition: background 0.2s ease;
-}
-
-.party-header .edit-name-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.party-header .sprite-change-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.party-header .sprite-change-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
 
 .draggable-trainer {
   position: absolute;
@@ -1107,6 +1042,55 @@
 
 .draggable-pokemon:active {
   cursor: grabbing;
+}
+
+.draggable-trainer-name {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: grab;
+  z-index: 5;
+  transition: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+.draggable-trainer-name:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.draggable-trainer-name.selected {
+  border-color: #667eea;
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+  z-index: 25;
+}
+
+.draggable-trainer-name:active {
+  cursor: grabbing;
+}
+
+.draggable-trainer-name .trainer-name-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.draggable-trainer-name .trainer-name-display h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
 .party-pokemon-sprite {
@@ -1255,6 +1239,13 @@
   font-weight: bold;
 }
 
+.trainer-name-btn {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+}
+
 /* Selection Bar Hint */
 .selection-bar-hint {
   margin-top: 0.25rem;
@@ -1279,7 +1270,7 @@
   }
   
   .party-layout {
-    height: 400px;
+    height: 100%;
   }
   
   .draggable-trainer {

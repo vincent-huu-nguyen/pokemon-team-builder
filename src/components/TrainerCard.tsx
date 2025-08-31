@@ -40,10 +40,14 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [pokemonSizes, setPokemonSizes] = useState<{ [key: number]: number }>({});
   const [selectedPokemonIndex, setSelectedPokemonIndex] = useState<number | null>(null);
   const [isTrainerSelected, setIsTrainerSelected] = useState(false);
-  const [lastSelectedItem, setLastSelectedItem] = useState<'trainer' | number | null>(null);
-  const [selectionHistory, setSelectionHistory] = useState<('trainer' | number)[]>([]);
+  const [isTrainerNameSelected, setIsTrainerNameSelected] = useState(false);
+  const [lastSelectedItem, setLastSelectedItem] = useState<'trainer' | 'trainerName' | number | null>(null);
+  const [selectionHistory, setSelectionHistory] = useState<('trainer' | 'trainerName' | number)[]>([]);
   const [pokemonPositions, setPokemonPositions] = useState<{ x: number; y: number }[]>([]);
   const [trainerPosition, setTrainerPosition] = useState({ x: 50, y: 70 });
+  const [trainerNamePosition, setTrainerNamePosition] = useState({ x: 50, y: 15 });
+  const [trainerNameSize, setTrainerNameSize] = useState(24);
+  const [trainerNameColor, setTrainerNameColor] = useState('#ffffff');
   const [trainerSize, setTrainerSize] = useState(140);
   const [isDragging, setIsDragging] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string>('');
@@ -184,12 +188,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         // Detect if we're on mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        // Force trainer name to be visible on mobile
+        // Force trainer name to be visible on mobile and preserve color
         const trainerNameContainers = cardClone.querySelectorAll('.trainer-name-display');
         trainerNameContainers.forEach(container => {
           const h2 = container.querySelector('h2');
           if (h2) {
-            h2.style.color = 'white';
+            // Preserve the custom color if it's set, otherwise use white
+            if (!h2.style.color || h2.style.color === 'white' || h2.style.color === 'rgb(255, 255, 255)') {
+              h2.style.color = trainerNameColor;
+            }
             h2.style.display = 'block';
             h2.style.visibility = 'visible';
             h2.style.fontSize = '1.75rem';
@@ -358,10 +365,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent, index?: number) => {
+  const handleMouseDown = (e: React.MouseEvent, index?: number, type?: 'trainer' | 'trainerName') => {
     setIsDragging(true);
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
+    } else if (type === 'trainerName') {
+      setIsTrainerNameSelected(true);
     }
   };
 
@@ -378,6 +387,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       const newPositions = [...pokemonPositions];
       newPositions[selectedPokemonIndex] = { x, y };
       setPokemonPositions(newPositions);
+    } else if (isTrainerNameSelected) {
+      setTrainerNamePosition({ x, y });
     } else {
       setTrainerPosition({ x, y });
     }
@@ -389,11 +400,13 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   };
 
   // Touch event handlers for mobile dragging
-  const handleTouchStart = (e: React.TouchEvent, index?: number) => {
+  const handleTouchStart = (e: React.TouchEvent, index?: number, type?: 'trainer' | 'trainerName') => {
     e.preventDefault(); // Prevent default touch behavior
     setIsDragging(true);
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
+    } else if (type === 'trainerName') {
+      setIsTrainerNameSelected(true);
     }
   };
 
@@ -412,6 +425,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       const newPositions = [...pokemonPositions];
       newPositions[selectedPokemonIndex] = { x, y };
       setPokemonPositions(newPositions);
+    } else if (isTrainerNameSelected) {
+      setTrainerNamePosition({ x, y });
     } else {
       setTrainerPosition({ x, y });
     }
@@ -427,11 +442,13 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     if (selectedPokemonIndex === index) {
       setSelectedPokemonIndex(null);
       setIsTrainerSelected(false);
+      setIsTrainerNameSelected(false);
       setLastSelectedItem(null);
       // Don't remove from selection history - keep z-index layers unchanged
     } else {
       setSelectedPokemonIndex(index);
       setIsTrainerSelected(false);
+      setIsTrainerNameSelected(false);
       setLastSelectedItem(index);
       // Always move the selected item to the front of z-index layers
       setSelectionHistory(prev => [...prev.filter(item => item !== index), index]);
@@ -448,14 +465,32 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     } else {
       setSelectedPokemonIndex(null);
       setIsTrainerSelected(true);
+      setIsTrainerNameSelected(false);
       setLastSelectedItem('trainer');
       // Always move the selected item to the front of z-index layers
       setSelectionHistory(prev => [...prev.filter(item => item !== 'trainer'), 'trainer']);
     }
   };
 
-  const getZIndex = (item: 'trainer' | number): number => {
-    const totalItems = selectedPokemon.length + 1; // +1 for trainer
+  const handleTrainerNameClick = () => {
+    // Toggle selection: if already selected, deselect it
+    if (isTrainerNameSelected) {
+      setSelectedPokemonIndex(null);
+      setIsTrainerNameSelected(false);
+      setLastSelectedItem(null);
+      // Don't remove from selection history - keep z-index layers unchanged
+    } else {
+      setSelectedPokemonIndex(null);
+      setIsTrainerNameSelected(true);
+      setIsTrainerSelected(false);
+      setLastSelectedItem('trainerName');
+      // Always move the selected item to the front of z-index layers
+      setSelectionHistory(prev => [...prev.filter(item => item !== 'trainerName'), 'trainerName']);
+    }
+  };
+
+  const getZIndex = (item: 'trainer' | 'trainerName' | number): number => {
+    const totalItems = selectedPokemon.length + 2; // +2 for trainer and trainerName
     const itemIndex = selectionHistory.indexOf(item);
     
     if (itemIndex === -1) {
@@ -492,6 +527,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         ...prev,
         'trainer': !prev['trainer']
       }));
+    } else if (isTrainerNameSelected) {
+      setFlippedItems(prev => ({
+        ...prev,
+        'trainerName': !prev['trainerName']
+      }));
     }
   };
 
@@ -514,6 +554,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       setRotatedItems(prev => ({
         ...prev,
         'trainer': newRotation
+      }));
+    } else if (isTrainerNameSelected) {
+      const currentRotation = rotatedItems['trainerName'] || 0;
+      const newRotation = direction === 'clockwise' 
+        ? currentRotation + 10 
+        : currentRotation - 10;
+      setRotatedItems(prev => ({
+        ...prev,
+        'trainerName': newRotation
       }));
     }
   };
@@ -660,7 +709,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 </div>
                 <div className="trainer-name-container">
                   <div className="trainer-name-display">
-                    <h2>{trainerName}</h2>
+                    <h2 style={{ color: trainerNameColor }}>{trainerName}</h2>
                   </div>
                 </div>
               </div>
@@ -705,16 +754,34 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               if (e.target === e.currentTarget) {
                 setSelectedPokemonIndex(null);
                 setIsTrainerSelected(false);
+                setIsTrainerNameSelected(false);
                 // Don't clear lastSelectedItem - keep it for z-index
               }
             }}
           >
-            {/* Party Header - Fixed at top */}
-            <div className="party-header">
-              <div className="trainer-name-container">
-                <div className="trainer-name-display">
-                  <h2>{trainerName}</h2>
-                </div>
+            {/* Draggable Trainer Name */}
+            <div 
+              className={`draggable-trainer-name ${isTrainerNameSelected ? 'selected' : ''}`}
+              style={{
+                left: `${trainerNamePosition.x}%`,
+                top: `${trainerNamePosition.y}%`,
+                transform: 'translate(-50%, -50%)',
+                zIndex: getZIndex('trainerName')
+              }}
+              onMouseDown={(e) => handleMouseDown(e, undefined, 'trainerName')}
+              onTouchStart={(e) => handleTouchStart(e, undefined, 'trainerName')}
+              onClick={handleTrainerNameClick}
+            >
+              <div className="trainer-name-display">
+                <h2 
+                  style={{ 
+                    fontSize: `${trainerNameSize}px`,
+                    color: trainerNameColor,
+                    transform: `${flippedItems['trainerName'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainerName'] ? `rotate(${rotatedItems['trainerName']}deg)` : ''}`.trim()
+                  }}
+                >
+                  {trainerName}
+                </h2>
               </div>
             </div>
 
@@ -727,8 +794,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 transform: 'translate(-50%, -50%)',
                 zIndex: getZIndex('trainer')
               }}
-              onMouseDown={(e) => handleMouseDown(e)}
-              onTouchStart={(e) => handleTouchStart(e)}
+              onMouseDown={(e) => handleMouseDown(e, undefined, 'trainer')}
+              onTouchStart={(e) => handleTouchStart(e, undefined, 'trainer')}
               onClick={handleTrainerClick}
             >
               <div className="trainer-sprite-container">
@@ -818,6 +885,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               }}
             />
           </button>
+          <button 
+            className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''}`}
+            onClick={handleTrainerNameClick}
+          >
+            <span className="trainer-name-btn">Name</span>
+          </button>
           {Array.from({ length: 6 }, (_, index) => (
             <button 
               key={index}
@@ -842,8 +915,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       {layoutMode === 'party' && (
         <div className="selection-bar-hint">
           <p>
-            💡 <strong>Selection Bar Tips:</strong> Click any item to select it and adjust its size. 
-            Click the same item again to deselect it. The most recently selected item appears on top!
+            💡 <strong>Selection Bar Tips:</strong> Click any item (trainer, name, or Pokemon) to select it and drag it around. 
+            When selected, you can adjust size, flip, and rotate items. Trainer name color can be changed in the Card Customization section below. Click the same item again to deselect it. The most recently selected item appears on top!
           </p>
         </div>
       )}
@@ -945,6 +1018,53 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         </div>
       )}
       
+      {/* Trainer Name Size Control - Only show when trainer name is selected */}
+      {layoutMode === 'party' && isTrainerNameSelected && (
+        <div className="size-control-container">
+          <div className="size-control">
+            <label>
+              Trainer Name Size: {trainerNameSize}px
+            </label>
+            <input
+              type="range"
+              min="12"
+              max="72"
+              value={trainerNameSize}
+              onChange={(e) => {
+                const newSize = Number(e.target.value);
+                setTrainerNameSize(newSize);
+              }}
+            />
+            <p className="size-hint">
+              Click on the trainer name to adjust its size
+            </p>
+          </div>
+          <div className="transform-controls">
+            <button 
+              onClick={handleFlipItem}
+              className="flip-btn"
+              title="Flip Trainer Name"
+            >
+              🔄 Flip
+            </button>
+            <button 
+              onClick={() => handleRotateItem('counterclockwise')}
+              className="rotate-btn"
+              title="Rotate Counter-clockwise"
+            >
+              ↶ Rotate Left
+            </button>
+            <button 
+              onClick={() => handleRotateItem('clockwise')}
+              className="rotate-btn"
+              title="Rotate Clockwise"
+            >
+              ↷ Rotate Right
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="card-customization">
         <div className="customization-header">
           <h4>Card Customization</h4>
@@ -992,6 +1112,16 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               />
             </div>
           )}
+          
+          <div className="color-picker">
+            <label>Text Color:</label>
+            <input
+              type="color"
+              value={trainerNameColor}
+              onChange={(e) => setTrainerNameColor(e.target.value)}
+              className="color-input"
+            />
+          </div>
         </div>
         
         <div className="background-controls">
