@@ -20,6 +20,7 @@ import trainerVivian from './assets/Trainer_Vivian.png';
 import trainerAlphonse from './assets/Trainer_Alphonse.png';
 import trainerAxel from './assets/Trainer_Axel.png';
 import pokeball from './assets/pokeball.png';
+import pancham from './assets/Pancham.png';
 
 function App() {
   const [trainerName, setTrainerName] = useState('Trainer');
@@ -70,8 +71,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Pokemon Team Builder</h1>
+        <h1>Pokemon Team Builder <img src={pancham} alt="Pancham" className="title-pancham" /></h1>
         <p className="credit">Created by Vincent Nguyen</p>
+        <p className="screenshot-hint">📸 Screenshot your masterpiece and share your card with friends!</p>
       </header>
       <main className="App-main">
         <div className="left-panel">
