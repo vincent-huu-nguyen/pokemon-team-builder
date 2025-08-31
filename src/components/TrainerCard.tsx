@@ -918,6 +918,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       {layoutMode === 'party' && (
         <div className="selection-bar">
           <button 
+            className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''}`}
+            onClick={handleTrainerNameClick}
+          >
+            <span className="trainer-name-btn">Name</span>
+          </button>
+          <button 
             className={`selection-btn ${isTrainerSelected ? 'selected' : ''}`}
             onClick={handleTrainerClick}
           >
@@ -929,12 +935,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 e.currentTarget.src = trainerVincent;
               }}
             />
-          </button>
-          <button 
-            className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''}`}
-            onClick={handleTrainerNameClick}
-          >
-            <span className="trainer-name-btn">Name</span>
           </button>
           {Array.from({ length: 6 }, (_, index) => (
             <button 
@@ -960,8 +960,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       {layoutMode === 'party' && (
         <div className="selection-bar-hint">
           <p>
-            💡 <strong>Selection Bar Tips:</strong> Click any item (trainer, name, or Pokemon) to select it and drag it around. 
-            When selected, you can adjust size, flip, and rotate items. Trainer name color can be changed in the Card Customization section below. Click the same item again to deselect it. The most recently selected item appears on top!
+            💡 <strong>Tip:</strong> Click items to select and drag them. Adjust size, flip, and rotate when selected. Most recent selection appears on top.
           </p>
         </div>
       )}
