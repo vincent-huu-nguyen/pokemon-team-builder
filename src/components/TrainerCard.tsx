@@ -464,12 +464,19 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
+      setIsTrainerSelected(false);
+      setIsTrainerNameSelected(false);
       const position = pokemonPositions[index] || { x: 20 + (index * 12), y: 70 };
       setDragOffset({ x: mouseX - position.x, y: mouseY - position.y });
     } else if (type === 'trainerName') {
+      setSelectedPokemonIndex(null);
       setIsTrainerNameSelected(true);
+      setIsTrainerSelected(false);
       setDragOffset({ x: mouseX - trainerNamePosition.x, y: mouseY - trainerNamePosition.y });
     } else if (type === 'trainer') {
+      setSelectedPokemonIndex(null);
+      setIsTrainerSelected(true);
+      setIsTrainerNameSelected(false);
       setDragOffset({ x: mouseX - trainerPosition.x, y: mouseY - trainerPosition.y });
     }
   };
@@ -522,12 +529,19 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     
     if (index !== undefined) {
       setSelectedPokemonIndex(index);
+      setIsTrainerSelected(false);
+      setIsTrainerNameSelected(false);
       const position = pokemonPositions[index] || { x: 20 + (index * 12), y: 70 };
       setDragOffset({ x: touchX - position.x, y: touchY - position.y });
     } else if (type === 'trainerName') {
+      setSelectedPokemonIndex(null);
       setIsTrainerNameSelected(true);
+      setIsTrainerSelected(false);
       setDragOffset({ x: touchX - trainerNamePosition.x, y: touchY - trainerNamePosition.y });
     } else if (type === 'trainer') {
+      setSelectedPokemonIndex(null);
+      setIsTrainerSelected(true);
+      setIsTrainerNameSelected(false);
       setDragOffset({ x: touchX - trainerPosition.x, y: touchY - trainerPosition.y });
     }
   };
