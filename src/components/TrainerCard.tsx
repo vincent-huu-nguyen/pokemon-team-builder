@@ -520,6 +520,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   // Touch event handlers for mobile dragging
   const handleTouchStart = (e: React.TouchEvent, index?: number, type?: 'trainer' | 'trainerName') => {
     e.preventDefault(); // Prevent default touch behavior
+    
+    // Don't change selection if this is a pinch gesture (2 touches)
+    if (e.touches.length === 2) {
+      return;
+    }
+    
     setIsDragging(true);
     
     const cardRect = cardRef.current?.getBoundingClientRect();
@@ -551,8 +557,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const handleTouchMove = (e: React.TouchEvent) => {
     e.preventDefault(); // Prevent scrolling while dragging
     
-    // Handle pinch gestures for resizing
-    if (e.touches.length === 2 && initialPinchDistance > 0) {
+    // Handle pinch gestures for resizing - only if something is selected
+    if (e.touches.length === 2 && initialPinchDistance > 0 && (selectedPokemonIndex !== null || isTrainerSelected || isTrainerNameSelected)) {
       const currentDistance = getTouchDistance(e.touches);
       const scale = currentDistance / initialPinchDistance;
       const newSize = Math.max(40, Math.min(300, initialSize * scale));
@@ -948,12 +954,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             onTouchStart={(e) => {
-              // Handle pinch gestures for resizing
-              if (e.touches.length === 2) {
+              // Handle pinch gestures for resizing - only if something is selected
+              if (e.touches.length === 2 && (selectedPokemonIndex !== null || isTrainerSelected || isTrainerNameSelected)) {
                 const distance = getTouchDistance(e.touches);
                 setInitialPinchDistance(distance);
                 
-                // Set initial size based on what's selected
+                // Set initial size based on what's currently selected
                 if (selectedPokemonIndex !== null) {
                   setInitialSize(pokemonSizes[selectedPokemonIndex] || 60);
                 } else if (isTrainerSelected) {
