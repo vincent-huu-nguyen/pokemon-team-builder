@@ -1292,6 +1292,34 @@
   text-align: center;
 }
 
+.selection-btn.hidden-item {
+  opacity: 0.4;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.selection-btn.hidden-item::after {
+  content: "👁️";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.selection-btn.hidden-item:hover {
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* Selection Bar Hint */
 .selection-bar-hint {
   margin-top: 0.25rem;

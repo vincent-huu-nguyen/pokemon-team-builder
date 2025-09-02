@@ -59,6 +59,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
   const [syncPageBackground, setSyncPageBackground] = useState(true);
+  const [showTrainerSprite, setShowTrainerSprite] = useState(true);
+  const [showTrainerName, setShowTrainerName] = useState(true);
   const [flippedItems, setFlippedItems] = useState<{ [key: string]: boolean }>({});
   const [rotatedItems, setRotatedItems] = useState<{ [key: string]: number }>({});
 
@@ -972,62 +974,66 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             }}
           >
             {/* Draggable Trainer Name */}
-            <div 
-              className={`draggable-trainer-name ${isTrainerNameSelected ? 'selected' : ''}`}
-              style={{
-                left: `${trainerNamePosition.x}%`,
-                top: `${trainerNamePosition.y}%`,
-                transform: 'translate(-50%, -50%)',
-                zIndex: getZIndex('trainerName')
-              }}
-              onMouseDown={(e) => handleMouseDown(e, undefined, 'trainerName')}
-              onTouchStart={(e) => handleTouchStart(e, undefined, 'trainerName')}
-              onClick={handleTrainerNameClick}
-            >
-              <div className="trainer-name-display">
-                <h2 
-                  style={{ 
-                    fontSize: `${trainerNameSize}px`,
-                    color: trainerNameColor,
-                    transform: `${flippedItems['trainerName'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainerName'] ? `rotate(${rotatedItems['trainerName']}deg)` : ''}`.trim()
-                  }}
-                >
-                  {trainerName}
-                </h2>
-              </div>
-            </div>
-
-            {/* Draggable Trainer Sprite Only */}
-            <div 
-              className={`draggable-trainer ${isTrainerSelected ? 'selected' : ''}`}
-              style={{
-                left: `${trainerPosition.x}%`,
-                top: `${trainerPosition.y}%`,
-                transform: 'translate(-50%, -50%)',
-                zIndex: getZIndex('trainer')
-              }}
-              onMouseDown={(e) => handleMouseDown(e, undefined, 'trainer')}
-              onTouchStart={(e) => handleTouchStart(e, undefined, 'trainer')}
-              onClick={handleTrainerClick}
-            >
-              <div className="trainer-sprite-container">
-                <div className="sprite-wrapper">
-                  <img 
-                    src={trainerSprite} 
-                    alt="Trainer" 
-                    className="trainer-sprite"
+            {showTrainerName && (
+              <div 
+                className={`draggable-trainer-name ${isTrainerNameSelected ? 'selected' : ''}`}
+                style={{
+                  left: `${trainerNamePosition.x}%`,
+                  top: `${trainerNamePosition.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: getZIndex('trainerName')
+                }}
+                onMouseDown={(e) => handleMouseDown(e, undefined, 'trainerName')}
+                onTouchStart={(e) => handleTouchStart(e, undefined, 'trainerName')}
+                onClick={handleTrainerNameClick}
+              >
+                <div className="trainer-name-display">
+                  <h2 
                     style={{ 
-                      width: trainerSize, 
-                      height: trainerSize,
-                      transform: `${flippedItems['trainer'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainer'] ? `rotate(${rotatedItems['trainer']}deg)` : ''}`.trim()
+                      fontSize: `${trainerNameSize}px`,
+                      color: trainerNameColor,
+                      transform: `${flippedItems['trainerName'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainerName'] ? `rotate(${rotatedItems['trainerName']}deg)` : ''}`.trim()
                     }}
-                    onError={(e) => {
-                      e.currentTarget.src = trainerVincent;
-                    }}
-                  />
+                  >
+                    {trainerName}
+                  </h2>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Draggable Trainer Sprite Only */}
+            {showTrainerSprite && (
+              <div 
+                className={`draggable-trainer ${isTrainerSelected ? 'selected' : ''}`}
+                style={{
+                  left: `${trainerPosition.x}%`,
+                  top: `${trainerPosition.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: getZIndex('trainer')
+                }}
+                onMouseDown={(e) => handleMouseDown(e, undefined, 'trainer')}
+                onTouchStart={(e) => handleTouchStart(e, undefined, 'trainer')}
+                onClick={handleTrainerClick}
+              >
+                <div className="trainer-sprite-container">
+                  <div className="sprite-wrapper">
+                    <img 
+                      src={trainerSprite} 
+                      alt="Trainer" 
+                      className="trainer-sprite"
+                      style={{ 
+                        width: trainerSize, 
+                        height: trainerSize,
+                        transform: `${flippedItems['trainer'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainer'] ? `rotate(${rotatedItems['trainer']}deg)` : ''}`.trim()
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.src = trainerVincent;
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Draggable Pokemon */}
             {selectedPokemon.map((pokemon, index) => {
@@ -1085,13 +1091,13 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       {layoutMode === 'party' && (
         <div className="selection-bar" ref={selectionBarRef}>
           <button 
-            className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''}`}
+            className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''} ${!showTrainerName ? 'hidden-item' : ''}`}
             onClick={handleTrainerNameClick}
           >
             <span className="trainer-name-btn">Name</span>
           </button>
           <button 
-            className={`selection-btn ${isTrainerSelected ? 'selected' : ''}`}
+            className={`selection-btn ${isTrainerSelected ? 'selected' : ''} ${!showTrainerSprite ? 'hidden-item' : ''}`}
             onClick={handleTrainerClick}
           >
             <img 
@@ -1182,132 +1188,162 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         </div>
       )}
       
-      {/* Trainer Size Control - Only show when trainer is selected */}
+      {/* Trainer Size Control - Only show when trainer is selected and visible */}
       {layoutMode === 'party' && isTrainerSelected && (
         <div className="size-control-container">
           <div className="size-control">
-            <label>
-              Trainer Size: {trainerSize}px
-            </label>
-            <input
-              type="range"
-              min="40"
-              max="300"
-              value={trainerSize}
-              onChange={(e) => {
-                const newSize = Number(e.target.value);
-                setTrainerSize(newSize);
-              }}
-            />
-            <p className="size-hint">
-              Click on the trainer to adjust its size
-            </p>
+            <div className="visibility-toggle">
+              <input
+                type="checkbox"
+                id="trainer-sprite-toggle"
+                checked={showTrainerSprite}
+                onChange={(e) => setShowTrainerSprite(e.target.checked)}
+              />
+              <label htmlFor="trainer-sprite-toggle">Show Trainer Sprite</label>
+            </div>
+            {showTrainerSprite && (
+              <>
+                <label>
+                  Trainer Size: {trainerSize}px
+                </label>
+                <input
+                  type="range"
+                  min="40"
+                  max="300"
+                  value={trainerSize}
+                  onChange={(e) => {
+                    const newSize = Number(e.target.value);
+                    setTrainerSize(newSize);
+                  }}
+                />
+                <p className="size-hint">
+                  Click on the trainer to adjust its size
+                </p>
+              </>
+            )}
           </div>
-          <div className="transform-controls">
-            <button 
-              onClick={handleFlipItem}
-              className="flip-btn"
-              title="Flip Trainer"
-            >
-              🔄 Flip
-            </button>
-            <button 
-              onClick={() => handleRotateItem('counterclockwise')}
-              className="rotate-btn"
-              title="Rotate Counter-clockwise"
-            >
-              ↶ Rotate Left
-            </button>
-            <button 
-              onClick={() => handleRotateItem('clockwise')}
-              className="rotate-btn"
-              title="Rotate Clockwise"
-            >
-              ↷ Rotate Right
-            </button>
-          </div>
+          {showTrainerSprite && (
+            <div className="transform-controls">
+              <button 
+                onClick={handleFlipItem}
+                className="flip-btn"
+                title="Flip Trainer"
+              >
+                🔄 Flip
+              </button>
+              <button 
+                onClick={() => handleRotateItem('counterclockwise')}
+                className="rotate-btn"
+                title="Rotate Counter-clockwise"
+              >
+                ↶ Rotate Left
+              </button>
+              <button 
+                onClick={() => handleRotateItem('clockwise')}
+                className="rotate-btn"
+                title="Rotate Clockwise"
+              >
+                ↷ Rotate Right
+              </button>
+            </div>
+          )}
         </div>
       )}
       
-      {/* Trainer Name Size Control - Only show when trainer name is selected */}
+      {/* Trainer Name Size Control - Only show when trainer name is selected and visible */}
       {layoutMode === 'party' && isTrainerNameSelected && (
         <div className="size-control-container">
           <div className="size-control">
-            <label>
-              Trainer Name Size: {trainerNameSize}px
-            </label>
-            <input
-              type="range"
-              min="12"
-              max="72"
-              value={trainerNameSize}
-              onChange={(e) => {
-                const newSize = Number(e.target.value);
-                setTrainerNameSize(newSize);
-              }}
-            />
-            <p className="size-hint">
-              Click on the trainer name to adjust its size
-            </p>
+            <div className="visibility-toggle">
+              <input
+                type="checkbox"
+                id="trainer-name-toggle"
+                checked={showTrainerName}
+                onChange={(e) => setShowTrainerName(e.target.checked)}
+              />
+              <label htmlFor="trainer-name-toggle">Show Trainer Name</label>
+            </div>
+            {showTrainerName && (
+              <>
+                <label>
+                  Trainer Name Size: {trainerNameSize}px
+                </label>
+                <input
+                  type="range"
+                  min="12"
+                  max="72"
+                  value={trainerNameSize}
+                  onChange={(e) => {
+                    const newSize = Number(e.target.value);
+                    setTrainerNameSize(newSize);
+                  }}
+                />
+                <p className="size-hint">
+                  Click on the trainer name to adjust its size
+                </p>
+              </>
+            )}
           </div>
-          <div className="transform-controls">
-            <button 
-              onClick={handleFlipItem}
-              className="flip-btn"
-              title="Flip Trainer Name"
-            >
-              🔄 Flip
-            </button>
-            <button 
-              onClick={() => handleRotateItem('counterclockwise')}
-              className="rotate-btn"
-              title="Rotate Counter-clockwise"
-            >
-              ↶ Rotate Left
-            </button>
-            <button 
-              onClick={() => handleRotateItem('clockwise')}
-              className="rotate-btn"
-              title="Rotate Clockwise"
-            >
-              ↷ Rotate Right
-            </button>
-          </div>
+          {showTrainerName && (
+            <div className="transform-controls">
+              <button 
+                onClick={handleFlipItem}
+                className="flip-btn"
+                title="Flip Trainer Name"
+              >
+                🔄 Flip
+              </button>
+              <button 
+                onClick={() => handleRotateItem('counterclockwise')}
+                className="rotate-btn"
+                title="Rotate Counter-clockwise"
+              >
+                ↶ Rotate Left
+              </button>
+              <button 
+                onClick={() => handleRotateItem('clockwise')}
+                className="rotate-btn"
+                title="Rotate Clockwise"
+              >
+                ↷ Rotate Right
+              </button>
+            </div>
+          )}
         </div>
       )}
       
       <div className="card-customization">
         <div className="customization-header">
           <h4>Card Customization</h4>
-          <div className="customization-toggles">
-            <div className="gradient-toggle">
-              <input
-                type="checkbox"
-                id="gradient-toggle"
-                checked={isGradient}
-                onChange={(e) => setIsGradient(e.target.checked)}
-              />
-              <label htmlFor="gradient-toggle">Gradient</label>
-            </div>
-            <div className="bubbles-toggle">
-              <input
-                type="checkbox"
-                id="bubbles-toggle"
-                checked={showBubbles}
-                onChange={(e) => setShowBubbles(e.target.checked)}
-              />
-              <label htmlFor="bubbles-toggle">Bubbles</label>
-            </div>
-            <div className="background-sync-toggle">
-              <input
-                type="checkbox"
-                id="background-sync-toggle"
-                checked={syncPageBackground}
-                onChange={(e) => setSyncPageBackground(e.target.checked)}
-              />
-              <label htmlFor="background-sync-toggle">Sync Page Background</label>
-            </div>
+                  <div className="customization-toggles">
+          <div className="gradient-toggle">
+            <input
+              type="checkbox"
+              id="gradient-toggle"
+              checked={isGradient}
+              onChange={(e) => setIsGradient(e.target.checked)}
+            />
+            <label htmlFor="gradient-toggle">Gradient</label>
           </div>
+          <div className="bubbles-toggle">
+            <input
+              type="checkbox"
+              id="bubbles-toggle"
+              checked={showBubbles}
+              onChange={(e) => setShowBubbles(e.target.checked)}
+            />
+            <label htmlFor="bubbles-toggle">Bubbles</label>
+          </div>
+          <div className="background-sync-toggle">
+            <input
+              type="checkbox"
+              id="background-sync-toggle"
+              checked={syncPageBackground}
+              onChange={(e) => setSyncPageBackground(e.target.checked)}
+            />
+            <label htmlFor="background-sync-toggle">Sync Page Background</label>
+          </div>
+        </div>
         </div>
         
         <div className="color-controls">
