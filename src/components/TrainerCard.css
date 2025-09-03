@@ -592,9 +592,10 @@
 
 .customization-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .customization-toggles {

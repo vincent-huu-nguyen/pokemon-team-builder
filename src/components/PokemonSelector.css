@@ -18,6 +18,7 @@
   color: #2d3748;
   font-size: 1.5rem;
   font-weight: 700;
+  text-align: center;
 }
 
 .search-container {
@@ -101,7 +102,7 @@
 .generation-header {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 12px 16px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -113,11 +114,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: 0.5rem;
+  text-align: center;
+  position: relative;
 }
 
 .generation-header:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.generation-header span {
+  text-align: center;
+  flex: 1;
+}
+
+.generation-header svg {
+  position: absolute;
+  right: 16px;
 }
 
 .generation-pokemon {
