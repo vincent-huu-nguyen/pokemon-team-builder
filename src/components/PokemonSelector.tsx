@@ -14,6 +14,8 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
   const [selectedGeneration, setSelectedGeneration] = useState<number | 'all'>('all');
   const [expandedGenerations, setExpandedGenerations] = useState<Set<number>>(new Set([1]));
   const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [totalPokemon, setTotalPokemon] = useState(1025);
 
   useEffect(() => {
     fetchAllPokemon();
@@ -26,28 +28,30 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
   const fetchAllPokemon = async () => {
     try {
       setLoading(true);
+      setLoadingProgress(0);
       const allPokemon: Pokemon[] = [];
       
-             // Fetch regular Pokemon in batches for better performance
-       const batchSize = 50;
-       const totalPokemon = 1025; // Updated to include all Pokemon up to Gen 9
-       
-       console.log(`Batch size: ${batchSize}, Total Pokemon: ${totalPokemon}`);
-       console.log(`Number of batches: ${Math.ceil(totalPokemon / batchSize)}`);
-       
-              console.log(`Starting to fetch ${totalPokemon} Pokemon...`);
-       
-       // Test the loop logic
-       let batchCount = 0;
-       for (let batchStart = 1; batchStart <= totalPokemon; batchStart += batchSize) {
-         batchCount++;
-         const batchEnd = Math.min(batchStart + batchSize - 1, totalPokemon);
-         console.log(`Batch ${batchCount}: Pokemon ${batchStart} to ${batchEnd}`);
-       }
-       console.log(`Total batches to process: ${batchCount}`);
-       
-       // Fetch Pokemon in batches
-       for (let batchStart = 1; batchStart <= totalPokemon; batchStart += batchSize) {
+      // Fetch regular Pokemon in batches for better performance
+      const batchSize = 50;
+      const totalPokemonCount = 1025; // Updated to include all Pokemon up to Gen 9
+      setTotalPokemon(totalPokemonCount);
+      
+      console.log(`Batch size: ${batchSize}, Total Pokemon: ${totalPokemonCount}`);
+      console.log(`Number of batches: ${Math.ceil(totalPokemonCount / batchSize)}`);
+      
+      console.log(`Starting to fetch ${totalPokemonCount} Pokemon...`);
+      
+      // Test the loop logic
+      let batchCount = 0;
+      for (let batchStart = 1; batchStart <= totalPokemonCount; batchStart += batchSize) {
+        batchCount++;
+        const batchEnd = Math.min(batchStart + batchSize - 1, totalPokemonCount);
+        console.log(`Batch ${batchCount}: Pokemon ${batchStart} to ${batchEnd}`);
+      }
+      console.log(`Total batches to process: ${batchCount}`);
+      
+      // Fetch Pokemon in batches
+      for (let batchStart = 1; batchStart <= totalPokemonCount; batchStart += batchSize) {
          let retryCount = 0;
          const maxRetries = 3;
          
@@ -129,11 +133,16 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
                      // Update the list as we fetch to show progress
            setPokemonList([...allPokemon]);
            setFilteredPokemon([...allPokemon]);
-           console.log(`Loaded ${allPokemon.length} Pokemon so far...`);
+           
+           // Update progress
+           const progress = Math.min((allPokemon.length / totalPokemonCount) * 100, 100);
+           setLoadingProgress(progress);
+           
+           console.log(`Loaded ${allPokemon.length} Pokemon so far... (${progress.toFixed(1)}%)`);
            
            // Check if this is the last batch
-           if (batchEnd >= totalPokemon) {
-             console.log(`Final batch completed. Expected ${totalPokemon} Pokemon, got ${allPokemon.length}`);
+           if (batchEnd >= totalPokemonCount) {
+             console.log(`Final batch completed. Expected ${totalPokemonCount} Pokemon, got ${allPokemon.length}`);
            }
                  } catch (error) {
            console.error(`Error fetching batch starting at ${batchStart}, retry ${retryCount + 1}/${maxRetries}:`, error);
@@ -461,8 +470,16 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
     return (
       <div className="pokemon-selector">
         <div className="loading">
-          <div className="loading-spinner"></div>
           <p>Loading Pokemon...</p>
+          <div className="progress-container">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${loadingProgress}%` }}
+              ></div>
+            </div>
+            <p className="progress-text">{Math.round(loadingProgress)}% ({Math.round((loadingProgress / 100) * totalPokemon)} / {totalPokemon})</p>
+          </div>
         </div>
       </div>
     );
