@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, Palette } from 'lucide-react';
 import { Pokemon } from '../types/Pokemon';
 import './PokemonSelector.css';
 
 interface PokemonSelectorProps {
   onPokemonSelect: (pokemon: Pokemon) => void;
+  artStyle: 'pixel' | 'official';
+  onArtStyleChange: (style: 'pixel' | 'official') => void;
 }
 
-const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) => {
+const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artStyle, onArtStyleChange }) => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -110,6 +112,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
                id: data.id,
                name: data.name,
                image: data.sprites.front_default,
+               officialArtwork: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default,
                generation: getGenerationFromId(data.id)
              };
              allPokemon.push(pokemon);
@@ -379,6 +382,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
             id: data.id,
             name: form.displayName,
             image: data.sprites.front_default,
+            officialArtwork: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default,
             generation: getGenerationFromId(form.baseId)
           };
           console.log(`Successfully fetched ${form.displayName}`);
@@ -489,27 +493,40 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
     <div className="pokemon-selector">
       <div className="selector-header">
         <h2>Pokemon Selector</h2>
-        <div className="search-container">
-          <Search size={20} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search Pokemon..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
-        <div className="generation-filter">
-          <select
-            value={selectedGeneration}
-            onChange={(e) => setSelectedGeneration(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-            className="generation-select"
-          >
-            <option value="all">All Generations</option>
-            {generations.map(gen => (
-              <option key={gen} value={gen}>Generation {gen}</option>
-            ))}
-          </select>
+        <div className="controls-row">
+          <div className="search-container">
+            <Search size={20} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search Pokemon..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+          <div className="generation-filter">
+            <select
+              value={selectedGeneration}
+              onChange={(e) => setSelectedGeneration(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              className="generation-select"
+            >
+              <option value="all">All Generations</option>
+              {generations.map(gen => (
+                <option key={gen} value={gen}>Generation {gen}</option>
+              ))}
+            </select>
+          </div>
+          <div className="art-style-toggle">
+            <Palette size={20} className="palette-icon" />
+            <select
+              value={artStyle}
+              onChange={(e) => onArtStyleChange(e.target.value as 'pixel' | 'official')}
+              className="art-style-select"
+            >
+              <option value="pixel">Pixel Art</option>
+              <option value="official">Official Art</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -541,7 +558,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
                         onClick={() => onPokemonSelect(pokemon)}
                       >
                         <img
-                          src={pokemon.image}
+                          src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
                           alt={pokemon.name}
                           className="pokemon-option-sprite"
                         />
@@ -564,7 +581,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect }) =>
                 onClick={() => onPokemonSelect(pokemon)}
               >
                 <img
-                  src={pokemon.image}
+                  src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
                   alt={pokemon.name}
                   className="pokemon-option-sprite"
                 />

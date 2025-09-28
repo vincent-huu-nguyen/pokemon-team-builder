@@ -26,6 +26,7 @@ function App() {
   const [trainerName, setTrainerName] = useState('Trainer');
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon[]>([]);
   const [trainerSprite, setTrainerSprite] = useState(trainerVincent);
+  const [artStyle, setArtStyle] = useState<'pixel' | 'official'>('pixel');
   
   // Available trainer sprites
   const availableSprites = [
@@ -87,10 +88,15 @@ function App() {
             availableSprites={availableSprites}
             onSpriteSelect={setTrainerSprite}
             pokeballImage={pokeball}
+            artStyle={artStyle}
           />
         </div>
         <div className="right-panel">
-          <PokemonSelector onPokemonSelect={addPokemon} />
+          <PokemonSelector 
+            onPokemonSelect={addPokemon} 
+            artStyle={artStyle}
+            onArtStyleChange={setArtStyle}
+          />
         </div>
       </main>
     </div>

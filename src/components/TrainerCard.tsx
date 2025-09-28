@@ -16,6 +16,7 @@ interface TrainerCardProps {
   availableSprites: { name: string; src: string }[];
   onSpriteSelect: (sprite: string) => void;
   pokeballImage: string;
+  artStyle: 'pixel' | 'official';
 }
 
 const TrainerCard: React.FC<TrainerCardProps> = ({
@@ -28,6 +29,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   availableSprites,
   onSpriteSelect,
   pokeballImage,
+  artStyle,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionBarRef = useRef<HTMLDivElement>(null);
@@ -930,7 +932,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                         style={{ cursor: 'pointer' }}
                       >
                         <img 
-                          src={selectedPokemon[index].image} 
+                          src={artStyle === 'official' ? (selectedPokemon[index].officialArtwork || selectedPokemon[index].image) : selectedPokemon[index].image} 
                           alt={selectedPokemon[index].name}
                           className="pokemon-sprite"
                         />
@@ -1062,7 +1064,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                   onClick={() => handlePokemonClick(index)}
                 >
                                     <img 
-                    src={pokemon.image} 
+                    src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image} 
                     alt={pokemon.name}
                     className="party-pokemon-sprite"
                     style={{ 
@@ -1123,7 +1125,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             >
               {selectedPokemon[index] ? (
                 <img 
-                  src={selectedPokemon[index].image} 
+                  src={artStyle === 'official' ? (selectedPokemon[index].officialArtwork || selectedPokemon[index].image) : selectedPokemon[index].image} 
                   alt={selectedPokemon[index].name}
                   className="selection-btn-sprite"
                 />
