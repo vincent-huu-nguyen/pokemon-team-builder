@@ -13,12 +13,6 @@
   margin-bottom: 1.5rem;
 }
 
-.controls-row {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
 
 .selector-header h2 {
   margin: 0 0 1rem 0;
@@ -30,8 +24,7 @@
 
 .search-container {
   position: relative;
-  flex: 1;
-  min-width: 200px;
+  margin-bottom: 1rem;
 }
 
 .search-icon {
@@ -58,53 +51,49 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.generation-filter {
-  flex-shrink: 0;
-}
 
 .art-style-toggle {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
+  justify-content: center;
 }
 
-.palette-icon {
-  color: #667eea;
-}
-
-.art-style-select {
-  padding: 8px 12px;
+.art-style-buttons {
+  display: flex;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+.art-style-btn {
+  padding: 8px 12px;
+  border: none;
+  background: white;
+  color: #4a5568;
   font-size: 0.9rem;
-  outline: none;
-  transition: all 0.2s ease;
-  background: white;
-  cursor: pointer;
-}
-
-.art-style-select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.generation-select {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1rem;
-  outline: none;
-  background: white;
   cursor: pointer;
   transition: all 0.2s ease;
+  border-right: 1px solid #e2e8f0;
 }
 
-.generation-select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+.art-style-btn:last-child {
+  border-right: none;
 }
+
+.art-style-btn:hover {
+  background: #f7fafc;
+  color: #2d3748;
+}
+
+.art-style-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.art-style-btn.active:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
 
 .pokemon-list {
   flex: 1;

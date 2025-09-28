@@ -13,7 +13,6 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGeneration, setSelectedGeneration] = useState<number | 'all'>('all');
   const [expandedGenerations, setExpandedGenerations] = useState<Set<number>>(new Set([1]));
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -25,7 +24,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
 
   useEffect(() => {
     filterPokemon();
-  }, [pokemonList, searchTerm, selectedGeneration]);
+  }, [pokemonList, searchTerm]);
 
   const fetchAllPokemon = async () => {
     try {
@@ -446,11 +445,6 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
       );
     }
 
-    // Filter by generation
-    if (selectedGeneration !== 'all') {
-      filtered = filtered.filter(pokemon => pokemon.generation === selectedGeneration);
-    }
-
     setFilteredPokemon(filtered);
   };
 
@@ -493,105 +487,75 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
     <div className="pokemon-selector">
       <div className="selector-header">
         <h2>Pokemon Selector</h2>
-        <div className="controls-row">
-          <div className="search-container">
-            <Search size={20} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search Pokemon..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          <div className="generation-filter">
-            <select
-              value={selectedGeneration}
-              onChange={(e) => setSelectedGeneration(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              className="generation-select"
+        <div className="search-container">
+          <Search size={20} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search Pokemon..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        <div className="art-style-toggle">
+          <div className="art-style-buttons">
+            <button
+              className={`art-style-btn ${artStyle === 'pixel' ? 'active' : ''}`}
+              onClick={() => onArtStyleChange('pixel')}
             >
-              <option value="all">All Generations</option>
-              {generations.map(gen => (
-                <option key={gen} value={gen}>Generation {gen}</option>
-              ))}
-            </select>
-          </div>
-          <div className="art-style-toggle">
-            <Palette size={20} className="palette-icon" />
-            <select
-              value={artStyle}
-              onChange={(e) => onArtStyleChange(e.target.value as 'pixel' | 'official')}
-              className="art-style-select"
+              Pixel Art
+            </button>
+            <button
+              className={`art-style-btn ${artStyle === 'official' ? 'active' : ''}`}
+              onClick={() => onArtStyleChange('official')}
             >
-              <option value="pixel">Pixel Art</option>
-              <option value="official">Official Art</option>
-            </select>
+              Official Art
+            </button>
           </div>
         </div>
       </div>
 
       <div className="pokemon-list">
-        {selectedGeneration === 'all' ? (
-          generations.map(generation => {
-            const generationPokemon = getPokemonByGeneration(generation);
-            if (generationPokemon.length === 0) return null;
+        {generations.map(generation => {
+          const generationPokemon = getPokemonByGeneration(generation);
+          if (generationPokemon.length === 0) return null;
 
-            return (
-              <div key={generation} className="generation-section">
-                <button
-                  className="generation-header"
-                  onClick={() => toggleGeneration(generation)}
-                >
-                  <span>Generation {generation} ({generationPokemon.length})</span>
-                  {expandedGenerations.has(generation) ? (
-                    <ChevronUp size={20} />
-                  ) : (
-                    <ChevronDown size={20} />
-                  )}
-                </button>
-                {expandedGenerations.has(generation) && (
-                  <div className="generation-pokemon">
-                    {generationPokemon.map(pokemon => (
-                      <div
-                        key={pokemon.id}
-                        className="pokemon-option"
-                        onClick={() => onPokemonSelect(pokemon)}
-                      >
-                        <img
-                          src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
-                          alt={pokemon.name}
-                          className="pokemon-option-sprite"
-                        />
-                        <span className="pokemon-option-name">
-                          {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })
-        ) : (
-          <div className="generation-pokemon">
-            {filteredPokemon.map(pokemon => (
-              <div
-                key={pokemon.id}
-                className="pokemon-option"
-                onClick={() => onPokemonSelect(pokemon)}
+          return (
+            <div key={generation} className="generation-section">
+              <button
+                className="generation-header"
+                onClick={() => toggleGeneration(generation)}
               >
-                <img
-                  src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
-                  alt={pokemon.name}
-                  className="pokemon-option-sprite"
-                />
-                <span className="pokemon-option-name">
-                  {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+                <span>Generation {generation} ({generationPokemon.length})</span>
+                {expandedGenerations.has(generation) ? (
+                  <ChevronUp size={20} />
+                ) : (
+                  <ChevronDown size={20} />
+                )}
+              </button>
+              {expandedGenerations.has(generation) && (
+                <div className="generation-pokemon">
+                  {generationPokemon.map(pokemon => (
+                    <div
+                      key={pokemon.id}
+                      className="pokemon-option"
+                      onClick={() => onPokemonSelect(pokemon)}
+                    >
+                      <img
+                        src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
+                        alt={pokemon.name}
+                        className="pokemon-option-sprite"
+                      />
+                      <span className="pokemon-option-name">
+                        {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
