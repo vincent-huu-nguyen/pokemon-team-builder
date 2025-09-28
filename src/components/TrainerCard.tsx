@@ -178,58 +178,56 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     });
   };
 
-  const createHighQualityScaledSprite = async (imageUrl: string, targetSize: number): Promise<string> => {
+  const createHighQualityScaledSprite = async (imageUrl: string, targetSize: number, isOfficialArt: boolean = false): Promise<string> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => {
-        // Create a high-resolution canvas (8x the target size for maximum sharpness)
-        const highResSize = targetSize * 8;
+        // Create a high-resolution canvas (4x the target size for better quality)
+        const highResSize = targetSize * 4;
         const canvas = document.createElement('canvas');
         canvas.width = highResSize;
         canvas.height = highResSize;
         const ctx = canvas.getContext('2d');
         
         if (ctx) {
-          // Set up high-quality rendering with nearest neighbor for pixel art
-          ctx.imageSmoothingEnabled = false;
+          // Set up rendering based on art type
+          if (isOfficialArt) {
+            // For official artwork, use smooth scaling
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+          } else {
+            // For pixel art, use nearest neighbor to maintain pixelated look
+            ctx.imageSmoothingEnabled = false;
+          }
           
           // Clear canvas
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           
-          // Scale up the image to the high-res size using nearest neighbor
+          // Scale up the image to the high-res size
           ctx.drawImage(img, 0, 0, highResSize, highResSize);
           
-          // Create intermediate canvas at 2x target size for better quality
-          const intermediateCanvas = document.createElement('canvas');
-          intermediateCanvas.width = targetSize * 2;
-          intermediateCanvas.height = targetSize * 2;
-          const intermediateCtx = intermediateCanvas.getContext('2d');
+          // Create final canvas at target size
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = targetSize;
+          finalCanvas.height = targetSize;
+          const finalCtx = finalCanvas.getContext('2d');
           
-          if (intermediateCtx) {
-            // Use nearest neighbor for intermediate step
-            intermediateCtx.imageSmoothingEnabled = false;
-            intermediateCtx.drawImage(canvas, 0, 0, targetSize * 2, targetSize * 2);
-            
-            // Create final canvas at target size
-            const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = targetSize;
-            finalCanvas.height = targetSize;
-            const finalCtx = finalCanvas.getContext('2d');
-            
-            if (finalCtx) {
-              // Use nearest neighbor for final step to maintain sharpness
-              finalCtx.imageSmoothingEnabled = false;
-              
-              // Draw the intermediate image to final size
-              finalCtx.drawImage(intermediateCanvas, 0, 0, targetSize, targetSize);
-              
-              resolve(finalCanvas.toDataURL('image/png', 1.0));
+          if (finalCtx) {
+            // Apply same smoothing settings for final step
+            if (isOfficialArt) {
+              finalCtx.imageSmoothingEnabled = true;
+              finalCtx.imageSmoothingQuality = 'high';
             } else {
-              reject(new Error('Could not get final canvas context'));
+              finalCtx.imageSmoothingEnabled = false;
             }
+            
+            // Draw the high-res image to final size
+            finalCtx.drawImage(canvas, 0, 0, targetSize, targetSize);
+            
+            resolve(finalCanvas.toDataURL('image/png', 1.0));
           } else {
-            reject(new Error('Could not get intermediate canvas context'));
+            reject(new Error('Could not get final canvas context'));
           }
         } else {
           reject(new Error('Could not get canvas context'));
@@ -338,7 +336,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               }
               
               // Create a high-quality scaled version at the target size
-              const scaledDataURL = await createHighQualityScaledSprite(imgElement.src, targetSize);
+              const scaledDataURL = await createHighQualityScaledSprite(imgElement.src, targetSize, artStyle === 'official');
               imgElement.src = scaledDataURL;
               
               // Set the display size to maintain exact layout positioning
@@ -563,7 +561,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     if (e.touches.length === 2 && initialPinchDistance > 0 && (selectedPokemonIndex !== null || isTrainerSelected || isTrainerNameSelected)) {
       const currentDistance = getTouchDistance(e.touches);
       const scale = currentDistance / initialPinchDistance;
-      const newSize = Math.max(40, Math.min(300, initialSize * scale));
+      const newSize = Math.max(40, Math.min(500, initialSize * scale));
       
       if (selectedPokemonIndex !== null) {
         setPokemonSizes(prev => ({
@@ -934,7 +932,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                         <img 
                           src={artStyle === 'official' ? (selectedPokemon[index].officialArtwork || selectedPokemon[index].image) : selectedPokemon[index].image} 
                           alt={selectedPokemon[index].name}
-                          className="pokemon-sprite"
+                          className={`pokemon-sprite ${artStyle === 'official' ? 'official-art' : 'pixel-art'}`}
                         />
                         <p className="pokemon-name">{selectedPokemon[index].name}</p>
                       </div>
@@ -1066,7 +1064,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                                     <img 
                     src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image} 
                     alt={pokemon.name}
-                    className="party-pokemon-sprite"
+                    className={`party-pokemon-sprite ${artStyle === 'official' ? 'official-art' : 'pixel-art'}`}
                     style={{ 
                       width: currentSize, 
                       height: currentSize,
@@ -1127,7 +1125,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 <img 
                   src={artStyle === 'official' ? (selectedPokemon[index].officialArtwork || selectedPokemon[index].image) : selectedPokemon[index].image} 
                   alt={selectedPokemon[index].name}
-                  className="selection-btn-sprite"
+                  className={`selection-btn-sprite ${artStyle === 'official' ? 'official-art' : 'pixel-art'}`}
                 />
               ) : (
                 <span className="empty-slot-indicator">+</span>
@@ -1156,7 +1154,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             <input
               type="range"
               min="40"
-              max="300"
+              max="500"
               value={pokemonSizes[selectedPokemonIndex] || 60}
               onChange={(e) => {
                 const newSize = Number(e.target.value);
@@ -1217,7 +1215,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 <input
                   type="range"
                   min="40"
-                  max="300"
+                  max="500"
                   value={trainerSize}
                   onChange={(e) => {
                     const newSize = Number(e.target.value);

@@ -434,12 +434,21 @@
   height: 80px;
   object-fit: contain;
   object-position: center;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   position: relative;
   z-index: 2;
+}
+
+.pokemon-sprite.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.pokemon-sprite.official-art {
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: smooth;
 }
 
 .pokemon-name {
@@ -1117,13 +1126,22 @@
 .party-pokemon-sprite {
   object-fit: contain;
   object-position: center;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   transition: all 0.2s ease;
   user-select: none;
   pointer-events: none;
+}
+
+.party-pokemon-sprite.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.party-pokemon-sprite.official-art {
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: smooth;
 }
 
 .party-pokemon-name {
@@ -1275,9 +1293,18 @@
   width: 40px;
   height: 40px;
   object-fit: contain;
+}
+
+.selection-btn-sprite.pixel-art {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+}
+
+.selection-btn-sprite.official-art {
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: smooth;
 }
 
 .empty-slot-indicator {
