@@ -237,6 +237,92 @@
   position: relative;
 }
 
+.trainer-card.list-mode {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.pokemon-list-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.pokemon-list-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.pokemon-list-grid {
+  display: grid;
+  gap: 8px;
+  padding: 0.25rem;
+  justify-self: center;
+  align-self: center;
+}
+
+/* Square cells: size comes from grid (fixed px when measured), item fills cell */
+.pokemon-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+}
+
+.pokemon-list-item:hover {
+  transform: translateY(-4px);
+}
+
+.pokemon-list-sprite-wrap {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pokemon-list-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.pokemon-list-sprite.official-art {
+  image-rendering: auto;
+}
+
+.pokemon-list-name {
+  margin: 0;
+  font-size: clamp(0.5rem, 2vw, 0.75rem);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 .trainer-card.show-bubbles::before {
   content: '';
   position: absolute;

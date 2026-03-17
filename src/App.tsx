@@ -49,7 +49,7 @@ function App() {
   ];
 
   const addPokemon = (pokemon: Pokemon) => {
-    if (selectedPokemon.length < 6) {
+    if (selectedPokemon.length < 18) {
       setSelectedPokemon([...selectedPokemon, pokemon]);
     }
   };

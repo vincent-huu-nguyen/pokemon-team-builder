@@ -33,13 +33,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionBarRef = useRef<HTMLDivElement>(null);
+  const listLayoutRef = useRef<HTMLDivElement>(null);
+  const [listGridSize, setListGridSize] = useState<{ cellSize: number; cols: number; rows: number } | null>(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [cardColor, setCardColor] = useState('#667eea');
   const [gradientColor, setGradientColor] = useState('#764ba2');
   const [isGradient, setIsGradient] = useState(true);
   const [showSpriteSelector, setShowSpriteSelector] = useState(false);
-  const [layoutMode, setLayoutMode] = useState<'card' | 'party'>('card');
+  const [layoutMode, setLayoutMode] = useState<'card' | 'party' | 'list'>('card');
   const [pokemonSizes, setPokemonSizes] = useState<{ [key: number]: number }>({});
   const [selectedPokemonIndex, setSelectedPokemonIndex] = useState<number | null>(null);
   const [isTrainerSelected, setIsTrainerSelected] = useState(false);
@@ -146,6 +148,35 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       }
     }
   }, [selectedPokemonIndex, isTrainerSelected, isTrainerNameSelected]);
+
+  // Pokemon List: measure container and compute square cell size so grid fills card
+  useEffect(() => {
+    if (layoutMode !== 'list' || selectedPokemon.length === 0) {
+      setListGridSize(null);
+      return;
+    }
+    const el = listLayoutRef.current;
+    if (!el) return;
+
+    const gapPx = 8;
+    const cols = 3;
+    const rows = 6;
+
+    const updateSize = () => {
+      const width = el.clientWidth;
+      const height = el.clientHeight;
+      const cellSize = Math.floor(Math.min(
+        (width - gapPx * (cols - 1)) / cols,
+        (height - gapPx * (rows - 1)) / rows
+      ));
+      setListGridSize({ cellSize: Math.max(20, cellSize), cols, rows });
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [layoutMode, selectedPokemon.length]);
 
   const convertImageToDataURL = async (imageUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -314,7 +345,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         document.body.appendChild(cardClone);
         
         // Convert all Pokemon images to high-quality scaled versions
-        const pokemonImages = cardClone.querySelectorAll('.pokemon-sprite, .party-pokemon-sprite');
+        const pokemonImages = cardClone.querySelectorAll('.pokemon-sprite, .party-pokemon-sprite, .pokemon-list-sprite');
         const imagePromises = Array.from(pokemonImages).map(async (img) => {
           const imgElement = img as HTMLImageElement;
           if (imgElement.src && !imgElement.src.startsWith('data:')) {
@@ -324,10 +355,14 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               let displaySize = 60; // Size to display (keep layout intact)
               
               // Check if this is a card mode Pokemon sprite (not party mode)
-              if (imgElement.classList.contains('pokemon-sprite') && !imgElement.classList.contains('party-pokemon-sprite')) {
+              const isListSprite = imgElement.classList.contains('pokemon-list-sprite');
+              if (imgElement.classList.contains('pokemon-sprite') && !imgElement.classList.contains('party-pokemon-sprite') && !isListSprite) {
                 // For card mode, keep display size at 80px but create high-quality 160px version
                 displaySize = 80; // Keep the display size to maintain layout
                 targetSize = 160; // Create high-quality version at larger size for better clarity
+              } else if (isListSprite) {
+                // For list mode, use a good quality size; layout is grid-based so don't set dimensions
+                targetSize = 160;
               } else {
                 // For party mode, use the current size or a minimum
                 const currentSize = parseInt(imgElement.style.width) || parseInt(imgElement.style.height) || 60;
@@ -339,9 +374,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               const scaledDataURL = await createHighQualityScaledSprite(imgElement.src, targetSize, artStyle === 'official');
               imgElement.src = scaledDataURL;
               
-              // Set the display size to maintain exact layout positioning
-              imgElement.style.width = `${displaySize}px`;
-              imgElement.style.height = `${displaySize}px`;
+              // Set the display size to maintain exact layout positioning (list mode keeps CSS 100%)
+              if (!isListSprite) {
+                imgElement.style.width = `${displaySize}px`;
+                imgElement.style.height = `${displaySize}px`;
+              }
               
               // Improve image rendering quality
               imgElement.style.imageRendering = 'crisp-edges';
@@ -823,7 +860,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 name="layout"
                 value="card"
                 checked={layoutMode === 'card'}
-                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party')}
+                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party' | 'list')}
               />
               Trainer Card
             </label>
@@ -833,9 +870,19 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 name="layout"
                 value="party"
                 checked={layoutMode === 'party'}
-                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party')}
+                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party' | 'list')}
               />
               Trainer Party
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="layout"
+                value="list"
+                checked={layoutMode === 'list'}
+                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party' | 'list')}
+              />
+              Pokemon List
             </label>
           </div>
         </div>
@@ -875,7 +922,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       
       <div 
         ref={cardRef} 
-        className={`trainer-card ${layoutMode === 'party' ? 'party-mode' : ''} ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
+        className={`trainer-card ${layoutMode === 'party' ? 'party-mode' : ''} ${layoutMode === 'list' ? 'list-mode' : ''} ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
         style={{
           background: backgroundImage 
             ? `url(${backgroundImage})`
@@ -946,6 +993,38 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               </div>
             </div>
           </>
+        ) : layoutMode === 'list' ? (
+          <div className="pokemon-list-layout" ref={listLayoutRef}>
+            {selectedPokemon.length === 0 ? (
+              <div className="pokemon-list-empty">
+                <p>Select Pokemon from the list to add them here</p>
+              </div>
+            ) : (
+              <div
+                className="pokemon-list-grid"
+                style={listGridSize ? {
+                  gridTemplateColumns: `repeat(${listGridSize.cols}, ${listGridSize.cellSize}px)`,
+                  gridTemplateRows: `repeat(${listGridSize.rows}, ${listGridSize.cellSize}px)`,
+                } : {
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gridTemplateRows: 'repeat(6, 1fr)',
+                }}
+              >
+                {selectedPokemon.map((pokemon, index) => (
+                  <div key={index} className="pokemon-list-item">
+                    <div className="pokemon-list-sprite-wrap">
+                      <img
+                        src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
+                        alt={pokemon.name}
+                        className={`pokemon-list-sprite ${artStyle === 'official' ? 'official-art' : 'pixel-art'}`}
+                      />
+                    </div>
+                    <p className="pokemon-list-name">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         ) : (
           <div 
             className="party-layout"
