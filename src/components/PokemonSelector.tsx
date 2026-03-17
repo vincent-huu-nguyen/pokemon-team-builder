@@ -7,9 +7,12 @@ interface PokemonSelectorProps {
   onPokemonSelect: (pokemon: Pokemon) => void;
   artStyle: 'pixel' | 'official';
   onArtStyleChange: (style: 'pixel' | 'official') => void;
+  cardColor?: string;
+  gradientColor?: string;
+  isGradient?: boolean;
 }
 
-const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artStyle, onArtStyleChange }) => {
+const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artStyle, onArtStyleChange, cardColor = '#667eea', gradientColor = '#764ba2', isGradient = true }) => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -480,8 +483,19 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
     );
   }
 
+  const cardBg = isGradient ? `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)` : cardColor;
+
   return (
-    <div className="pokemon-selector">
+    <div
+      className="pokemon-selector"
+      style={
+        {
+          '--card-color': cardColor,
+          '--gradient-color': gradientColor,
+          '--card-bg': cardBg,
+        } as React.CSSProperties
+      }
+    >
       <div className="selector-header">
         <h2>Pokemon Selector</h2>
         <div className="search-container">

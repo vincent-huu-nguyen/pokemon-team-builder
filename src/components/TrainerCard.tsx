@@ -17,6 +17,12 @@ interface TrainerCardProps {
   onSpriteSelect: (sprite: string) => void;
   pokeballImage: string;
   artStyle: 'pixel' | 'official';
+  cardColor: string;
+  setCardColor: (color: string) => void;
+  gradientColor: string;
+  setGradientColor: (color: string) => void;
+  isGradient: boolean;
+  setIsGradient: (value: boolean) => void;
 }
 
 const TrainerCard: React.FC<TrainerCardProps> = ({
@@ -30,6 +36,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   onSpriteSelect,
   pokeballImage,
   artStyle,
+  cardColor,
+  setCardColor,
+  gradientColor,
+  setGradientColor,
+  isGradient,
+  setIsGradient,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionBarRef = useRef<HTMLDivElement>(null);
@@ -37,9 +49,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [listGridSize, setListGridSize] = useState<{ cellSize: number; cols: number; rows: number } | null>(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [cardColor, setCardColor] = useState('#667eea');
-  const [gradientColor, setGradientColor] = useState('#764ba2');
-  const [isGradient, setIsGradient] = useState(true);
   const [showSpriteSelector, setShowSpriteSelector] = useState(false);
   const [layoutMode, setLayoutMode] = useState<'card' | 'party' | 'list'>('card');
   const [pokemonSizes, setPokemonSizes] = useState<{ [key: number]: number }>({});

@@ -65,6 +65,9 @@ function App() {
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon[]>([]);
   const [trainerSprite, setTrainerSprite] = useState(trainerVincent);
   const [artStyle, setArtStyle] = useState<'pixel' | 'official'>('pixel');
+  const [cardColor, setCardColor] = useState('#242424');
+  const [gradientColor, setGradientColor] = useState('#050505');
+  const [isGradient, setIsGradient] = useState(true);
   
   // Available trainer sprites (new/canonical first, then variants, then original)
   const availableSprites = [
@@ -168,6 +171,12 @@ function App() {
             onSpriteSelect={setTrainerSprite}
             pokeballImage={pokeball}
             artStyle={artStyle}
+            cardColor={cardColor}
+            setCardColor={setCardColor}
+            gradientColor={gradientColor}
+            setGradientColor={setGradientColor}
+            isGradient={isGradient}
+            setIsGradient={setIsGradient}
           />
         </div>
         <div className="right-panel">
@@ -175,6 +184,9 @@ function App() {
             onPokemonSelect={addPokemon} 
             artStyle={artStyle}
             onArtStyleChange={setArtStyle}
+            cardColor={cardColor}
+            gradientColor={gradientColor}
+            isGradient={isGradient}
           />
         </div>
       </main>
