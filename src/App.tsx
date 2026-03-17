@@ -19,6 +19,44 @@ import trainerArnold from './assets/Trainer_Arnold.png';
 import trainerVivian from './assets/Trainer_Vivian.png';
 import trainerAlphonse from './assets/Trainer_Alphonse.png';
 import trainerAxel from './assets/Trainer_Axel.png';
+import trainerAkari from './assets/Trainer_Akari.png';
+import trainerBlue from './assets/Trainer_Blue.png';
+import trainerBlueGen7 from './assets/Trainer_BlueGen7.png';
+import trainerBlueMasters from './assets/Trainer_BlueMasters.png';
+import trainerBrendan from './assets/Trainer_Brendan.png';
+import trainerBrendanRS from './assets/Trainer_BrendanRS.png';
+import trainerCalem from './assets/Trainer_Calem.png';
+import trainerDawn from './assets/Trainer_Dawn.png';
+import trainerDawnPT from './assets/Trainer_DawnPT.png';
+import trainerElio from './assets/Trainer_Elio.png';
+import trainerElioUSUM from './assets/Trainer_ElioUSUM.png';
+import trainerEthan from './assets/Trainer_Ethan.png';
+import trainerFlorian from './assets/Trainer_Florian.png';
+import trainerGloria from './assets/Trainer_Gloria.png';
+import trainerHarmony from './assets/Trainer_Harmony.png';
+import trainerHilbert from './assets/Trainer_Hilbert.png';
+import trainerHilda from './assets/Trainer_Hilda.png';
+import trainerJuliana from './assets/Trainer_Juliana.png';
+import trainerKris from './assets/Trainer_Kris.png';
+import trainerLeaf from './assets/Trainer_Leaf.png';
+import trainerLeafMasters from './assets/Trainer_LeafMasters.png';
+import trainerLucas from './assets/Trainer_Lucas.png';
+import trainerLucasPT from './assets/Trainer_LucasPT.png';
+import trainerLyra from './assets/Trainer_Lyra.png';
+import trainerMay from './assets/Trainer_May.png';
+import trainerMayRS from './assets/Trainer_MayRS.png';
+import trainerNate from './assets/Trainer_Nate.png';
+import trainerPaxton from './assets/Trainer_Paxton.png';
+import trainerRed from './assets/Trainer_Red.png';
+import trainerRedGen7 from './assets/Trainer_RedGen7.png';
+import trainerRedMasters from './assets/Trainer_RedMasters.png';
+import trainerRei from './assets/Trainer_Rei.png';
+import trainerRosa from './assets/Trainer_Rosa.png';
+import trainerSelene from './assets/Trainer_Selene.png';
+import trainerSeleneUSUM from './assets/Trainer_SeleneUSUM.png';
+import trainerSerena from './assets/Trainer_Serena.png';
+import trainerSilver from './assets/Trainer_Silver.png';
+import trainerVictor from './assets/Trainer_Victor.png';
 import pokeball from './assets/pokeball.png';
 import pancham from './assets/Pancham.png';
 
@@ -28,8 +66,49 @@ function App() {
   const [trainerSprite, setTrainerSprite] = useState(trainerVincent);
   const [artStyle, setArtStyle] = useState<'pixel' | 'official'>('pixel');
   
-  // Available trainer sprites
+  // Available trainer sprites (new/canonical first, then variants, then original)
   const availableSprites = [
+    // New sprites (requested order)
+    { name: 'Red', src: trainerRed },
+    { name: 'Leaf', src: trainerLeaf },
+    { name: 'Blue', src: trainerBlue },
+    { name: 'Ethan', src: trainerEthan },
+    { name: 'Silver', src: trainerSilver },
+    { name: 'Kris', src: trainerKris },
+    { name: 'Lyra', src: trainerLyra },
+    { name: 'Brendan', src: trainerBrendan },
+    { name: 'May', src: trainerMay },
+    { name: 'Lucas', src: trainerLucas },
+    { name: 'Rei', src: trainerRei },
+    { name: 'Dawn', src: trainerDawn },
+    { name: 'Akari', src: trainerAkari },
+    { name: 'Hilbert', src: trainerHilbert },
+    { name: 'Hilda', src: trainerHilda },
+    { name: 'Nate', src: trainerNate },
+    { name: 'Rosa', src: trainerRosa },
+    { name: 'Calem', src: trainerCalem },
+    { name: 'Serena', src: trainerSerena },
+    { name: 'Elio', src: trainerElio },
+    { name: 'Selene', src: trainerSelene },
+    { name: 'Victor', src: trainerVictor },
+    { name: 'Gloria', src: trainerGloria },
+    { name: 'Florian', src: trainerFlorian },
+    { name: 'Juliana', src: trainerJuliana },
+    { name: 'Paxton', src: trainerPaxton },
+    { name: 'Harmony', src: trainerHarmony },
+    // New sprite variants
+    { name: 'Red Gen 7', src: trainerRedGen7 },
+    { name: 'Red Masters', src: trainerRedMasters },
+    { name: 'Leaf Masters', src: trainerLeafMasters },
+    { name: 'Blue Gen 7', src: trainerBlueGen7 },
+    { name: 'Blue Masters', src: trainerBlueMasters },
+    { name: 'Brendan RS', src: trainerBrendanRS },
+    { name: 'May RS', src: trainerMayRS },
+    { name: 'Dawn PT', src: trainerDawnPT },
+    { name: 'Lucas PT', src: trainerLucasPT },
+    { name: 'Elio USUM', src: trainerElioUSUM },
+    { name: 'Selene USUM', src: trainerSeleneUSUM },
+    // Original sprites
     { name: 'Vincent', src: trainerVincent },
     { name: 'Arnold', src: trainerArnold },
     { name: 'Luna', src: trainerLuna },

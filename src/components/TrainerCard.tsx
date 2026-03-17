@@ -641,15 +641,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       return;
     }
     
-    // If the Pokemon is already selected, deselect it
-    if (selectedPokemonIndex === index) {
-      setSelectedPokemonIndex(null);
-      setIsTrainerSelected(false);
-      setIsTrainerNameSelected(false);
-      return;
-    }
-    
-    // Otherwise, select the Pokemon
+    // Select this Pokemon (last clicked sprite stays selected; deselect by clicking empty space on card)
     setSelectedPokemonIndex(index);
     setIsTrainerSelected(false);
     setIsTrainerNameSelected(false);
@@ -663,15 +655,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       return;
     }
     
-    // If the trainer is already selected, deselect it
-    if (isTrainerSelected) {
-      setSelectedPokemonIndex(null);
-      setIsTrainerSelected(false);
-      setIsTrainerNameSelected(false);
-      return;
-    }
-    
-    // Otherwise, select the trainer
+    // Select the trainer (last clicked stays selected; deselect by clicking empty space on card)
     setSelectedPokemonIndex(null);
     setIsTrainerSelected(true);
     setIsTrainerNameSelected(false);
@@ -685,15 +669,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       return;
     }
     
-    // If the trainer name is already selected, deselect it
-    if (isTrainerNameSelected) {
-      setSelectedPokemonIndex(null);
-      setIsTrainerSelected(false);
-      setIsTrainerNameSelected(false);
-      return;
-    }
-    
-    // Otherwise, select the trainer name
+    // Select the trainer name (last clicked stays selected; deselect by clicking empty space on card)
     setSelectedPokemonIndex(null);
     setIsTrainerNameSelected(true);
     setIsTrainerSelected(false);
