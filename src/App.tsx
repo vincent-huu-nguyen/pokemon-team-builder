@@ -63,7 +63,7 @@ import pancham from './assets/Pancham.png';
 function App() {
   const [trainerName, setTrainerName] = useState('Trainer');
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon[]>([]);
-  const [trainerSprite, setTrainerSprite] = useState(trainerVincent);
+  const [trainerSprite, setTrainerSprite] = useState(trainerRed);
   const [artStyle, setArtStyle] = useState<'pixel' | 'official'>('pixel');
   const [cardColor, setCardColor] = useState('#242424');
   const [gradientColor, setGradientColor] = useState('#050505');
