@@ -61,6 +61,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [trainerNamePosition, setTrainerNamePosition] = useState({ x: 50, y: 15 });
   const [trainerNameSize, setTrainerNameSize] = useState(24);
   const [trainerNameColor, setTrainerNameColor] = useState('#ffffff');
+  const [trainerNamePixelFont, setTrainerNamePixelFont] = useState(false);
   const [trainerSize, setTrainerSize] = useState(140);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartTime, setDragStartTime] = useState(0);
@@ -330,6 +331,9 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             h2.style.fontWeight = '700';
             h2.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
             h2.style.margin = '0';
+            if (trainerNamePixelFont) {
+              h2.style.fontFamily = '"Press Start 2P", cursive';
+            }
           }
         });
 
@@ -915,7 +919,10 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 </div>
                 <div className="trainer-name-container">
                   <div className="trainer-name-display">
-                    <h2 style={{ color: trainerNameColor }}>{trainerName}</h2>
+                    <h2 style={{
+                      color: trainerNameColor,
+                      ...(trainerNamePixelFont && { fontFamily: '"Press Start 2P", cursive' })
+                    }}>{trainerName}</h2>
                   </div>
                 </div>
               </div>
@@ -1040,7 +1047,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                     style={{ 
                       fontSize: `${trainerNameSize}px`,
                       color: trainerNameColor,
-                      transform: `${flippedItems['trainerName'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainerName'] ? `rotate(${rotatedItems['trainerName']}deg)` : ''}`.trim()
+                      transform: `${flippedItems['trainerName'] ? 'scaleX(-1)' : ''} ${rotatedItems['trainerName'] ? `rotate(${rotatedItems['trainerName']}deg)` : ''}`.trim(),
+                      ...(trainerNamePixelFont && { fontFamily: '"Press Start 2P", cursive' })
                     }}
                   >
                     {trainerName}
@@ -1425,6 +1433,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               onChange={(e) => setTrainerNameColor(e.target.value)}
               className="color-input"
             />
+          </div>
+          <div className="pixel-font-toggle">
+            <input
+              type="checkbox"
+              id="pixel-font-toggle"
+              checked={trainerNamePixelFont}
+              onChange={(e) => setTrainerNamePixelFont(e.target.checked)}
+            />
+            <label htmlFor="pixel-font-toggle">Pixel font (name)</label>
           </div>
         </div>
         
