@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { Download, Edit3, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { Pokemon } from '../types/Pokemon';
@@ -46,7 +46,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [selectedPokemonIndex, setSelectedPokemonIndex] = useState<number | null>(null);
   const [isTrainerSelected, setIsTrainerSelected] = useState(false);
   const [isTrainerNameSelected, setIsTrainerNameSelected] = useState(false);
-  const [lastSelectedItem, setLastSelectedItem] = useState<'trainer' | 'trainerName' | number | null>(null);
   const [selectionHistory, setSelectionHistory] = useState<('trainer' | 'trainerName' | number)[]>([]);
   const [pokemonPositions, setPokemonPositions] = useState<{ x: number; y: number }[]>([]);
   const [trainerPosition, setTrainerPosition] = useState({ x: 50, y: 70 });
@@ -60,7 +59,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [initialSize, setInitialSize] = useState(0);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [backgroundImage, setBackgroundImage] = useState<string>('');
-  const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
   const [syncPageBackground, setSyncPageBackground] = useState(true);
   const [showTrainerSprite, setShowTrainerSprite] = useState(true);
@@ -69,7 +67,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [rotatedItems, setRotatedItems] = useState<{ [key: string]: number }>({});
 
   // Function to update page background to match card colors
-  const updatePageBackground = () => {
+  const updatePageBackground = useCallback(() => {
     const body = document.body;
     if (!syncPageBackground) {
       // Reset to default if sync is disabled
@@ -96,7 +94,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       // If solid color, use the primary color
       body.style.background = cardColor;
     }
-  };
+  }, [syncPageBackground, backgroundImage, isGradient, cardColor, gradientColor]);
 
   // Update page background whenever colors change
   useEffect(() => {
@@ -110,7 +108,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       document.body.style.backgroundRepeat = '';
       document.body.style.backgroundAttachment = '';
     };
-  }, [cardColor, gradientColor, isGradient, backgroundImage, syncPageBackground]);
+  }, [cardColor, gradientColor, isGradient, backgroundImage, syncPageBackground, updatePageBackground]);
 
   // Auto-scroll selection bar when items are selected on the card
   useEffect(() => {
@@ -414,30 +412,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         // Wait a bit for the DOM to update
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Get the actual background from the card
-        const cardStyle = window.getComputedStyle(cardClone);
-        const cardBackground = cardStyle.background || cardStyle.backgroundColor;
-        
-        // Determine background color for html2canvas
-        let backgroundColor = null;
-        if (isMobile) {
-          // On mobile, use the actual card background if it's a solid color
-          if (backgroundImage) {
-            // If there's a background image, use a fallback color
-            backgroundColor = cardColor || '#667eea';
-          } else if (isGradient) {
-            // For gradients, try to use the computed background, otherwise use gradient color
-            if (cardBackground && cardBackground !== 'rgba(0, 0, 0, 0)' && !cardBackground.includes('gradient')) {
-              backgroundColor = cardBackground;
-            } else {
-              backgroundColor = gradientColor || cardColor || '#667eea';
-            }
-          } else {
-            // For solid colors, use the actual card color
-            backgroundColor = cardColor || '#667eea';
-          }
-        }
-        
         const canvas = await html2canvas(cardClone, {
           backgroundColor: null,
           scale: isMobile ? 2 : 4,
@@ -679,7 +653,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     setSelectedPokemonIndex(index);
     setIsTrainerSelected(false);
     setIsTrainerNameSelected(false);
-    setLastSelectedItem(index);
     // Always move the selected item to the front of z-index layers
     setSelectionHistory(prev => [...prev.filter(item => item !== index), index]);
   };
@@ -702,7 +675,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     setSelectedPokemonIndex(null);
     setIsTrainerSelected(true);
     setIsTrainerNameSelected(false);
-    setLastSelectedItem('trainer');
     // Always move the selected item to the front of z-index layers
     setSelectionHistory(prev => [...prev.filter(item => item !== 'trainer'), 'trainer']);
   };
@@ -725,13 +697,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     setSelectedPokemonIndex(null);
     setIsTrainerNameSelected(true);
     setIsTrainerSelected(false);
-    setLastSelectedItem('trainerName');
     // Always move the selected item to the front of z-index layers
     setSelectionHistory(prev => [...prev.filter(item => item !== 'trainerName'), 'trainerName']);
   };
 
   const getZIndex = (item: 'trainer' | 'trainerName' | number): number => {
-    const totalItems = selectedPokemon.length + 2; // +2 for trainer and trainerName
     const itemIndex = selectionHistory.indexOf(item);
     
     if (itemIndex === -1) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronUp, Palette } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Pokemon } from '../types/Pokemon';
 import './PokemonSelector.css';
 
@@ -20,11 +20,9 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
 
   useEffect(() => {
     fetchAllPokemon();
+    // We intentionally only run this once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    filterPokemon();
-  }, [pokemonList, searchTerm]);
 
   const fetchAllPokemon = async () => {
     try {
@@ -435,10 +433,9 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
     return 1;
   };
 
-  const filterPokemon = () => {
+  useEffect(() => {
     let filtered = pokemonList;
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(pokemon =>
         pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -446,7 +443,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
     }
 
     setFilteredPokemon(filtered);
-  };
+  }, [pokemonList, searchTerm]);
 
   const toggleGeneration = (generation: number) => {
     const newExpanded = new Set(expandedGenerations);
