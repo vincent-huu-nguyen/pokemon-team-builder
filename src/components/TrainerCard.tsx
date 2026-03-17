@@ -981,7 +981,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 }}
               >
                 {selectedPokemon.map((pokemon, index) => (
-                  <div key={index} className="pokemon-list-item">
+                  <div
+                    key={index}
+                    className="pokemon-list-item"
+                    onClick={() => handleRemovePokemon(index)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && handleRemovePokemon(index)}
+                    aria-label={`Remove ${pokemon.name} from list`}
+                  >
                     <div className="pokemon-list-sprite-wrap">
                       <img
                         src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
