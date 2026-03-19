@@ -340,8 +340,8 @@
 }
 
 .card-header {
-  margin-bottom: 3rem;
-  padding-top: 3rem;
+  margin-bottom: 2rem;
+  padding-top: 1.5rem;
 }
 
 .trainer-info {
@@ -517,8 +517,8 @@
 }
 
 .pokemon-sprite {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
   object-position: center;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
@@ -639,8 +639,8 @@
   }
   
   .card-header {
-    margin-bottom: 1rem;
-    padding-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-top: 1.25rem;
   }
   
   .pokemon-grid {
@@ -658,8 +658,8 @@
   }
   
   .pokemon-sprite {
-    width: 60px;
-    height: 60px;
+    width: 72px;
+    height: 72px;
   }
   
   .pokemon-name {

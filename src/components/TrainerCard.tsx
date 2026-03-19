@@ -368,9 +368,9 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               // Check if this is a card mode Pokemon sprite (not party mode)
               const isListSprite = imgElement.classList.contains('pokemon-list-sprite');
               if (imgElement.classList.contains('pokemon-sprite') && !imgElement.classList.contains('party-pokemon-sprite') && !isListSprite) {
-                // For card mode, keep display size at 80px but create high-quality 160px version
-                displaySize = 80; // Keep the display size to maintain layout
-                targetSize = 160; // Create high-quality version at larger size for better clarity
+                // For card mode, keep display size at 100px but create high-quality 200px version
+                displaySize = 100; // Keep the display size to maintain layout
+                targetSize = 200; // Create high-quality version at larger size for better clarity
               } else if (isListSprite) {
                 // For list mode, use a good quality size; layout is grid-based so don't set dimensions
                 targetSize = 160;
