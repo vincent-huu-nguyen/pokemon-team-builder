@@ -3,6 +3,59 @@ import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Pokemon } from '../types/Pokemon';
 import './PokemonSelector.css';
 
+declare const require: any;
+
+// Map `regionalForms[].name` (PokeAPI slugs) -> local mega pixel sprite file URL.
+// Example: `clefable-mega` -> `src/assets/Mega_Clefable.png`
+const megaPixelOverrides: Record<string, string> = (() => {
+  // Webpack module keys from CRA typically look like: "./Mega_AbsolZ.png"
+  const ctx = require.context('../assets', false, /^\.\/Mega_.*\.png$/);
+  const map: Record<string, string> = {};
+
+  ctx.keys().forEach((key: string) => {
+    // key example: "./Mega_Clefable.png"
+    const filename = key.replace(/^\.\//, '');
+    const mod = ctx(key);
+    const url = mod?.default ?? mod;
+
+    const fileBase = filename.replace(/^Mega_/, '').replace(/\.png$/i, '');
+    const parts = fileBase.split('_');
+
+    let slug: string | null = null;
+    if (parts.length > 1) {
+      // Examples:
+      // - Eternal_Flower_Floette -> floette-mega
+      // - Magearna_Original -> magearna-original-mega
+      const last = parts[parts.length - 1];
+      if (parts.length === 2 && last === 'Original') {
+        slug = `${parts[0].toLowerCase()}-original-mega`;
+      } else {
+        slug = `${last.toLowerCase()}-mega`;
+      }
+    } else {
+      // Examples:
+      // - AbsolZ -> absol-mega-z
+      // - LucarioZ -> lucario-mega-z
+      // - RaichuX -> raichu-mega-x
+      // - RaichuY -> raichu-mega-y
+      const base = parts[0];
+      if (base.endsWith('X')) {
+        slug = `${base.slice(0, -1).toLowerCase()}-mega-x`;
+      } else if (base.endsWith('Y')) {
+        slug = `${base.slice(0, -1).toLowerCase()}-mega-y`;
+      } else if (base.endsWith('Z')) {
+        slug = `${base.slice(0, -1).toLowerCase()}-mega-z`;
+      } else {
+        slug = `${base.toLowerCase()}-mega`;
+      }
+    }
+
+    if (slug) map[slug] = url;
+  });
+
+  return map;
+})();
+
 interface PokemonSelectorProps {
   onPokemonSelect: (pokemon: Pokemon) => void;
   artStyle: 'pixel' | 'official';
@@ -20,6 +73,11 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [totalPokemon, setTotalPokemon] = useState(1025);
+
+  // Used when a particular form doesn't have a `sprites.front_default` sprite.
+  // This prevents pixel-art mode from accidentally showing `official-artwork`.
+  const TRANSPARENT_PLACEHOLDER =
+    'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
   useEffect(() => {
     fetchAllPokemon();
@@ -207,8 +265,10 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'manectric-mega', displayName: 'Mega Manectric', baseId: 310 },
         { name: 'banette-mega', displayName: 'Mega Banette', baseId: 354 },
         { name: 'absol-mega', displayName: 'Mega Absol', baseId: 359 },
+        { name: 'absol-mega-z', displayName: 'Mega Absol Z', baseId: 359 },
         { name: 'garchomp-mega', displayName: 'Mega Garchomp', baseId: 445 },
         { name: 'lucario-mega', displayName: 'Mega Lucario', baseId: 448 },
+        { name: 'lucario-mega-z', displayName: 'Mega Lucario Z', baseId: 448 },
         { name: 'abomasnow-mega', displayName: 'Mega Abomasnow', baseId: 460 },
         { name: 'floette-eternal', displayName: 'Eternal Floette', baseId: 670 },
         { name: 'latias-mega', displayName: 'Mega Latias', baseId: 380 },
@@ -258,6 +318,18 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'hawlucha-mega', displayName: 'Mega Hawlucha', baseId: 701 },
         { name: 'floette-mega', displayName: 'Mega Eternal Flower Floette', baseId: 670 },
         { name: 'zygarde-mega', displayName: 'Mega Zygarde', baseId: 718 },
+        // Additional new Mega Evolutions (from local `src/assets/Mega_*.png`)
+        { name: 'baxcalibur-mega', displayName: 'Mega Baxcalibur', baseId: 998 },
+        { name: 'chimecho-mega', displayName: 'Mega Chimecho', baseId: 358 },
+        { name: 'darkrai-mega', displayName: 'Mega Darkrai', baseId: 491 },
+        { name: 'glimmora-mega', displayName: 'Mega Glimmora', baseId: 970 },
+        { name: 'heatran-mega', displayName: 'Mega Heatran', baseId: 485 },
+        { name: 'meowstic-mega', displayName: 'Mega Meowstic', baseId: 678 },
+        { name: 'raichu-mega-x', displayName: 'Mega Raichu X', baseId: 26 },
+        { name: 'raichu-mega-y', displayName: 'Mega Raichu Y', baseId: 26 },
+        { name: 'scovillain-mega', displayName: 'Mega Scovillain', baseId: 952 },
+        { name: 'staraptor-mega', displayName: 'Mega Staraptor', baseId: 398 },
+        { name: 'zeraora-mega', displayName: 'Mega Zeraora', baseId: 807 },
 
         // Missing forms (non-mega)
         { name: 'aegislash-blade', displayName: 'Aegislash (Blade Forme)', baseId: 681 },
@@ -553,14 +625,16 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             id: data.id,
             name: form.displayName,
             // Some Mega/odd forms can have missing `sprites.front_default`.
-            // Fall back to official artwork so the selector still renders an image.
+            // Pixel art mode should never fall back to `official-artwork`,
+            // so use a placeholder when `front_default` is missing.
             image:
+              megaPixelOverrides[form.name] ||
               data.sprites.front_default ||
-              data.sprites.other?.['official-artwork']?.front_default ||
-              data.sprites.front_default,
+              TRANSPARENT_PLACEHOLDER,
             officialArtwork:
               data.sprites.other?.['official-artwork']?.front_default ||
-              data.sprites.front_default,
+              data.sprites.front_default ||
+              TRANSPARENT_PLACEHOLDER,
             generation: getGenerationFromId(form.baseId),
             // For forms (mega/gmax/etc), sort by the base species' Pokédex number
             dexNumber: (form as { dexNumber?: number }).dexNumber ?? form.baseId,
