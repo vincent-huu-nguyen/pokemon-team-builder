@@ -959,7 +959,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           <div className="pokemon-list-layout" ref={listLayoutRef}>
             {selectedPokemon.length === 0 ? (
               <div className="pokemon-list-empty">
-                <p>Select Pokemon from the list to add them here</p>
+                <p>Select Pokemon from the selector to add them here</p>
               </div>
             ) : (
               <div
