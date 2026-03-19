@@ -231,6 +231,33 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'steelix-mega', displayName: 'Mega Steelix', baseId: 208 },
         { name: 'pidgeot-mega', displayName: 'Mega Pidgeot', baseId: 18 },
         { name: 'beedrill-mega', displayName: 'Mega Beedrill', baseId: 15 },
+        // New Mega Evolutions (Pokémon Legends: Z-A)
+        { name: 'clefable-mega', displayName: 'Mega Clefable', baseId: 36 },
+        { name: 'starmie-mega', displayName: 'Mega Starmie', baseId: 121 },
+        { name: 'victreebel-mega', displayName: 'Mega Victreebel', baseId: 71 },
+        { name: 'dragonite-mega', displayName: 'Mega Dragonite', baseId: 149 },
+        { name: 'meganium-mega', displayName: 'Mega Meganium', baseId: 154 },
+        { name: 'feraligatr-mega', displayName: 'Mega Feraligatr', baseId: 160 },
+        { name: 'skarmory-mega', displayName: 'Mega Skarmory', baseId: 227 },
+        { name: 'froslass-mega', displayName: 'Mega Froslass', baseId: 478 },
+        { name: 'emboar-mega', displayName: 'Mega Emboar', baseId: 500 },
+        { name: 'scolipede-mega', displayName: 'Mega Scolipede', baseId: 545 },
+        { name: 'excadrill-mega', displayName: 'Mega Excadrill', baseId: 530 },
+        { name: 'eelektross-mega', displayName: 'Mega Eelektross', baseId: 604 },
+        { name: 'scrafty-mega', displayName: 'Mega Scrafty', baseId: 560 },
+        { name: 'chandelure-mega', displayName: 'Mega Chandelure', baseId: 609 },
+        { name: 'chesnaught-mega', displayName: 'Mega Chesnaught', baseId: 652 },
+        { name: 'delphox-mega', displayName: 'Mega Delphox', baseId: 655 },
+        { name: 'greninja-mega', displayName: 'Mega Greninja', baseId: 658 },
+        { name: 'pyroar-mega', displayName: 'Mega Pyroar', baseId: 668 },
+        { name: 'malamar-mega', displayName: 'Mega Malamar', baseId: 687 },
+        { name: 'barbaracle-mega', displayName: 'Mega Barbaracle', baseId: 689 },
+        { name: 'dragalge-mega', displayName: 'Mega Dragalge', baseId: 691 },
+        { name: 'hawlucha-mega', displayName: 'Mega Hawlucha', baseId: 701 },
+        { name: 'floette-eternal-mega', displayName: 'Mega Eternal Flower Floette', baseId: 670 },
+        { name: 'zygarde-mega', displayName: 'Mega Zygarde', baseId: 718 },
+        { name: 'drampa-mega', displayName: 'Mega Drampa', baseId: 780 },
+        { name: 'falinks-mega', displayName: 'Mega Falinks', baseId: 870 },
         
         // Alolan forms (using correct API names)
         { name: 'meowth-alola', displayName: 'Alolan Meowth', baseId: 52 },
@@ -292,7 +319,15 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'samurott-hisui', displayName: 'Hisuian Samurott', baseId: 503 },
         { name: 'lilligant-hisui', displayName: 'Hisuian Lilligant', baseId: 549 },
                  { name: 'basculin-white-striped', displayName: 'Hisuian Basculin', baseId: 550 },
-                 { name: 'basculegion-male', displayName: 'Basculegion', baseId: 550 },
+                 { name: 'basculegion-male', displayName: 'Basculegion (Male)', baseId: 550 },
+                 { name: 'basculegion-female', displayName: 'Basculegion (Female)', baseId: 550 },
+        // Frillish, Jellicent, Pyroar: female forms 404 on PokeAPI - fetched separately by base ID with gender sprites
+        { name: 'meowstic-male', displayName: 'Meowstic (Male)', baseId: 678 },
+        { name: 'meowstic-female', displayName: 'Meowstic (Female)', baseId: 678 },
+        { name: 'indeedee-male', displayName: 'Indeedee (Male)', baseId: 876 },
+        { name: 'indeedee-female', displayName: 'Indeedee (Female)', baseId: 876 },
+        { name: 'oinkologne-male', displayName: 'Oinkologne (Male)', baseId: 916 },
+        { name: 'oinkologne-female', displayName: 'Oinkologne (Female)', baseId: 916 },
         { name: 'zorua-hisui', displayName: 'Hisuian Zorua', baseId: 570 },
         { name: 'zoroark-hisui', displayName: 'Hisuian Zoroark', baseId: 571 },
         { name: 'braviary-hisui', displayName: 'Hisuian Braviary', baseId: 628 },
@@ -394,12 +429,49 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
       });
 
       const regionalResults = await Promise.all(regionalPromises);
-      const validRegionalForms = regionalResults.filter(pokemon => pokemon !== null) as Pokemon[];
+      let validRegionalForms = regionalResults.filter(pokemon => pokemon !== null) as Pokemon[];
+
+      // Frillish, Jellicent, Pyroar: PokeAPI returns 404 for -female; fetch by base ID and use gender sprites
+      const genderFormSpecies = [
+        { baseId: 592, maleName: 'Frillish (Male)', femaleName: 'Frillish (Female)' },
+        { baseId: 593, maleName: 'Jellicent (Male)', femaleName: 'Jellicent (Female)' },
+        { baseId: 668, maleName: 'Pyroar (Male)', femaleName: 'Pyroar (Female)' },
+      ];
+      for (const species of genderFormSpecies) {
+        try {
+          const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${species.baseId}`);
+          if (!response.ok) continue;
+          const data = await response.json();
+          const art = data.sprites.other?.['official-artwork'];
+          validRegionalForms.push({
+            id: data.id,
+            name: species.maleName,
+            image: data.sprites.front_default,
+            officialArtwork: art?.front_default || data.sprites.front_default,
+            generation: getGenerationFromId(species.baseId),
+          });
+          const femaleImg = data.sprites.front_female ?? data.sprites.front_default;
+          const femaleArt = art?.front_female ?? art?.front_default ?? data.sprites.front_default;
+          validRegionalForms.push({
+            id: data.id,
+            name: species.femaleName,
+            image: femaleImg,
+            officialArtwork: femaleArt,
+            generation: getGenerationFromId(species.baseId),
+          });
+        } catch {
+          // skip if fetch fails
+        }
+      }
+
+      // Base IDs that have explicit Male/Female form entries - exclude from base list to avoid duplicates
+      const baseIdsWithGenderForms = new Set([592, 593, 668, 678, 876, 916]); // Frillish, Jellicent, Pyroar, Meowstic, Indeedee, Oinkologne
+      const basePokemonFiltered = basePokemon.filter(p => !baseIdsWithGenderForms.has(p.id));
       
              console.log(`Successfully loaded ${validRegionalForms.length} regional forms`);
        
-       const updatedPokemonList = [...basePokemon, ...validRegionalForms];
-       console.log(`Total Pokemon loaded: ${updatedPokemonList.length} (${basePokemon.length} base + ${validRegionalForms.length} regional)`);
+       const updatedPokemonList = [...basePokemonFiltered, ...validRegionalForms];
+       console.log(`Total Pokemon loaded: ${updatedPokemonList.length} (${basePokemonFiltered.length} base + ${validRegionalForms.length} regional)`);
        
        // Check for specific Pokemon in final list
        const snivy = updatedPokemonList.find(p => p.name === 'snivy');
