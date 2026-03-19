@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Pokemon } from '../types/Pokemon';
+import megaGreninjaUpsideDownPixel from '../assets/Mega_Greninja_UpsideDown.png';
+import megaTatsugiriPixel from '../assets/Mega_Tatsugiri.png';
 import './PokemonSelector.css';
 
 declare const require: any;
@@ -20,6 +22,13 @@ const megaPixelOverrides: Record<string, string> = (() => {
 
     const fileBase = filename.replace(/^Mega_/, '').replace(/\.png$/i, '');
     const parts = fileBase.split('_');
+
+    // These sprites are custom “extra” variants in your assets that do not have
+    // a corresponding PokeAPI slug in `/pokemon/<name>`, so never override
+    // existing selector entries with them.
+    if (fileBase.toLowerCase().includes('upsidedown')) {
+      return;
+    }
 
     let slug: string | null = null;
     if (parts.length > 1) {
@@ -267,6 +276,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'absol-mega', displayName: 'Mega Absol', baseId: 359 },
         { name: 'absol-mega-z', displayName: 'Mega Absol Z', baseId: 359 },
         { name: 'garchomp-mega', displayName: 'Mega Garchomp', baseId: 445 },
+        { name: 'garchomp-mega-z', displayName: 'Mega Garchomp Z', baseId: 445 },
         { name: 'lucario-mega', displayName: 'Mega Lucario', baseId: 448 },
         { name: 'lucario-mega-z', displayName: 'Mega Lucario Z', baseId: 448 },
         { name: 'abomasnow-mega', displayName: 'Mega Abomasnow', baseId: 460 },
@@ -310,7 +320,10 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'chandelure-mega', displayName: 'Mega Chandelure', baseId: 609 },
         { name: 'chesnaught-mega', displayName: 'Mega Chesnaught', baseId: 652 },
         { name: 'delphox-mega', displayName: 'Mega Delphox', baseId: 655 },
-        { name: 'greninja-mega', displayName: 'Mega Greninja', baseId: 658 },
+        { name: 'greninja-mega', displayName: 'Mega Greninja (but better)', baseId: 658.5 },
+        { name: 'crabominable-mega', displayName: 'Mega Crabominable', baseId: 740 },
+        { name: 'golisopod-mega', displayName: 'Mega Golisopod', baseId: 768 },
+        { name: 'golurk-mega', displayName: 'Mega Golurk', baseId: 623 },
         { name: 'pyroar-mega', displayName: 'Mega Pyroar', baseId: 668 },
         { name: 'malamar-mega', displayName: 'Mega Malamar', baseId: 687 },
         { name: 'barbaracle-mega', displayName: 'Mega Barbaracle', baseId: 689 },
@@ -390,9 +403,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'tatsugiri-curly', displayName: 'Tatsugiri (Curly Forme)', baseId: 978 },
         { name: 'tatsugiri-droopy', displayName: 'Tatsugiri (Droopy Forme)', baseId: 978 },
         { name: 'tatsugiri-stretchy', displayName: 'Tatsugiri (Stretchy Forme)', baseId: 978 },
-        { name: 'tatsugiri-curly-mega', displayName: 'Tatsugiri (Curly Forme, Mega Forme)', baseId: 978 },
-        { name: 'tatsugiri-droopy-mega', displayName: 'Tatsugiri (Droopy Forme, Mega Forme)', baseId: 978 },
-        { name: 'tatsugiri-stretchy-mega', displayName: 'Tatsugiri (Stretchy Forme, Mega Forme)', baseId: 978 },
+        { name: 'tatsugiri-stretchy-mega', displayName: 'Mega Tatsugiri', baseId: 978 },
 
         // Dudunsparce forms
         { name: 'dudunsparce-two-segment', displayName: 'Dudunsparce (Two Segment Forme)', baseId: 982 },
@@ -628,6 +639,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             // Pixel art mode should never fall back to `official-artwork`,
             // so use a placeholder when `front_default` is missing.
             image:
+              (form.name === 'tatsugiri-stretchy-mega' ? megaTatsugiriPixel : null) ||
               megaPixelOverrides[form.name] ||
               data.sprites.front_default ||
               TRANSPARENT_PLACEHOLDER,
@@ -1030,6 +1042,31 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         } catch {
           // ignore if these forms fail to load
         }
+      }
+
+      // Mega Greninja (Upside Down) is a local-only sprite variant.
+      // PokeAPI doesn't expose a matching slug for it, so create it manually.
+      validRegionalForms.push({
+        id: 10295,
+        name: 'Mega Greninja',
+        image: megaGreninjaUpsideDownPixel,
+        officialArtwork: megaGreninjaUpsideDownPixel,
+        generation: getGenerationFromId(658),
+        dexNumber: 658,
+      });
+
+      // Mega Tatsugiri sometimes fails to load via PokeAPI.
+      // Keep it always available via your local sprite.
+      const megaTatsugiriApiId = 10324;
+      if (!validRegionalForms.some(p => p.id === megaTatsugiriApiId)) {
+        validRegionalForms.push({
+          id: megaTatsugiriApiId,
+          name: 'Mega Tatsugiri',
+          image: megaTatsugiriPixel,
+          officialArtwork: megaTatsugiriPixel,
+          generation: getGenerationFromId(978),
+          dexNumber: 978,
+        });
       }
 
       // Base IDs that have explicit form entries - exclude from base list to avoid duplicates
