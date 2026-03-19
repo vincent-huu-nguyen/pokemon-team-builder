@@ -436,6 +436,9 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { baseId: 592, maleName: 'Frillish (Male)', femaleName: 'Frillish (Female)' },
         { baseId: 593, maleName: 'Jellicent (Male)', femaleName: 'Jellicent (Female)' },
         { baseId: 668, maleName: 'Pyroar (Male)', femaleName: 'Pyroar (Female)' },
+        { baseId: 449, maleName: 'Hippopotas (Male)', femaleName: 'Hippopotas (Female)' },
+        { baseId: 450, maleName: 'Hippowdon (Male)', femaleName: 'Hippowdon (Female)' },
+        { baseId: 521, maleName: 'Unfezant (Male)', femaleName: 'Unfezant (Female)' },
       ];
       for (const species of genderFormSpecies) {
         try {
@@ -465,7 +468,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
       }
 
       // Base IDs that have explicit Male/Female form entries - exclude from base list to avoid duplicates
-      const baseIdsWithGenderForms = new Set([592, 593, 668, 678, 876, 916]); // Frillish, Jellicent, Pyroar, Meowstic, Indeedee, Oinkologne
+      const baseIdsWithGenderForms = new Set([449, 450, 521, 592, 593, 668, 678, 876, 916]); // Hippopotas, Hippowdon, Unfezant, Frillish, Jellicent, Pyroar, Meowstic, Indeedee, Oinkologne
       const basePokemonFiltered = basePokemon.filter(p => !baseIdsWithGenderForms.has(p.id));
       
              console.log(`Successfully loaded ${validRegionalForms.length} regional forms`);
