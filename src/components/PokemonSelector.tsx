@@ -113,7 +113,9 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
                name: data.name,
                image: data.sprites.front_default,
                officialArtwork: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default,
-               generation: getGenerationFromId(data.id)
+              generation: getGenerationFromId(data.id),
+              // Base Pokémon: Pokédex number == API id
+              dexNumber: data.id,
              };
              allPokemon.push(pokemon);
              
@@ -254,8 +256,86 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'barbaracle-mega', displayName: 'Mega Barbaracle', baseId: 689 },
         { name: 'dragalge-mega', displayName: 'Mega Dragalge', baseId: 691 },
         { name: 'hawlucha-mega', displayName: 'Mega Hawlucha', baseId: 701 },
-        { name: 'floette-eternal-mega', displayName: 'Mega Eternal Flower Floette', baseId: 670 },
+        { name: 'floette-mega', displayName: 'Mega Eternal Flower Floette', baseId: 670 },
         { name: 'zygarde-mega', displayName: 'Mega Zygarde', baseId: 718 },
+
+        // Missing forms (non-mega)
+        { name: 'aegislash-blade', displayName: 'Aegislash (Blade Forme)', baseId: 681 },
+        { name: 'hoopa-unbound', displayName: 'Hoopa (Unbound)', baseId: 720 },
+        { name: 'zygarde-10', displayName: 'Zygarde (10%)', baseId: 718 },
+        { name: 'zygarde-complete', displayName: 'Zygarde (Complete)', baseId: 718 },
+
+        // Oricorio forms
+        { name: 'oricorio-baile', displayName: 'Oricorio (Baile Style)', baseId: 741 },
+        { name: 'oricorio-pom-pom', displayName: 'Oricorio (Pom-Pom Style)', baseId: 741 },
+        { name: 'oricorio-pau', displayName: 'Oricorio (Pa\'u Style)', baseId: 741 },
+        { name: 'oricorio-sensu', displayName: 'Oricorio (Sensu Style)', baseId: 741 },
+
+        // Lycanroc forms
+        { name: 'lycanroc-midday', displayName: 'Lycanroc (Midday Forme)', baseId: 745 },
+        { name: 'lycanroc-dusk', displayName: 'Lycanroc (Dusk Forme)', baseId: 745 },
+        { name: 'lycanroc-midnight', displayName: 'Lycanroc (Midnight Forme)', baseId: 745 },
+
+        // Wishiwashi forms
+        { name: 'wishiwashi-solo', displayName: 'Wishiwashi (Solo Forme)', baseId: 746 },
+        { name: 'wishiwashi-school', displayName: 'Wishiwashi (School Forme)', baseId: 746 },
+
+        // Necrozma forms
+        { name: 'necrozma', displayName: 'Necrozma', baseId: 800 },
+        { name: 'necrozma-dusk', displayName: 'Necrozma (Dusk Mane Forme)', baseId: 800 },
+        { name: 'necrozma-dawn', displayName: 'Necrozma (Dawn Wings Forme)', baseId: 800 },
+        { name: 'necrozma-ultra', displayName: 'Necrozma (Ultra Forme)', baseId: 800 },
+
+        // Magearna forms
+        { name: 'magearna', displayName: 'Magearna', baseId: 801 },
+        { name: 'magearna-original', displayName: 'Magearna (Original Color)', baseId: 801 },
+        { name: 'magearna-mega', displayName: 'Magearna (Mega Forme)', baseId: 801 },
+        { name: 'magearna-original-mega', displayName: 'Magearna (Original Color Mega Forme)', baseId: 801 },
+
+        // Eternatus / Calyrex / Maushold / Squawkabilly / Palafin / Tatsugiri / Dudunsparce / Gimmighoul forms
+        { name: 'eternatus', displayName: 'Eternatus', baseId: 890 },
+        { name: 'eternatus-eternamax', displayName: 'Eternatus (Eternamax Form)', baseId: 890 },
+
+        { name: 'calyrex', displayName: 'Calyrex', baseId: 898 },
+        { name: 'calyrex-ice', displayName: 'Calyrex (Ice Rider Forme)', baseId: 898 },
+        { name: 'calyrex-shadow', displayName: 'Calyrex (Shadow Rider Forme)', baseId: 898 },
+
+        // Maushold forms
+        { name: 'maushold-family-of-four', displayName: 'Maushold (Family of Four)', baseId: 925 },
+        { name: 'maushold-family-of-three', displayName: 'Maushold (Family of Three)', baseId: 925 },
+
+        // Squawkabilly forms
+        { name: 'squawkabilly-green-plumage', displayName: 'Squawkabilly (Green Plumage)', baseId: 931 },
+        { name: 'squawkabilly-blue-plumage', displayName: 'Squawkabilly (Blue Plumage)', baseId: 931 },
+        { name: 'squawkabilly-yellow-plumage', displayName: 'Squawkabilly (Yellow Plumage)', baseId: 931 },
+        { name: 'squawkabilly-white-plumage', displayName: 'Squawkabilly (White Plumage)', baseId: 931 },
+
+        // Palafin forms
+        { name: 'palafin-zero', displayName: 'Palafin (Zero Forme)', baseId: 964 },
+        { name: 'palafin-hero', displayName: 'Palafin (Hero Forme)', baseId: 964 },
+
+        // Tatsugiri forms
+        { name: 'tatsugiri-curly', displayName: 'Tatsugiri (Curly Forme)', baseId: 978 },
+        { name: 'tatsugiri-droopy', displayName: 'Tatsugiri (Droopy Forme)', baseId: 978 },
+        { name: 'tatsugiri-stretchy', displayName: 'Tatsugiri (Stretchy Forme)', baseId: 978 },
+        { name: 'tatsugiri-curly-mega', displayName: 'Tatsugiri (Curly Forme, Mega Forme)', baseId: 978 },
+        { name: 'tatsugiri-droopy-mega', displayName: 'Tatsugiri (Droopy Forme, Mega Forme)', baseId: 978 },
+        { name: 'tatsugiri-stretchy-mega', displayName: 'Tatsugiri (Stretchy Forme, Mega Forme)', baseId: 978 },
+
+        // Dudunsparce forms
+        { name: 'dudunsparce-two-segment', displayName: 'Dudunsparce (Two Segment Forme)', baseId: 982 },
+        { name: 'dudunsparce-three-segment', displayName: 'Dudunsparce (Three Segment Forme)', baseId: 982 },
+
+        // Gimmighoul forms
+        { name: 'gimmighoul', displayName: 'Gimmighoul (Chest)', baseId: 999 },
+        { name: 'gimmighoul-roaming', displayName: 'Gimmighoul (Roaming Forme)', baseId: 999 },
+
+        // Eiscue / Morpeko / Zacian / Zamazenta (missing non-default forms)
+        { name: 'eiscue-noice', displayName: 'Eiscue (Noice Face)', baseId: 875 },
+        { name: 'morpeko-hangry', displayName: 'Morpeko (Hangry)', baseId: 877 },
+        { name: 'zacian-crowned', displayName: 'Zacian (Crowned Sword)', baseId: 888 },
+        { name: 'zamazenta-crowned', displayName: 'Zamazenta (Crowned Shield)', baseId: 889 },
+
         { name: 'drampa-mega', displayName: 'Mega Drampa', baseId: 780 },
         { name: 'falinks-mega', displayName: 'Mega Falinks', baseId: 870 },
         
@@ -302,6 +382,9 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'obstagoon', displayName: 'Obstagoon', baseId: 264 },
         { name: 'darumaka-galar', displayName: 'Galarian Darumaka', baseId: 554 },
                  { name: 'darmanitan-galar-standard', displayName: 'Galarian Darmanitan', baseId: 555 },
+        { name: 'darmanitan-standard', displayName: 'Darmanitan (Standard Mode)', baseId: 555 },
+        { name: 'darmanitan-zen', displayName: 'Darmanitan (Zen Mode)', baseId: 555 },
+        { name: 'darmanitan-galar-zen', displayName: 'Galarian Darmanitan (Zen Mode)', baseId: 555 },
         { name: 'yamask-galar', displayName: 'Galarian Yamask', baseId: 562 },
         { name: 'runerigus', displayName: 'Runerigus', baseId: 562 },
         { name: 'stunfisk-galar', displayName: 'Galarian Stunfisk', baseId: 618 },
@@ -318,9 +401,12 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         { name: 'sneasler', displayName: 'Sneasler', baseId: 215 },
         { name: 'samurott-hisui', displayName: 'Hisuian Samurott', baseId: 503 },
         { name: 'lilligant-hisui', displayName: 'Hisuian Lilligant', baseId: 549 },
-                 { name: 'basculin-white-striped', displayName: 'Hisuian Basculin', baseId: 550 },
-                 { name: 'basculegion-male', displayName: 'Basculegion (Male)', baseId: 550 },
-                 { name: 'basculegion-female', displayName: 'Basculegion (Female)', baseId: 550 },
+        { name: 'basculin-red-striped', displayName: 'Basculin (Red-Striped)', baseId: 550 },
+        { name: 'basculin-blue-striped', displayName: 'Basculin (Blue-Striped)', baseId: 550 },
+        { name: 'basculin-white-striped', displayName: 'Basculin (White-Striped)', baseId: 550 },
+        // Force ordering inside the Basculin (dexNumber 550) group: red, blue, white, male, female.
+        { name: 'basculegion-male', displayName: 'Basculegion (Male)', baseId: 550, dexNumber: 550.1 },
+        { name: 'basculegion-female', displayName: 'Basculegion (Female)', baseId: 550, dexNumber: 550.2 },
         // Frillish, Jellicent, Pyroar: female forms 404 on PokeAPI - fetched separately by base ID with gender sprites
         { name: 'meowstic-male', displayName: 'Meowstic (Male)', baseId: 678 },
         { name: 'meowstic-female', displayName: 'Meowstic (Female)', baseId: 678 },
@@ -339,16 +425,66 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         // Paldean forms
         { name: 'wooper-paldea', displayName: 'Paldean Wooper', baseId: 194 },
         { name: 'clodsire', displayName: 'Clodsire', baseId: 194 },
-        { name: 'tauros-paldea-combat', displayName: 'Paldean Tauros (Combat)', baseId: 128 },
-        { name: 'tauros-paldea-blaze', displayName: 'Paldean Tauros (Blaze)', baseId: 128 },
-        { name: 'tauros-paldea-aqua', displayName: 'Paldean Tauros (Aqua)', baseId: 128 },
+        { name: 'tauros-paldea-combat-breed', displayName: 'Paldean Tauros (Combat)', baseId: 128 },
+        { name: 'tauros-paldea-blaze-breed', displayName: 'Paldean Tauros (Blaze)', baseId: 128 },
+        { name: 'tauros-paldea-aqua-breed', displayName: 'Paldean Tauros (Aqua)', baseId: 128 },
+        
+        // Castform Forms
+        { name: 'castform-sunny', displayName: 'Castform (Sunny Day)', baseId: 351 },
+        { name: 'castform-rainy', displayName: 'Castform (Rainy)', baseId: 351 },
+        { name: 'castform-snowy', displayName: 'Castform (Snowy)', baseId: 351 },
+
+        // Deerling / Sawsbuck seasonal forms are loaded via pokemon-form/<id>
+        // (PokeAPI returns 404 for these at /pokemon/<slug>).
+        
+        // Deoxys Forms
+        { name: 'deoxys-attack', displayName: 'Deoxys (Attack)', baseId: 386 },
+        { name: 'deoxys-defense', displayName: 'Deoxys (Defense)', baseId: 386 },
+        { name: 'deoxys-speed', displayName: 'Deoxys (Speed)', baseId: 386 },
+
+        // Legendary forms
+        { name: 'dialga-origin', displayName: 'Dialga (Origin)', baseId: 483 },
+        { name: 'palkia-origin', displayName: 'Palkia (Origin)', baseId: 484 },
+        { name: 'giratina-origin', displayName: 'Giratina (Origin)', baseId: 487 },
+        { name: 'shaymin-sky', displayName: 'Shaymin (Sky)', baseId: 492 },
+        
+        // Tornadus / Thundurus / Landorus / Enamorus
+        { name: 'tornadus-incarnate', displayName: 'Tornadus (Incarnate Forme)', baseId: 641 },
+        { name: 'tornadus-therian', displayName: 'Tornadus (Therian Forme)', baseId: 641 },
+        { name: 'thundurus-incarnate', displayName: 'Thundurus (Incarnate Forme)', baseId: 642 },
+        { name: 'thundurus-therian', displayName: 'Thundurus (Therian Forme)', baseId: 642 },
+        { name: 'landorus-incarnate', displayName: 'Landorus (Incarnate Forme)', baseId: 645 },
+        { name: 'landorus-therian', displayName: 'Landorus (Therian Forme)', baseId: 645 },
+        { name: 'enamorus-incarnate', displayName: 'Enamorus (Incarnate Forme)', baseId: 905 },
+        { name: 'enamorus-therian', displayName: 'Enamorus (Therian Forme)', baseId: 905 },
+
+        // Kyurem / Keldeo / Meloetta
+        { name: 'kyurem', displayName: 'Kyurem', baseId: 646 },
+        { name: 'kyurem-black', displayName: 'Kyurem (Black)', baseId: 646 },
+        { name: 'kyurem-white', displayName: 'Kyurem (White)', baseId: 646 },
+        { name: 'keldeo-ordinary', displayName: 'Keldeo (Ordinary Forme)', baseId: 647 },
+        { name: 'keldeo-resolute', displayName: 'Keldeo (Resolute Forme)', baseId: 647 },
+        { name: 'meloetta-aria', displayName: 'Meloetta (Aria Forme)', baseId: 648 },
+        { name: 'meloetta-pirouette', displayName: 'Meloetta (Pirouette Forme)', baseId: 648 },
+
+        // Rotom Forms
+        { name: 'rotom-heat', displayName: 'Rotom (Heat)', baseId: 479 },
+        { name: 'rotom-wash', displayName: 'Rotom (Wash)', baseId: 479 },
+        { name: 'rotom-frost', displayName: 'Rotom (Frost)', baseId: 479 },
+        { name: 'rotom-fan', displayName: 'Rotom (Fan)', baseId: 479 },
+        { name: 'rotom-mow', displayName: 'Rotom (Mow)', baseId: 479 },
+
+        // Burmy / Wormadam forms (Wormadam supports normal /pokemon/{name} fetch)
+        { name: 'wormadam-plant', displayName: 'Wormadam (Plant)', baseId: 413 },
+        { name: 'wormadam-sandy', displayName: 'Wormadam (Sandy)', baseId: 413 },
+        { name: 'wormadam-trash', displayName: 'Wormadam (Trash)', baseId: 413 },
         
         // Special forms and variants
         { name: 'ursaluna-bloodmoon', displayName: 'Ursaluna Blood Moon', baseId: 901 },
-        { name: 'ogerpon-wellspring', displayName: 'Ogerpon (Wellspring)', baseId: 1017 },
-        { name: 'ogerpon-hearthflame', displayName: 'Ogerpon (Hearthflame)', baseId: 1017 },
-        { name: 'ogerpon-cornerstone', displayName: 'Ogerpon (Cornerstone)', baseId: 1017 },
-        { name: 'ogerpon-teal', displayName: 'Ogerpon (Teal)', baseId: 1017 },
+        { name: 'ogerpon', displayName: 'Ogerpon', baseId: 1017 },
+        { name: 'ogerpon-wellspring-mask', displayName: 'Ogerpon (Wellspring Mask)', baseId: 1017 },
+        { name: 'ogerpon-hearthflame-mask', displayName: 'Ogerpon (Hearthflame Mask)', baseId: 1017 },
+        { name: 'ogerpon-cornerstone-mask', displayName: 'Ogerpon (Cornerstone Mask)', baseId: 1017 },
         { name: 'terapagos-terastal', displayName: 'Terapagos (Terastal)', baseId: 1024 },
         { name: 'terapagos-stellar', displayName: 'Terapagos (Stellar)', baseId: 1024 },
         
@@ -416,9 +552,18 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
           const pokemon: Pokemon = {
             id: data.id,
             name: form.displayName,
-            image: data.sprites.front_default,
-            officialArtwork: data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default,
-            generation: getGenerationFromId(form.baseId)
+            // Some Mega/odd forms can have missing `sprites.front_default`.
+            // Fall back to official artwork so the selector still renders an image.
+            image:
+              data.sprites.front_default ||
+              data.sprites.other?.['official-artwork']?.front_default ||
+              data.sprites.front_default,
+            officialArtwork:
+              data.sprites.other?.['official-artwork']?.front_default ||
+              data.sprites.front_default,
+            generation: getGenerationFromId(form.baseId),
+            // For forms (mega/gmax/etc), sort by the base species' Pokédex number
+            dexNumber: (form as { dexNumber?: number }).dexNumber ?? form.baseId,
           };
           console.log(`Successfully fetched ${form.displayName}`);
           return pokemon;
@@ -452,6 +597,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             image: data.sprites.front_default,
             officialArtwork: art?.front_default || data.sprites.front_default,
             generation: getGenerationFromId(species.baseId),
+            dexNumber: species.baseId,
           });
           const femaleImg = data.sprites.front_female ?? data.sprites.front_default;
           const femaleArt = art?.front_female ?? art?.front_default ?? data.sprites.front_default;
@@ -461,14 +607,389 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             image: femaleImg,
             officialArtwork: femaleArt,
             generation: getGenerationFromId(species.baseId),
+            dexNumber: species.baseId,
           });
         } catch {
           // skip if fetch fails
         }
       }
 
-      // Base IDs that have explicit Male/Female form entries - exclude from base list to avoid duplicates
-      const baseIdsWithGenderForms = new Set([449, 450, 521, 592, 593, 668, 678, 876, 916]); // Hippopotas, Hippowdon, Unfezant, Frillish, Jellicent, Pyroar, Meowstic, Indeedee, Oinkologne
+      // Unown forms: PokeAPI requires pokemon-form endpoints (unown-a, etc return 404 on /pokemon)
+      const unownForms = [
+        { id: 201, displayName: 'Unown A' },
+        { id: 10001, displayName: 'Unown B' },
+        { id: 10002, displayName: 'Unown C' },
+        { id: 10003, displayName: 'Unown D' },
+        { id: 10004, displayName: 'Unown E' },
+        { id: 10005, displayName: 'Unown F' },
+        { id: 10006, displayName: 'Unown G' },
+        { id: 10007, displayName: 'Unown H' },
+        { id: 10008, displayName: 'Unown I' },
+        { id: 10009, displayName: 'Unown J' },
+        { id: 10010, displayName: 'Unown K' },
+        { id: 10011, displayName: 'Unown L' },
+        { id: 10012, displayName: 'Unown M' },
+        { id: 10013, displayName: 'Unown N' },
+        { id: 10014, displayName: 'Unown O' },
+        { id: 10015, displayName: 'Unown P' },
+        { id: 10016, displayName: 'Unown Q' },
+        { id: 10017, displayName: 'Unown R' },
+        { id: 10018, displayName: 'Unown S' },
+        { id: 10019, displayName: 'Unown T' },
+        { id: 10020, displayName: 'Unown U' },
+        { id: 10021, displayName: 'Unown V' },
+        { id: 10022, displayName: 'Unown W' },
+        { id: 10023, displayName: 'Unown X' },
+        { id: 10024, displayName: 'Unown Y' },
+        { id: 10025, displayName: 'Unown Z' },
+        { id: 10026, displayName: 'Unown !' },
+        { id: 10027, displayName: 'Unown ?' },
+      ];
+
+      try {
+        const unownResults = await Promise.all(
+          unownForms.map(async (form) => {
+            try {
+              const response = await fetch(`https://pokeapi.co/api/v2/pokemon-form/${form.id}`);
+              if (!response.ok) return null;
+              const data = await response.json();
+              const pokemon: Pokemon = {
+                id: data.id,
+                name: form.displayName,
+                image: data.sprites.front_default,
+                generation: getGenerationFromId(201),
+                dexNumber: 201,
+              };
+              return pokemon;
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        validRegionalForms = validRegionalForms.concat(
+          unownResults.filter((p): p is Pokemon => p !== null)
+        );
+      } catch {
+        // ignore if Unown fails to load
+      }
+
+      // Burmy forms: PokeAPI requires pokemon-form/{id} endpoints for proper sprites
+      const burmyForms = [
+        { id: 412, displayName: 'Burmy (Plant)', baseId: 412 },
+        { id: 10034, displayName: 'Burmy (Sandy)', baseId: 412 },
+        { id: 10035, displayName: 'Burmy (Trash)', baseId: 412 },
+      ];
+      try {
+        const burmyResults = await Promise.all(
+          burmyForms.map(async (form) => {
+            try {
+              const response = await fetch(`https://pokeapi.co/api/v2/pokemon-form/${form.id}`);
+              if (!response.ok) return null;
+              const data = await response.json();
+              const pokemon: Pokemon = {
+                id: data.id,
+                name: form.displayName,
+                image: data.sprites.front_default,
+                officialArtwork: data.sprites.front_default,
+                generation: getGenerationFromId(form.baseId),
+                dexNumber: form.baseId,
+              };
+              return pokemon;
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        validRegionalForms = validRegionalForms.concat(
+          burmyResults.filter((p): p is Pokemon => p !== null)
+        );
+      } catch {
+        // ignore if Burmy fails to load
+      }
+
+      // Cherrim / Shellos / Gastrodon forms: /pokemon/<form-slug> 404s, use pokemon-form/{id}
+      const cloakFormSpecies = [
+        {
+          baseId: 421,
+          forms: [
+            { id: 421, displayName: 'Cherrim (Overcast)' },
+            { id: 10038, displayName: 'Cherrim (Sunshine)' },
+          ],
+        },
+        {
+          baseId: 422,
+          forms: [
+            { id: 422, displayName: 'Shellos (West)' },
+            { id: 10039, displayName: 'Shellos (East)' },
+          ],
+        },
+        {
+          baseId: 423,
+          forms: [
+            { id: 423, displayName: 'Gastrodon (West)' },
+            { id: 10040, displayName: 'Gastrodon (East)' },
+          ],
+        },
+      ];
+
+      for (const species of cloakFormSpecies) {
+        try {
+          const formResults = await Promise.all(
+            species.forms.map(async (form) => {
+              try {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon-form/${form.id}`);
+                if (!response.ok) return null;
+                const data = await response.json();
+                const pokemon: Pokemon = {
+                  id: data.id,
+                  name: form.displayName,
+                  image: data.sprites.front_default,
+                  officialArtwork: data.sprites.front_default,
+                  generation: getGenerationFromId(species.baseId),
+                  dexNumber: species.baseId,
+                };
+                return pokemon;
+              } catch {
+                return null;
+              }
+            })
+          );
+
+          validRegionalForms = validRegionalForms.concat(
+            formResults.filter((p): p is Pokemon => p !== null)
+          );
+        } catch {
+          // ignore if these forms fail to load
+        }
+      }
+
+      // Deerling / Sawsbuck seasonal forms: use pokemon-form endpoints.
+      const seasonalFormSpecies = [
+        {
+          baseId: 585,
+          forms: [
+            { id: 585, displayName: 'Deerling (Spring)' },
+            { id: 10068, displayName: 'Deerling (Summer)' },
+            { id: 10069, displayName: 'Deerling (Autumn)' },
+            { id: 10070, displayName: 'Deerling (Winter)' },
+          ],
+        },
+        {
+          baseId: 586,
+          forms: [
+            { id: 586, displayName: 'Sawsbuck (Spring)' },
+            { id: 10071, displayName: 'Sawsbuck (Summer)' },
+            { id: 10072, displayName: 'Sawsbuck (Autumn)' },
+            { id: 10073, displayName: 'Sawsbuck (Winter)' },
+          ],
+        },
+      ];
+
+      for (const species of seasonalFormSpecies) {
+        try {
+          const formResults = await Promise.all(
+            species.forms.map(async (form) => {
+              try {
+                const response = await fetch(
+                  `https://pokeapi.co/api/v2/pokemon-form/${form.id}`
+                );
+                if (!response.ok) return null;
+                const data = await response.json();
+
+                const art = data.sprites.other?.['official-artwork'];
+
+                const pokemon: Pokemon = {
+                  id: data.id,
+                  name: form.displayName,
+                  image: data.sprites.front_default,
+                  officialArtwork: art?.front_default || data.sprites.front_default,
+                  generation: getGenerationFromId(species.baseId),
+                  dexNumber: species.baseId,
+                };
+                return pokemon;
+              } catch {
+                return null;
+              }
+            })
+          );
+
+          validRegionalForms = validRegionalForms.concat(
+            formResults.filter((p): p is Pokemon => p !== null)
+          );
+        } catch {
+          // ignore if these forms fail to load
+        }
+      }
+
+      // Vivillon patterns: use pokemon-form endpoints because /pokemon/<slug> can 404
+      const vivillonPatternSpecies = [
+        {
+          baseId: 666,
+          forms: [
+            { id: 666, displayName: 'Vivillon (Meadow)' },
+            { id: 10086, displayName: 'Vivillon (Icy Snow)' },
+            { id: 10087, displayName: 'Vivillon (Polar)' },
+            { id: 10088, displayName: 'Vivillon (Tundra)' },
+            { id: 10089, displayName: 'Vivillon (Continental)' },
+            { id: 10090, displayName: 'Vivillon (Garden)' },
+            { id: 10091, displayName: 'Vivillon (Elegant)' },
+            { id: 10092, displayName: 'Vivillon (Modern)' },
+            { id: 10093, displayName: 'Vivillon (Marine)' },
+            { id: 10094, displayName: 'Vivillon (Archipelago)' },
+            { id: 10095, displayName: 'Vivillon (High Plains)' },
+            { id: 10096, displayName: 'Vivillon (Sandstorm)' },
+            { id: 10097, displayName: 'Vivillon (River)' },
+            { id: 10098, displayName: 'Vivillon (Monsoon)' },
+            { id: 10099, displayName: 'Vivillon (Savanna)' },
+            { id: 10100, displayName: 'Vivillon (Sun)' },
+            { id: 10101, displayName: 'Vivillon (Ocean)' },
+            { id: 10102, displayName: 'Vivillon (Jungle)' },
+            { id: 10161, displayName: 'Vivillon (Fancy)' },
+            { id: 10162, displayName: 'Vivillon (Pokeball)' },
+          ],
+        },
+      ];
+
+      for (const species of vivillonPatternSpecies) {
+        try {
+          const formResults = await Promise.all(
+            species.forms.map(async (form) => {
+              try {
+                const response = await fetch(
+                  `https://pokeapi.co/api/v2/pokemon-form/${form.id}`
+                );
+                if (!response.ok) return null;
+                const data = await response.json();
+
+                const art = data.sprites.other?.['official-artwork'];
+
+                const pokemon: Pokemon = {
+                  id: data.id,
+                  name: form.displayName,
+                  image: data.sprites.front_default,
+                  officialArtwork: art?.front_default || data.sprites.front_default,
+                  generation: getGenerationFromId(species.baseId),
+                  dexNumber: species.baseId,
+                };
+                return pokemon;
+              } catch {
+                return null;
+              }
+            })
+          );
+
+          validRegionalForms = validRegionalForms.concat(
+            formResults.filter((p): p is Pokemon => p !== null)
+          );
+        } catch {
+          // ignore if these forms fail to load
+        }
+      }
+
+      // Flabebe / Floette / Florges color forms: use pokemon-form endpoints because /pokemon/<slug> can 404
+      const flabebeFloetteFlorgesSpecies = [
+        {
+          baseId: 669,
+          forms: [
+            { id: 669, displayName: 'Flabebe (Red)' },
+            { id: 10103, displayName: 'Flabebe (Yellow)' },
+            { id: 10104, displayName: 'Flabebe (Orange)' },
+            { id: 10105, displayName: 'Flabebe (Blue)' },
+            { id: 10106, displayName: 'Flabebe (White)' },
+          ],
+        },
+        {
+          baseId: 670,
+          forms: [
+            { id: 670, displayName: 'Floette (Red)' },
+            { id: 10107, displayName: 'Floette (Yellow)' },
+            { id: 10108, displayName: 'Floette (Orange)' },
+            { id: 10109, displayName: 'Floette (Blue)' },
+            { id: 10110, displayName: 'Floette (White)' },
+          ],
+        },
+        {
+          baseId: 671,
+          forms: [
+            { id: 671, displayName: 'Florges (Red)' },
+            { id: 10111, displayName: 'Florges (Yellow)' },
+            { id: 10112, displayName: 'Florges (Orange)' },
+            { id: 10113, displayName: 'Florges (Blue)' },
+            { id: 10114, displayName: 'Florges (White)' },
+          ],
+        },
+      ];
+
+      for (const species of flabebeFloetteFlorgesSpecies) {
+        try {
+          const formResults = await Promise.all(
+            species.forms.map(async (form) => {
+              try {
+                const response = await fetch(
+                  `https://pokeapi.co/api/v2/pokemon-form/${form.id}`
+                );
+                if (!response.ok) return null;
+                const data = await response.json();
+
+                const art = data.sprites.other?.['official-artwork'];
+
+                const pokemon: Pokemon = {
+                  id: data.id,
+                  name: form.displayName,
+                  image: data.sprites.front_default,
+                  officialArtwork: art?.front_default || data.sprites.front_default,
+                  generation: getGenerationFromId(species.baseId),
+                  dexNumber: species.baseId,
+                };
+                return pokemon;
+              } catch {
+                return null;
+              }
+            })
+          );
+
+          validRegionalForms = validRegionalForms.concat(
+            formResults.filter((p): p is Pokemon => p !== null)
+          );
+        } catch {
+          // ignore if these forms fail to load
+        }
+      }
+
+      // Base IDs that have explicit form entries - exclude from base list to avoid duplicates
+      const baseIdsWithGenderForms = new Set([
+        201, // Unown
+        421, 422, 423, // Cherrim / Shellos / Gastrodon
+        412, 413, // Burmy / Wormadam
+        550, // Basculin
+        555, // Darmanitan
+        585, 586, // Deerling / Sawsbuck
+        666, // Vivillon
+        669, 670, 671, // Flabebe / Floette / Florges
+        449, 450, 521, // Hippopotas, Hippowdon, Unfezant
+        592, 593, // Frillish, Jellicent
+        668, 678, // Pyroar, Meowstic
+        876, // Indeedee
+        916, // Oinkologne
+        641, 642, 645, 905, // Tornadus / Thundurus / Landorus / Enamorus
+        646, 647, 648, // Kyurem / Keldeo / Meloetta
+        741, // Oricorio
+        745, // Lycanroc
+        746, // Wishiwashi
+        800, // Necrozma
+        801, // Magearna
+        890, // Eternatus
+        898, // Calyrex
+        925, // Maushold
+        931, // Squawkabilly
+        964, // Palafin
+        978, // Tatsugiri
+        982, // Dudunsparce
+        999, // Gimmighoul
+        1017, // Ogerpon
+      ]);
       const basePokemonFiltered = basePokemon.filter(p => !baseIdsWithGenderForms.has(p.id));
       
              console.log(`Successfully loaded ${validRegionalForms.length} regional forms`);
@@ -490,8 +1011,13 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
        if (oshawott) console.log(`✅ Oshawott found in final list: ${oshawott.name} (ID: ${oshawott.id})`);
        else console.log(`❌ Oshawott NOT found in final list`);
        
-       setPokemonList(updatedPokemonList);
-       setFilteredPokemon(updatedPokemonList);
+      // Sort by Pokédex number (base species id for forms; id for base Pokémon)
+      const sortedPokemonList = [...updatedPokemonList].sort(
+        (a, b) => (a.dexNumber ?? a.id) - (b.dexNumber ?? b.id) || a.id - b.id
+      );
+
+      setPokemonList(sortedPokemonList);
+      setFilteredPokemon(sortedPokemonList);
       
     } catch (error) {
       console.error('Error fetching regional forms:', error);
