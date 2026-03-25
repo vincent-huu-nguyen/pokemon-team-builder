@@ -151,6 +151,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
+Pokémon and trainer sprites used in this project are not owned by me; all rights belong to their respective owners.
+
 - [PokeAPI](https://pokeapi.co/) for providing comprehensive Pokemon data
 - [Lucide React](https://lucide.dev/) for beautiful icons
 - [HTML2Canvas](https://html2canvas.hertzen.com/) for image generation capabilities

@@ -253,6 +253,10 @@ function App() {
       <header className="App-header">
         <h1><img src={pancham} alt="Pancham" className="title-pancham title-pancham-left" /> Pokemon Team Builder <img src={pancham} alt="Pancham" className="title-pancham" /></h1>
         <p className="credit">Created by Vincent Nguyen</p>
+        <p className="sprite-attribution">
+          Pokémon and trainer sprites used in this project are not owned by me; all rights belong to
+          their respective owners.
+        </p>
         <p className="screenshot-hint">📸 Screenshot your masterpiece and share your card with friends!</p>
       </header>
       <main className="App-main">
