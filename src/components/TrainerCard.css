@@ -237,12 +237,16 @@
   position: relative;
 }
 
+/* Content shifts left; outer card box size/position unchanged (same width, border box) */
 .trainer-card.list-mode {
-  padding: 1rem;
+  padding: 1rem 1rem 1rem 0.2rem;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
 }
 
+/* Center the card stack; inner list can stay left via .pokemon-list-layout */
 .trainer-list-bulk-export {
   display: flex;
   flex-direction: column;
@@ -250,11 +254,13 @@
   gap: 0.75rem;
   width: 100%;
   max-width: 420px;
+  align-self: center;
 }
 
 .pokemon-list-bulk-panel {
   width: 100%;
   max-width: 400px;
+  align-self: center;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -323,6 +329,10 @@
   justify-content: flex-start;
   align-items: stretch;
   width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+  box-sizing: border-box;
+  margin-left: -0.15rem;
 }
 
 .trainer-card .pokemon-list-empty {
@@ -339,12 +349,12 @@
 .trainer-card .pokemon-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 0.35rem;
+  column-gap: 0.3rem;
   row-gap: 0;
   width: 100%;
   max-width: 100%;
   height: 100%;
-  padding: 0 0.25rem;
+  padding: 0 0.1rem 0 0;
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
@@ -357,13 +367,13 @@
   flex-direction: row;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 0.3rem;
+  gap: 0;
   min-height: 0;
   min-width: 0;
   width: 100%;
   height: 100%;
   max-height: 100%;
-  padding: 0 1px;
+  padding: 0;
   box-sizing: border-box;
   border-radius: 3px;
   cursor: pointer;
@@ -388,7 +398,8 @@
   aspect-ratio: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* Hug the label: sprite art sits on the right side of the cell toward the name */
+  justify-content: flex-end;
 }
 
 .trainer-card .pokemon-list-sprite {
@@ -408,8 +419,10 @@
 
 .trainer-card .pokemon-list-name {
   margin: 0;
+  padding: 0;
+  margin-left: -0.2em;
   align-self: center;
-  font-size: clamp(0.45rem, min(0.9rem, 2.4vmin, 3.2vw), 0.9rem);
+  font-size: clamp(0.36rem, min(0.65rem, 1.5vmin, 2vw), 0.7rem);
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   text-align: left;
