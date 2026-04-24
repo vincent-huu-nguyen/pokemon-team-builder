@@ -1021,7 +1021,16 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                                 }`}
                               />
                             </div>
-                            <p className="pokemon-list-name">
+                            <p
+                              className="pokemon-list-name"
+                              style={{
+                                color: trainerNameColor,
+                                textAlign: 'left',
+                                ...(trainerNamePixelFont && {
+                                  fontFamily: '"Press Start 2P", cursive',
+                                }),
+                              }}
+                            >
                               {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
                             </p>
                           </div>
