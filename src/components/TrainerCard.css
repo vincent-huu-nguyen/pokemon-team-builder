@@ -243,16 +243,89 @@
   flex-direction: column;
 }
 
-.pokemon-list-layout {
+.trainer-list-bulk-export {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.pokemon-list-bulk-panel {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.pokemon-list-bulk-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.pokemon-list-bulk-textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 0.85rem;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.pokemon-list-bulk-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pokemon-list-bulk-apply {
+  align-self: flex-start;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.pokemon-list-bulk-apply:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pokemon-list-bulk-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #ffb4b4;
+}
+
+/* Scoped under .trainer-card so .pokemon-list does not collide with PokemonSelector.css */
+.trainer-card .pokemon-list-layout {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
 }
 
-.pokemon-list-empty {
+.trainer-card .pokemon-list-empty {
   flex: 1;
   display: flex;
   align-items: center;
@@ -263,65 +336,89 @@
   font-size: 1rem;
 }
 
-.pokemon-list-grid {
+.trainer-card .pokemon-list {
   display: grid;
-  gap: 8px;
-  padding: 0.25rem;
-  justify-self: center;
-  align-self: center;
-}
-
-/* Square cells: size comes from grid (fixed px when measured), item fills cell */
-.pokemon-list-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.35rem;
+  row-gap: 0;
   width: 100%;
+  max-width: 100%;
   height: 100%;
+  padding: 0 0.25rem;
   box-sizing: border-box;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-.pokemon-list-item:hover {
-  transform: translateY(-4px);
-}
-
-.pokemon-list-sprite-wrap {
-  position: relative;
   flex: 1;
-  width: 100%;
   min-height: 0;
+  align-content: stretch;
+  overflow: hidden;
+}
+
+.trainer-card .pokemon-list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: 0 1px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.trainer-card .pokemon-list-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.trainer-card .pokemon-list-sprite-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: center;
+  /* Scale with row height; rem cap keeps single-row layouts from huge art */
+  height: min(5.5rem, 100%);
+  width: min(5.5rem, 100%);
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+  max-width: 78%;
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.pokemon-list-sprite {
-  width: 100%;
-  height: 100%;
+.trainer-card .pokemon-list-sprite {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
 
-.pokemon-list-sprite.official-art {
+.trainer-card .pokemon-list-sprite.official-art {
   image-rendering: auto;
 }
 
-.pokemon-list-name {
+.trainer-card .pokemon-list-name {
   margin: 0;
-  font-size: clamp(0.5rem, 2vw, 0.75rem);
+  align-self: center;
+  font-size: clamp(0.45rem, min(0.9rem, 2.4vmin, 3.2vw), 0.9rem);
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  text-align: center;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  line-height: 1.1;
 }
 
 .trainer-card.show-bubbles::before {

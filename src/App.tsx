@@ -228,9 +228,7 @@ function App() {
   ];
 
   const addPokemon = (pokemon: Pokemon) => {
-    if (selectedPokemon.length < 18) {
-      setSelectedPokemon([...selectedPokemon, pokemon]);
-    }
+    setSelectedPokemon((prev) => [...prev, pokemon]);
   };
 
   const removePokemon = (index: number) => {
@@ -265,6 +263,7 @@ function App() {
             trainerName={trainerName}
             setTrainerName={setTrainerName}
             selectedPokemon={selectedPokemon}
+            replaceSelectedPokemon={setSelectedPokemon}
             onRemovePokemon={removePokemon}
             trainerSprite={trainerSprite}
             onTrainerSpriteChange={handleTrainerSpriteChange}

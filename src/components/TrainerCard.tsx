@@ -1,7 +1,12 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { Download, Edit3, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { Pokemon } from '../types/Pokemon';
+import {
+  POKEMON_LIST_PAGE_SIZE,
+  parsePokemonNamesFromText,
+  fetchPokemonByNameForList,
+} from '../utils/pokemonPokeApi';
 import './TrainerCard.css';
 import { useState } from 'react';
 import trainerVincent from '../assets/Trainer_Vincent.png';
@@ -10,6 +15,8 @@ interface TrainerCardProps {
   trainerName: string;
   setTrainerName: (name: string) => void;
   selectedPokemon: Pokemon[];
+  /** Replaces the full team (used for Pokémon list bulk import, list layout only) */
+  replaceSelectedPokemon: (pokemon: Pokemon[]) => void;
   onRemovePokemon: (index: number) => void;
   trainerSprite: string;
   onTrainerSpriteChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -25,10 +32,20 @@ interface TrainerCardProps {
   setIsGradient: (value: boolean) => void;
 }
 
+function chunkPokemonListForDisplay<T>(items: T[], pageSize: number): T[][] {
+  if (items.length === 0) return [];
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += pageSize) {
+    out.push(items.slice(i, i + pageSize));
+  }
+  return out;
+}
+
 const TrainerCard: React.FC<TrainerCardProps> = ({
   trainerName,
   setTrainerName,
   selectedPokemon,
+  replaceSelectedPokemon,
   onRemovePokemon,
   trainerSprite,
   onTrainerSpriteChange,
@@ -46,7 +63,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionBarRef = useRef<HTMLDivElement>(null);
   const listLayoutRef = useRef<HTMLDivElement>(null);
-  const [listGridSize, setListGridSize] = useState<{ cellSize: number; cols: number; rows: number } | null>(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showSpriteSelector, setShowSpriteSelector] = useState(false);
@@ -75,6 +91,78 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [showTrainerName, setShowTrainerName] = useState(true);
   const [flippedItems, setFlippedItems] = useState<{ [key: string]: boolean }>({});
   const [rotatedItems, setRotatedItems] = useState<{ [key: string]: number }>({});
+  const [listBulkText, setListBulkText] = useState('');
+  const [listBulkError, setListBulkError] = useState('');
+  const [listBulkLoading, setListBulkLoading] = useState(false);
+
+  const cardSurfaceStyle = useMemo(
+    () =>
+      ({
+        background: backgroundImage
+          ? `url(${backgroundImage})`
+          : isGradient
+            ? `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`
+            : cardColor,
+        backgroundSize: backgroundImage ? 'cover' : 'auto',
+        backgroundPosition: backgroundImage ? 'center' : 'auto',
+        backgroundRepeat: backgroundImage ? 'no-repeat' : 'auto',
+        '--pokeball-image': `url(${pokeballImage})`,
+      }) as React.CSSProperties,
+    [backgroundImage, isGradient, cardColor, gradientColor, pokeballImage]
+  );
+
+  const applyListBulkFromText = useCallback(async () => {
+    setListBulkError('');
+    const names = parsePokemonNamesFromText(listBulkText);
+    if (names.length === 0) {
+      setListBulkError('Enter at least one Pokémon name (comma, newline, or semicolon).');
+      return;
+    }
+    setListBulkLoading(true);
+    try {
+      const results = await Promise.all(
+        names.map(async (name, order) => {
+          try {
+            const pokemon = await fetchPokemonByNameForList(name);
+            return { ok: true as const, order, pokemon, raw: name };
+          } catch {
+            return { ok: false as const, order, raw: name };
+          }
+        })
+      );
+      const failed = results
+        .filter((r): r is { ok: false; order: number; raw: string } => !r.ok)
+        .map((r) => r.raw);
+      const ok = results
+        .filter(
+          (r): r is { ok: true; order: number; pokemon: Pokemon; raw: string } => r.ok
+        )
+        .map((r) => r);
+      ok.sort((a, b) => {
+        const da = a.pokemon.dexNumber ?? a.pokemon.id;
+        const db = b.pokemon.dexNumber ?? b.pokemon.id;
+        if (da !== db) return da - db;
+        return a.order - b.order;
+      });
+      const sorted = ok.map((x) => x.pokemon);
+      setPokemonSizes({});
+      setPokemonPositions([]);
+      setSelectionHistory([]);
+      setSelectedPokemonIndex(null);
+      setIsTrainerSelected(false);
+      setIsTrainerNameSelected(false);
+      replaceSelectedPokemon(sorted);
+      if (failed.length > 0) {
+        setListBulkError(
+          `Could not find: ${Array.from(new Set(failed)).join(', ')}`
+        );
+      }
+    } catch {
+      setListBulkError('Something went wrong. Try again in a moment.');
+    } finally {
+      setListBulkLoading(false);
+    }
+  }, [listBulkText, replaceSelectedPokemon]);
 
   // Function to update page background to match card colors
   const updatePageBackground = useCallback(() => {
@@ -156,35 +244,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       }
     }
   }, [selectedPokemonIndex, isTrainerSelected, isTrainerNameSelected]);
-
-  // Pokemon List: measure container and compute square cell size so grid fills card
-  useEffect(() => {
-    if (layoutMode !== 'list' || selectedPokemon.length === 0) {
-      setListGridSize(null);
-      return;
-    }
-    const el = listLayoutRef.current;
-    if (!el) return;
-
-    const gapPx = 8;
-    const cols = 3;
-    const rows = 6;
-
-    const updateSize = () => {
-      const width = el.clientWidth;
-      const height = el.clientHeight;
-      const cellSize = Math.floor(Math.min(
-        (width - gapPx * (cols - 1)) / cols,
-        (height - gapPx * (rows - 1)) / rows
-      ));
-      setListGridSize({ cellSize: Math.max(20, cellSize), cols, rows });
-    };
-
-    updateSize();
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [layoutMode, selectedPokemon.length]);
 
   const convertImageToDataURL = async (imageUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -338,15 +397,25 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         });
 
         // Apply background styling to ensure proper capture on all devices
-        if (backgroundImage) {
-          cardClone.style.background = `url(${backgroundImage})`;
-          cardClone.style.backgroundSize = 'cover';
-          cardClone.style.backgroundPosition = 'center';
-          cardClone.style.backgroundRepeat = 'no-repeat';
-        } else if (isGradient) {
-          cardClone.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+        const applySurfaceToElement = (el: HTMLElement) => {
+          if (backgroundImage) {
+            el.style.background = `url(${backgroundImage})`;
+            el.style.backgroundSize = 'cover';
+            el.style.backgroundPosition = 'center';
+            el.style.backgroundRepeat = 'no-repeat';
+          } else if (isGradient) {
+            el.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+          } else {
+            el.style.background = cardColor;
+          }
+        };
+        if (cardClone.classList.contains('trainer-list-bulk-export')) {
+          cardClone.style.background = 'transparent';
+          cardClone.querySelectorAll('.trainer-card').forEach((node) => {
+            applySurfaceToElement(node as HTMLElement);
+          });
         } else {
-          cardClone.style.background = cardColor;
+          applySurfaceToElement(cardClone);
         }
         
         // Temporarily add the clone to the DOM (hidden)
@@ -436,18 +505,22 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           width: cardClone.offsetWidth,
           height: cardClone.offsetHeight,
           onclone: (clonedDoc) => {
-            // Ensure the cloned element has the correct background
-            const clonedCard = clonedDoc.querySelector('.trainer-card') as HTMLElement;
-            if (clonedCard) {
+            const root = clonedDoc.querySelector('[data-capture-root]') as HTMLElement | null;
+            if (!root) return;
+            const isMultilist = root.classList.contains('trainer-list-bulk-export');
+            const cardEls: HTMLElement[] = isMultilist
+              ? Array.from(root.querySelectorAll('.trainer-card'))
+              : [root];
+            for (const el of cardEls) {
               if (backgroundImage) {
-                clonedCard.style.background = `url(${backgroundImage})`;
-                clonedCard.style.backgroundSize = 'cover';
-                clonedCard.style.backgroundPosition = 'center';
-                clonedCard.style.backgroundRepeat = 'no-repeat';
+                el.style.background = `url(${backgroundImage})`;
+                el.style.backgroundSize = 'cover';
+                el.style.backgroundPosition = 'center';
+                el.style.backgroundRepeat = 'no-repeat';
               } else if (isGradient) {
-                clonedCard.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
+                el.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`;
               } else {
-                clonedCard.style.background = cardColor;
+                el.style.background = cardColor;
               }
             }
           }
@@ -879,20 +952,127 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
 
       </div>
       
-      <div 
-        ref={cardRef} 
-        className={`trainer-card ${layoutMode === 'party' ? 'party-mode' : ''} ${layoutMode === 'list' ? 'list-mode' : ''} ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
-        style={{
-          background: backgroundImage 
-            ? `url(${backgroundImage})`
-            : isGradient 
-              ? `linear-gradient(135deg, ${cardColor} 0%, ${gradientColor} 100%)`
-              : cardColor,
-          backgroundSize: backgroundImage ? 'cover' : 'auto',
-          backgroundPosition: backgroundImage ? 'center' : 'auto',
-          backgroundRepeat: backgroundImage ? 'no-repeat' : 'auto',
-          '--pokeball-image': `url(${pokeballImage})`
-        } as React.CSSProperties}
+      {layoutMode === 'list' ? (
+        <>
+          <div
+            ref={cardRef}
+            className="trainer-list-bulk-export"
+            data-capture-root
+          >
+            {selectedPokemon.length === 0 ? (
+              <div
+                className={`trainer-card list-mode ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
+                style={cardSurfaceStyle}
+              >
+                <div className="pokemon-list-layout" ref={listLayoutRef}>
+                  <div className="pokemon-list-empty">
+                    <p>
+                      Select Pokémon from the selector, or use the text area below to paste names
+                      (comma, newline, or semicolon), then apply.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              chunkPokemonListForDisplay(
+                selectedPokemon,
+                POKEMON_LIST_PAGE_SIZE
+              ).map((chunk, chunkIndex) => (
+                <div
+                  key={chunkIndex}
+                  className={`trainer-card list-mode ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
+                  style={cardSurfaceStyle}
+                >
+                  <div
+                    className="pokemon-list-layout"
+                    ref={chunkIndex === 0 ? listLayoutRef : undefined}
+                  >
+                    <div
+                      className="pokemon-list"
+                      style={{
+                        gridTemplateRows: `repeat(${Math.ceil(chunk.length / 2)}, minmax(0, 1fr))`,
+                      }}
+                    >
+                      {chunk.map((pokemon, localIndex) => {
+                        const globalIndex =
+                          chunkIndex * POKEMON_LIST_PAGE_SIZE + localIndex;
+                        return (
+                          <div
+                            key={`${globalIndex}-${pokemon.id}-${pokemon.name}`}
+                            className="pokemon-list-item"
+                            onClick={() => handleRemovePokemon(globalIndex)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) =>
+                              e.key === 'Enter' && handleRemovePokemon(globalIndex)
+                            }
+                            aria-label={`Remove ${pokemon.name} from list`}
+                          >
+                            <div className="pokemon-list-sprite-wrap">
+                              <img
+                                src={
+                                  artStyle === 'official'
+                                    ? pokemon.officialArtwork || pokemon.image
+                                    : pokemon.image
+                                }
+                                alt={pokemon.name}
+                                className={`pokemon-list-sprite ${
+                                  artStyle === 'official' ? 'official-art' : 'pixel-art'
+                                }`}
+                              />
+                            </div>
+                            <p className="pokemon-list-name">
+                              {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <div className="pokemon-list-bulk-panel">
+            <label className="pokemon-list-bulk-label" htmlFor="pokemon-list-bulk-text">
+              Paste or type Pokémon names (separate with commas, new lines, or semicolons). They
+              are applied in National Pokédex order.
+            </label>
+            <textarea
+              id="pokemon-list-bulk-text"
+              className="pokemon-list-bulk-textarea"
+              value={listBulkText}
+              onChange={(e) => {
+                setListBulkText(e.target.value);
+                setListBulkError('');
+              }}
+              rows={4}
+              placeholder="e.g. pikachu, charizard, mew, snorlax"
+              disabled={listBulkLoading}
+            />
+            <button
+              type="button"
+              className="pokemon-list-bulk-apply"
+              onClick={applyListBulkFromText}
+              disabled={listBulkLoading}
+            >
+              {listBulkLoading ? 'Loading…' : 'Apply & sort by Pokédex'}
+            </button>
+            {listBulkError ? (
+              <p className="pokemon-list-bulk-error" role="alert">
+                {listBulkError}
+              </p>
+            ) : null}
+          </div>
+        </>
+      ) : (
+      <div
+        ref={cardRef}
+        data-capture-root
+        className={`trainer-card ${layoutMode === 'party' ? 'party-mode' : ''} ${
+          showBubbles ? 'show-bubbles' : 'no-bubbles'
+        }`}
+        style={cardSurfaceStyle}
       >
         {layoutMode === 'card' ? (
           <>
@@ -955,46 +1135,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               </div>
             </div>
           </>
-        ) : layoutMode === 'list' ? (
-          <div className="pokemon-list-layout" ref={listLayoutRef}>
-            {selectedPokemon.length === 0 ? (
-              <div className="pokemon-list-empty">
-                <p>Select Pokemon from the selector to add them here</p>
-              </div>
-            ) : (
-              <div
-                className="pokemon-list-grid"
-                style={listGridSize ? {
-                  gridTemplateColumns: `repeat(${listGridSize.cols}, ${listGridSize.cellSize}px)`,
-                  gridTemplateRows: `repeat(${listGridSize.rows}, ${listGridSize.cellSize}px)`,
-                } : {
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gridTemplateRows: 'repeat(6, 1fr)',
-                }}
-              >
-                {selectedPokemon.map((pokemon, index) => (
-                  <div
-                    key={index}
-                    className="pokemon-list-item"
-                    onClick={() => handleRemovePokemon(index)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === 'Enter' && handleRemovePokemon(index)}
-                    aria-label={`Remove ${pokemon.name} from list`}
-                  >
-                    <div className="pokemon-list-sprite-wrap">
-                      <img
-                        src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
-                        alt={pokemon.name}
-                        className={`pokemon-list-sprite ${artStyle === 'official' ? 'official-art' : 'pixel-art'}`}
-                      />
-                    </div>
-                    <p className="pokemon-list-name">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         ) : (
           <div 
             className="party-layout"
@@ -1139,9 +1279,9 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             
           </div>
         )}
-        
 
       </div>
+      )}
       
       {/* Selection Bar - Quick select buttons */}
       {layoutMode === 'party' && (
