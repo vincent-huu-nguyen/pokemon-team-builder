@@ -9,7 +9,7 @@ import {
 } from '../utils/pokemonPokeApi';
 import './TrainerCard.css';
 import { useState } from 'react';
-import trainerVincent from '../assets/Trainer_Vincent.png';
+import trainerVincent from '../assets/PKMSprites/Trainer_Vincent.png';
 
 interface TrainerCardProps {
   trainerName: string;

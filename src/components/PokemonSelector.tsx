@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Pokemon } from '../types/Pokemon';
-import megaGreninjaUpsideDownPixel from '../assets/Mega_Greninja_UpsideDown.png';
-import megaTatsugiriPixel from '../assets/Mega_Tatsugiri.png';
+import megaGreninjaUpsideDownPixel from '../assets/PKMSprites/Mega_Greninja_UpsideDown.png';
+import megaTatsugiriPixel from '../assets/PKMSprites/Mega_Tatsugiri.png';
 import './PokemonSelector.css';
 
 declare const require: any;
@@ -11,7 +11,7 @@ declare const require: any;
 // Example: `clefable-mega` -> `src/assets/Mega_Clefable.png`
 const megaPixelOverrides: Record<string, string> = (() => {
   // Webpack module keys from CRA typically look like: "./Mega_AbsolZ.png"
-  const ctx = require.context('../assets', false, /^\.\/Mega_.*\.png$/);
+  const ctx = require.context('../assets/PKMSprites', false, /^\.\/Mega_.*\.png$/);
   const map: Record<string, string> = {};
 
   ctx.keys().forEach((key: string) => {
