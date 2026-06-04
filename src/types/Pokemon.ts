@@ -7,4 +7,5 @@ export interface Pokemon {
   // Used for sorting by Pokédex number (base species number for forms).
   // When omitted, code can fall back to `id`.
   dexNumber?: number;
+  types?: string[];
 }

@@ -65,6 +65,80 @@ const megaPixelOverrides: Record<string, string> = (() => {
   return map;
 })();
 
+const POKEMON_TYPE_FILTER_OPTIONS = [
+  'all',
+  'normal',
+  'fire',
+  'water',
+  'electric',
+  'grass',
+  'ice',
+  'fighting',
+  'poison',
+  'ground',
+  'flying',
+  'psychic',
+  'bug',
+  'rock',
+  'ghost',
+  'dragon',
+  'dark',
+  'steel',
+  'fairy',
+] as const;
+
+type PokemonTypeFilter = (typeof POKEMON_TYPE_FILTER_OPTIONS)[number];
+
+const TYPE_DISPLAY_NAMES: Record<PokemonTypeFilter, string> = {
+  all: 'All Types',
+  normal: 'Normal',
+  fire: 'Fire',
+  water: 'Water',
+  electric: 'Electric',
+  grass: 'Grass',
+  ice: 'Ice',
+  fighting: 'Fighting',
+  poison: 'Poison',
+  ground: 'Ground',
+  flying: 'Flying',
+  psychic: 'Psychic',
+  bug: 'Bug',
+  rock: 'Rock',
+  ghost: 'Ghost',
+  dragon: 'Dragon',
+  dark: 'Dark',
+  steel: 'Steel',
+  fairy: 'Fairy',
+};
+
+function parsePokemonTypes(data: {
+  types?: { type: { name: string } }[];
+  pokemon?: { types?: { type: { name: string } }[] };
+}): string[] {
+  const raw = data.types ?? data.pokemon?.types;
+  if (!raw?.length) return [];
+  return raw.map((entry) => entry.type.name);
+}
+
+function fillMissingTypes(list: Pokemon[]): Pokemon[] {
+  const typesByDex = new Map<number, string[]>();
+  for (const pokemon of list) {
+    if (pokemon.types?.length && pokemon.dexNumber != null) {
+      typesByDex.set(pokemon.dexNumber, pokemon.types);
+    }
+  }
+  return list.map((pokemon) => {
+    if (pokemon.types?.length) return pokemon;
+    const inherited =
+      pokemon.dexNumber != null ? typesByDex.get(pokemon.dexNumber) : undefined;
+    return inherited ? { ...pokemon, types: [...inherited] } : pokemon;
+  });
+}
+
+function pokemonHasType(pokemon: Pokemon, type: string): boolean {
+  return pokemon.types?.includes(type) ?? false;
+}
+
 interface PokemonSelectorProps {
   onPokemonSelect: (pokemon: Pokemon) => void;
   artStyle: 'pixel' | 'official';
@@ -78,6 +152,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedType, setSelectedType] = useState<PokemonTypeFilter>('all');
   const [expandedGenerations, setExpandedGenerations] = useState<Set<number>>(new Set([1]));
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -183,6 +258,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
               generation: getGenerationFromId(data.id),
               // Base Pokémon: Pokédex number == API id
               dexNumber: data.id,
+              types: parsePokemonTypes(data),
              };
              allPokemon.push(pokemon);
              
@@ -650,6 +726,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             generation: getGenerationFromId(form.baseId),
             // For forms (mega/gmax/etc), sort by the base species' Pokédex number
             dexNumber: (form as { dexNumber?: number }).dexNumber ?? form.baseId,
+            types: parsePokemonTypes(data),
           };
           console.log(`Successfully fetched ${form.displayName}`);
           return pokemon;
@@ -677,6 +754,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
           if (!response.ok) continue;
           const data = await response.json();
           const art = data.sprites.other?.['official-artwork'];
+          const speciesTypes = parsePokemonTypes(data);
           validRegionalForms.push({
             id: data.id,
             name: species.maleName,
@@ -684,6 +762,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             officialArtwork: art?.front_default || data.sprites.front_default,
             generation: getGenerationFromId(species.baseId),
             dexNumber: species.baseId,
+            types: speciesTypes,
           });
           const femaleImg = data.sprites.front_female ?? data.sprites.front_default;
           const femaleArt = art?.front_female ?? art?.front_default ?? data.sprites.front_default;
@@ -694,6 +773,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             officialArtwork: femaleArt,
             generation: getGenerationFromId(species.baseId),
             dexNumber: species.baseId,
+            types: speciesTypes,
           });
         } catch {
           // skip if fetch fails
@@ -1053,6 +1133,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
         officialArtwork: megaGreninjaUpsideDownPixel,
         generation: getGenerationFromId(658),
         dexNumber: 658,
+        types: ['water', 'dark'],
       });
 
       // Mega Tatsugiri sometimes fails to load via PokeAPI.
@@ -1066,6 +1147,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
           officialArtwork: megaTatsugiriPixel,
           generation: getGenerationFromId(978),
           dexNumber: 978,
+          types: ['dragon', 'water'],
         });
       }
 
@@ -1123,8 +1205,10 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
        else console.log(`❌ Oshawott NOT found in final list`);
        
       // Sort by Pokédex number (base species id for forms; id for base Pokémon)
-      const sortedPokemonList = [...updatedPokemonList].sort(
-        (a, b) => (a.dexNumber ?? a.id) - (b.dexNumber ?? b.id) || a.id - b.id
+      const sortedPokemonList = fillMissingTypes(
+        [...updatedPokemonList].sort(
+          (a, b) => (a.dexNumber ?? a.id) - (b.dexNumber ?? b.id) || a.id - b.id
+        )
       );
 
       setPokemonList(sortedPokemonList);
@@ -1157,8 +1241,12 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
       );
     }
 
+    if (selectedType !== 'all') {
+      filtered = filtered.filter((pokemon) => pokemonHasType(pokemon, selectedType));
+    }
+
     setFilteredPokemon(filtered);
-  }, [pokemonList, searchTerm]);
+  }, [pokemonList, searchTerm, selectedType]);
 
   const toggleGeneration = (generation: number) => {
     const newExpanded = new Set(expandedGenerations);
@@ -1235,6 +1323,23 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
               Official Art
             </button>
           </div>
+        </div>
+        <div className="type-filter">
+          <label className="type-filter-label" htmlFor="pokemon-type-filter">
+            Type
+          </label>
+          <select
+            id="pokemon-type-filter"
+            className="type-filter-select"
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value as PokemonTypeFilter)}
+          >
+            {POKEMON_TYPE_FILTER_OPTIONS.map((type) => (
+              <option key={type} value={type}>
+                {TYPE_DISPLAY_NAMES[type]}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
