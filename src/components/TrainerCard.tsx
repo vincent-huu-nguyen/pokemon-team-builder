@@ -1641,19 +1641,6 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             </div>
             
             <div className="sprite-grid">
-              {availableSprites.map((sprite, index) => (
-                <div 
-                  key={index}
-                  className={`sprite-option ${trainerSprite === sprite.src ? 'selected' : ''}`}
-                  onClick={() => {
-                    onSpriteSelect(sprite.src);
-                    setShowSpriteSelector(false);
-                  }}
-                >
-                  <img src={sprite.src} alt={sprite.name} />
-                </div>
-              ))}
-              
               {/* Custom Upload Option */}
               <div className="sprite-option custom-upload">
                 <input
@@ -1673,10 +1660,25 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                   id="custom-sprite-upload"
                 />
                 <label htmlFor="custom-sprite-upload">
-                  <div className="upload-icon">+</div>
-                  <span>Upload Custom</span>
+                  <div className="upload-icon">
+                    <span className="upload-plus">+</span>
+                    <span className="upload-label">Upload Custom</span>
+                  </div>
                 </label>
               </div>
+
+              {availableSprites.map((sprite, index) => (
+                <div 
+                  key={index}
+                  className={`sprite-option ${trainerSprite === sprite.src ? 'selected' : ''}`}
+                  onClick={() => {
+                    onSpriteSelect(sprite.src);
+                    setShowSpriteSelector(false);
+                  }}
+                >
+                  <img src={sprite.src} alt={sprite.name} />
+                </div>
+              ))}
             </div>
           </div>
         </div>
