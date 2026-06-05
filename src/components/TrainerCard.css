@@ -228,6 +228,13 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) {
+  width: 560px;
+  height: 996px; /* 9:16 aspect ratio (560 * 16/9 = 996) */
+  padding: 3rem;
 }
 
 .trainer-card.party-mode {
@@ -473,6 +480,21 @@
   overflow: visible;
 }
 
+.trainer-card:not(.party-mode):not(.list-mode) .trainer-sprite-container,
+.trainer-card:not(.party-mode):not(.list-mode) .sprite-wrapper {
+  width: 215px;
+  height: 215px;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .trainer-sprite-container {
+  margin-top: -1.25rem;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .trainer-sprite {
+  width: 100%;
+  height: 100%;
+}
+
 .sprite-wrapper {
   display: flex;
   align-items: center;
@@ -537,6 +559,10 @@
 /* Move trainer name down in trainer card mode (not party mode) */
 .trainer-card:not(.party-mode) .trainer-name-display h2 {
   margin-top: 0.5rem;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .trainer-name-display h2 {
+  margin-top: 2.0rem;
 }
 
 .edit-name-btn {
@@ -647,6 +673,58 @@
   image-rendering: smooth;
 }
 
+.trainer-card:not(.party-mode):not(.list-mode) .pokemon-team {
+  margin-top: -1.25rem;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .pokemon-grid {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  justify-items: center;
+  row-gap: 0.35rem;
+  grid-template-rows: repeat(3, auto);
+  align-content: start;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .pokemon-slot {
+  min-height: 140px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .pokemon-item {
+  padding: 0.25rem;
+  width: 100%;
+  max-width: 150px;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .pokemon-sprite {
+  width: 140px;
+  height: 140px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3rem;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .empty-slot {
+  height: 140px;
+  width: 100%;
+  max-width: 150px;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .pokemon-item::before {
+  background-size: 110px 110px;
+  background-position: center 80%;
+}
+
+.trainer-card:not(.party-mode):not(.list-mode) .empty-slot::before {
+  background-size: 110px 110px;
+  background-position: center 100%;
+}
+
 .pokemon-name {
   margin: 0;
   font-size: 0.875rem;
@@ -717,6 +795,12 @@
     height: 533px; /* 9:16 aspect ratio (300 * 16/9 = 533) */
     padding: 1rem;
   }
+
+  .trainer-card:not(.party-mode):not(.list-mode) {
+    width: 440px;
+    height: 782px; /* 9:16 aspect ratio (440 * 16/9 = 782) */
+    padding: 1.5rem;
+  }
   
   .trainer-card.party-mode {
     min-width: 350px;
@@ -730,6 +814,12 @@
     gap: -0.5rem;
   }
   
+  .trainer-card:not(.party-mode):not(.list-mode) .trainer-sprite-container,
+  .trainer-card:not(.party-mode):not(.list-mode) .sprite-wrapper {
+    width: 165px;
+    height: 165px;
+  }
+
   .trainer-sprite-container {
     width: 100px;
     height: 100px;
@@ -756,6 +846,42 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem 1rem;
     row-gap: 0.75rem;
+  }
+
+  .trainer-card:not(.party-mode):not(.list-mode) .pokemon-grid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    justify-items: center;
+    row-gap: 0.35rem;
+    grid-template-rows: repeat(3, auto);
+    align-content: start;
+  }
+
+  .trainer-card:not(.party-mode):not(.list-mode) .pokemon-sprite {
+    width: 110px;
+    height: 110px;
+  }
+
+  .trainer-card:not(.party-mode):not(.list-mode) .pokemon-slot {
+    min-height: 110px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .trainer-card:not(.party-mode):not(.list-mode) .pokemon-item {
+    max-width: 120px;
+  }
+
+  .trainer-card:not(.party-mode):not(.list-mode) .empty-slot {
+    height: 110px;
+    max-width: 120px;
+  }
+
+  .trainer-card:not(.party-mode):not(.list-mode) .pokemon-item::before,
+  .trainer-card:not(.party-mode):not(.list-mode) .empty-slot::before {
+    background-size: 90px 90px;
   }
   
   .pokemon-slot {

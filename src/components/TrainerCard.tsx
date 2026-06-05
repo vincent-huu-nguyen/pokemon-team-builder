@@ -484,8 +484,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             // Ensure the sprite maintains its aspect ratio
             trainerSpriteImg.style.width = 'auto';
             trainerSpriteImg.style.height = 'auto';
-            trainerSpriteImg.style.maxWidth = '140px';
-            trainerSpriteImg.style.maxHeight = '140px';
+            trainerSpriteImg.style.maxWidth = '215px';
+            trainerSpriteImg.style.maxHeight = '215px';
           } catch (error) {
             console.error('Error converting trainer sprite:', error);
           }
