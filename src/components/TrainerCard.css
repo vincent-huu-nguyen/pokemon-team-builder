@@ -232,8 +232,8 @@
 }
 
 .trainer-card:not(.party-mode):not(.list-mode) {
-  width: 560px;
-  height: 996px; /* 9:16 aspect ratio (560 * 16/9 = 996) */
+  width: 500px;
+  height: 889px; /* 9:16 aspect ratio (500 * 16/9 = 889) */
   padding: 3rem;
 }
 
@@ -562,7 +562,7 @@
 }
 
 .trainer-card:not(.party-mode):not(.list-mode) .trainer-name-display h2 {
-  margin-top: 2.0rem;
+  margin-top: 1.0rem;
 }
 
 .edit-name-btn {
@@ -706,7 +706,7 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 3rem;
+  margin-top: 1rem;
 }
 
 .trainer-card:not(.party-mode):not(.list-mode) .empty-slot {
@@ -717,7 +717,7 @@
 
 .trainer-card:not(.party-mode):not(.list-mode) .pokemon-item::before {
   background-size: 110px 110px;
-  background-position: center 80%;
+  background-position: center 70%;
 }
 
 .trainer-card:not(.party-mode):not(.list-mode) .empty-slot::before {
@@ -797,8 +797,8 @@
   }
 
   .trainer-card:not(.party-mode):not(.list-mode) {
-    width: 440px;
-    height: 782px; /* 9:16 aspect ratio (440 * 16/9 = 782) */
+    width: 380px;
+    height: 676px; /* 9:16 aspect ratio (380 * 16/9 = 676) */
     padding: 1.5rem;
   }
   
