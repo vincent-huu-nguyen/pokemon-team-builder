@@ -190,3 +190,26 @@ export function parsePokemonNamesFromText(text: string): string[] {
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 }
+
+export type PokemonListSortMode = 'pokedex' | 'alphabetical';
+
+export function sortPokemonForList(
+  pokemon: Pokemon[],
+  mode: PokemonListSortMode
+): Pokemon[] {
+  const copy = [...pokemon];
+  if (mode === 'alphabetical') {
+    copy.sort((a, b) => {
+      const byName = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      return byName !== 0 ? byName : a.id - b.id;
+    });
+    return copy;
+  }
+  copy.sort((a, b) => {
+    const da = a.dexNumber ?? a.id;
+    const db = b.dexNumber ?? b.id;
+    if (da !== db) return da - db;
+    return a.id - b.id;
+  });
+  return copy;
+}

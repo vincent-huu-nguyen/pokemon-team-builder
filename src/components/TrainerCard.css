@@ -278,6 +278,31 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+.pokemon-list-sort-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+}
+
+.pokemon-list-sort-label {
+  font-weight: 600;
+}
+
+.pokemon-list-sort-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.pokemon-list-sort-toggle input[type="radio"] {
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
 .pokemon-list-bulk-label {
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.8rem;

@@ -6,6 +6,8 @@ import {
   POKEMON_LIST_PAGE_SIZE,
   parsePokemonNamesFromText,
   fetchPokemonByNameForList,
+  sortPokemonForList,
+  PokemonListSortMode,
 } from '../utils/pokemonPokeApi';
 import './TrainerCard.css';
 import { useState } from 'react';
@@ -94,6 +96,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [listBulkText, setListBulkText] = useState('');
   const [listBulkError, setListBulkError] = useState('');
   const [listBulkLoading, setListBulkLoading] = useState(false);
+  const [listSortMode, setListSortMode] = useState<PokemonListSortMode>('pokedex');
+  const prevListSortModeRef = useRef<PokemonListSortMode>('pokedex');
 
   const cardSurfaceStyle = useMemo(
     () =>
@@ -138,13 +142,10 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           (r): r is { ok: true; order: number; pokemon: Pokemon; raw: string } => r.ok
         )
         .map((r) => r);
-      ok.sort((a, b) => {
-        const da = a.pokemon.dexNumber ?? a.pokemon.id;
-        const db = b.pokemon.dexNumber ?? b.pokemon.id;
-        if (da !== db) return da - db;
-        return a.order - b.order;
-      });
-      const sorted = ok.map((x) => x.pokemon);
+      const sorted = sortPokemonForList(
+        ok.map((x) => x.pokemon),
+        listSortMode
+      );
       setPokemonSizes({});
       setPokemonPositions([]);
       setSelectionHistory([]);
@@ -162,7 +163,21 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     } finally {
       setListBulkLoading(false);
     }
-  }, [listBulkText, replaceSelectedPokemon]);
+  }, [listBulkText, listSortMode, replaceSelectedPokemon]);
+
+  useEffect(() => {
+    if (layoutMode !== 'list' || selectedPokemon.length === 0) return;
+
+    const sortModeChanged = prevListSortModeRef.current !== listSortMode;
+    prevListSortModeRef.current = listSortMode;
+    const shouldSort = listSortMode === 'alphabetical' || sortModeChanged;
+    if (!shouldSort) return;
+
+    const sorted = sortPokemonForList(selectedPokemon, listSortMode);
+    if (sorted.some((pokemon, index) => pokemon !== selectedPokemon[index])) {
+      replaceSelectedPokemon(sorted);
+    }
+  }, [selectedPokemon, layoutMode, listSortMode, replaceSelectedPokemon]);
 
   // Function to update page background to match card colors
   const updatePageBackground = useCallback(() => {
@@ -1043,9 +1058,36 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             )}
           </div>
           <div className="pokemon-list-bulk-panel">
+            <div className="pokemon-list-sort-toggle">
+              <span className="pokemon-list-sort-label">Sort order:</span>
+              <label>
+                <input
+                  type="radio"
+                  name="list-sort"
+                  value="pokedex"
+                  checked={listSortMode === 'pokedex'}
+                  onChange={() => setListSortMode('pokedex')}
+                />
+                Pokédex
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="list-sort"
+                  value="alphabetical"
+                  checked={listSortMode === 'alphabetical'}
+                  onChange={() => setListSortMode('alphabetical')}
+                />
+                A–Z
+              </label>
+            </div>
             <label className="pokemon-list-bulk-label" htmlFor="pokemon-list-bulk-text">
               Paste or type Pokémon names (separate with commas, new lines, or semicolons). They
-              are applied in National Pokédex order.
+              are applied in{' '}
+              {listSortMode === 'alphabetical'
+                ? 'alphabetical order'
+                : 'National Pokédex order'}
+              .
             </label>
             <textarea
               id="pokemon-list-bulk-text"
@@ -1065,7 +1107,11 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               onClick={applyListBulkFromText}
               disabled={listBulkLoading}
             >
-              {listBulkLoading ? 'Loading…' : 'Apply & sort by Pokédex'}
+              {listBulkLoading
+                ? 'Loading…'
+                : listSortMode === 'alphabetical'
+                  ? 'Apply & sort A–Z'
+                  : 'Apply & sort by Pokédex'}
             </button>
             {listBulkError ? (
               <p className="pokemon-list-bulk-error" role="alert">
