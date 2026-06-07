@@ -106,6 +106,153 @@ import trainerVeteranM from './assets/PKMSprites/Trainer_VeteranM.png';
 import trainerWally from './assets/PKMSprites/Trainer_Wally.png';
 import trainerYellow from './assets/PKMSprites/Trainer_Yellow.png';
 import trainerYoungster from './assets/PKMSprites/Trainer_Youngster.png';
+import trainerAceF6 from './assets/PKMSprites/Trainer_AceF6.png';
+import trainerAceF6xy from './assets/PKMSprites/Trainer_AceF6xy.png';
+import trainerAceF7 from './assets/PKMSprites/Trainer_AceF7.png';
+import trainerAceM6 from './assets/PKMSprites/Trainer_AceM6.png';
+import trainerAceM6xy from './assets/PKMSprites/Trainer_AceM6xy.png';
+import trainerAceM7 from './assets/PKMSprites/Trainer_AceM7.png';
+import trainerAetherfoundation from './assets/PKMSprites/Trainer_Aetherfoundation.png';
+import trainerAetherfoundationf from './assets/PKMSprites/Trainer_Aetherfoundationf.png';
+import trainerAlder from './assets/PKMSprites/Trainer_Alder.png';
+import trainerAllister from './assets/PKMSprites/Trainer_Allister.png';
+import trainerAnabel from './assets/PKMSprites/Trainer_Anabel.png';
+import trainerAquagruntRse from './assets/PKMSprites/Trainer_Aquagrunt-rse.png';
+import trainerAquagrunt from './assets/PKMSprites/Trainer_Aquagrunt.png';
+import trainerAquagruntfRse from './assets/PKMSprites/Trainer_Aquagruntf-rse.png';
+import trainerAquagruntf from './assets/PKMSprites/Trainer_Aquagruntf.png';
+import trainerArchie from './assets/PKMSprites/Trainer_Archie.png';
+import trainerAz from './assets/PKMSprites/Trainer_Az.png';
+import trainerBackpackerGen6 from './assets/PKMSprites/Trainer_Backpacker-gen6.png';
+import trainerBackpackerGen8 from './assets/PKMSprites/Trainer_Backpacker-gen8.png';
+import trainerBackpacker from './assets/PKMSprites/Trainer_Backpacker.png';
+import trainerBackpackerf from './assets/PKMSprites/Trainer_Backpackerf.png';
+import trainerBallguy from './assets/PKMSprites/Trainer_Ballguy.png';
+import trainerBea from './assets/PKMSprites/Trainer_Bea.png';
+import trainerBeautyGen6 from './assets/PKMSprites/Trainer_Beauty-gen6.png';
+import trainerBeautyGen6xy from './assets/PKMSprites/Trainer_Beauty-gen6xy.png';
+import trainerBeautyMasters from './assets/PKMSprites/Trainer_Beauty-masters.png';
+import trainerBirch from './assets/PKMSprites/Trainer_Birch.png';
+import trainerBlackbeltGen9 from './assets/PKMSprites/Trainer_Blackbelt-gen9.png';
+import trainerBrock from './assets/PKMSprites/Trainer_Brock.png';
+import trainerBruno from './assets/PKMSprites/Trainer_Bruno.png';
+import trainerCaitlin from './assets/PKMSprites/Trainer_Caitlin.png';
+import trainerCynthiaGen4 from './assets/PKMSprites/Trainer_Cynthia-gen4.png';
+import trainerCynthia from './assets/PKMSprites/Trainer_Cynthia.png';
+import trainerCyrus from './assets/PKMSprites/Trainer_Cyrus.png';
+import trainerDancerGen7 from './assets/PKMSprites/Trainer_Dancer-gen7.png';
+import trainerDancerGen8 from './assets/PKMSprites/Trainer_Dancer-gen8.png';
+import trainerDelinquent from './assets/PKMSprites/Trainer_Delinquent.png';
+import trainerDiantha from './assets/PKMSprites/Trainer_Diantha.png';
+import trainerDrayton from './assets/PKMSprites/Trainer_Drayton.png';
+import trainerElesaGen5bw2 from './assets/PKMSprites/Trainer_Elesa-gen5bw2.png';
+import trainerElesa from './assets/PKMSprites/Trainer_Elesa.png';
+import trainerElm from './assets/PKMSprites/Trainer_Elm.png';
+import trainerEmma from './assets/PKMSprites/Trainer_Emma.png';
+import trainerFairyGirl from './assets/PKMSprites/Trainer_FairyGirl.png';
+import trainerFirefighter from './assets/PKMSprites/Trainer_Firefighter.png';
+import trainerFlannery from './assets/PKMSprites/Trainer_Flannery.png';
+import trainerFlareF from './assets/PKMSprites/Trainer_FlareF.png';
+import trainerFlareM from './assets/PKMSprites/Trainer_FlareM.png';
+import trainerGalacticgrunt from './assets/PKMSprites/Trainer_Galacticgrunt.png';
+import trainerGalacticgruntf from './assets/PKMSprites/Trainer_Galacticgruntf.png';
+import trainerGardenia from './assets/PKMSprites/Trainer_Gardenia.png';
+import trainerGeeta from './assets/PKMSprites/Trainer_Geeta.png';
+import trainerGentleman from './assets/PKMSprites/Trainer_Gentleman.png';
+import trainerGhetsis from './assets/PKMSprites/Trainer_Ghetsis.png';
+import trainerGhetsis2 from './assets/PKMSprites/Trainer_Ghetsis2.png';
+import trainerGiovanni from './assets/PKMSprites/Trainer_Giovanni.png';
+import trainerGiovanni2 from './assets/PKMSprites/Trainer_Giovanni2.png';
+import trainerGladion from './assets/PKMSprites/Trainer_Gladion.png';
+import trainerGrimsley from './assets/PKMSprites/Trainer_Grimsley.png';
+import trainerGuitar from './assets/PKMSprites/Trainer_Guitar.png';
+import trainerGuzma from './assets/PKMSprites/Trainer_Guzma.png';
+import trainerGwynn from './assets/PKMSprites/Trainer_Gwynn.png';
+import trainerHexManiac from './assets/PKMSprites/Trainer_HexManiac.png';
+import trainerIono from './assets/PKMSprites/Trainer_Iono.png';
+import trainerIrida from './assets/PKMSprites/Trainer_Irida.png';
+import trainerIris from './assets/PKMSprites/Trainer_Iris.png';
+import trainerJacinthe from './assets/PKMSprites/Trainer_Jacinthe.png';
+import trainerJuniper from './assets/PKMSprites/Trainer_Juniper.png';
+import trainerKamado from './assets/PKMSprites/Trainer_Kamado.png';
+import trainerKaren from './assets/PKMSprites/Trainer_Karen.png';
+import trainerKindler from './assets/PKMSprites/Trainer_Kindler.png';
+import trainerKoga from './assets/PKMSprites/Trainer_Koga.png';
+import trainerKoga2 from './assets/PKMSprites/Trainer_Koga2.png';
+import trainerKukui from './assets/PKMSprites/Trainer_Kukui.png';
+import trainerLacey from './assets/PKMSprites/Trainer_Lacey.png';
+import trainerLance from './assets/PKMSprites/Trainer_Lance.png';
+import trainerLarry from './assets/PKMSprites/Trainer_Larry.png';
+import trainerLass2 from './assets/PKMSprites/Trainer_Lass2.png';
+import trainerLass3 from './assets/PKMSprites/Trainer_Lass3.png';
+import trainerLass4 from './assets/PKMSprites/Trainer_Lass4.png';
+import trainerLaventon from './assets/PKMSprites/Trainer_Laventon.png';
+import trainerLeaguestaff from './assets/PKMSprites/Trainer_Leaguestaff.png';
+import trainerLeaguestaffF from './assets/PKMSprites/Trainer_LeaguestaffF.png';
+import trainerLeon from './assets/PKMSprites/Trainer_Leon.png';
+import trainerLeonTower from './assets/PKMSprites/Trainer_LeonTower.png';
+import trainerLida from './assets/PKMSprites/Trainer_Lida.png';
+import trainerLtsurge from './assets/PKMSprites/Trainer_Ltsurge.png';
+import trainerLysandre from './assets/PKMSprites/Trainer_Lysandre.png';
+import trainerMable from './assets/PKMSprites/Trainer_Mable.png';
+import trainerMagma from './assets/PKMSprites/Trainer_Magma.png';
+import trainerMagmaF from './assets/PKMSprites/Trainer_MagmaF.png';
+import trainerMagmagruntRse from './assets/PKMSprites/Trainer_Magmagrunt-rse.png';
+import trainerMagmagruntfRse from './assets/PKMSprites/Trainer_Magmagruntf-rse.png';
+import trainerMarley from './assets/PKMSprites/Trainer_Marley.png';
+import trainerMaxie from './assets/PKMSprites/Trainer_Maxie.png';
+import trainerMela from './assets/PKMSprites/Trainer_Mela.png';
+import trainerMelony from './assets/PKMSprites/Trainer_Melony.png';
+import trainerMilo from './assets/PKMSprites/Trainer_Milo.png';
+import trainerMisty from './assets/PKMSprites/Trainer_Misty.png';
+import trainerMorty from './assets/PKMSprites/Trainer_Morty.png';
+import trainerNaveen from './assets/PKMSprites/Trainer_Naveen.png';
+import trainerNessa from './assets/PKMSprites/Trainer_Nessa.png';
+import trainerNinjaboy from './assets/PKMSprites/Trainer_Ninjaboy.png';
+import trainerOak from './assets/PKMSprites/Trainer_Oak.png';
+import trainerOlympia from './assets/PKMSprites/Trainer_Olympia.png';
+import trainerPlasmagrunt from './assets/PKMSprites/Trainer_Plasmagrunt.png';
+import trainerPlasmagrunt2 from './assets/PKMSprites/Trainer_Plasmagrunt2.png';
+import trainerPlasmagruntf from './assets/PKMSprites/Trainer_Plasmagruntf.png';
+import trainerPlasmagruntf2 from './assets/PKMSprites/Trainer_Plasmagruntf2.png';
+import trainerPokemonrangerGen6 from './assets/PKMSprites/Trainer_Pokemonranger-gen6.png';
+import trainerPokemonrangerGen6xy from './assets/PKMSprites/Trainer_Pokemonranger-gen6xy.png';
+import trainerPokemonrangerfGen6 from './assets/PKMSprites/Trainer_Pokemonrangerf-gen6.png';
+import trainerPokemonrangerfGen6xy from './assets/PKMSprites/Trainer_Pokemonrangerf-gen6xy.png';
+import trainerRaihan from './assets/PKMSprites/Trainer_Raihan.png';
+import trainerRika from './assets/PKMSprites/Trainer_Rika.png';
+import trainerRowan from './assets/PKMSprites/Trainer_Rowan.png';
+import trainerSabrina from './assets/PKMSprites/Trainer_Sabrina.png';
+import trainerSada from './assets/PKMSprites/Trainer_Sada.png';
+import trainerSailor from './assets/PKMSprites/Trainer_Sailor.png';
+import trainerSchoolkid from './assets/PKMSprites/Trainer_Schoolkid.png';
+import trainerSchoolkidF from './assets/PKMSprites/Trainer_SchoolkidF.png';
+import trainerSkytrainer from './assets/PKMSprites/Trainer_Skytrainer.png';
+import trainerSkytrainerf from './assets/PKMSprites/Trainer_Skytrainerf.png';
+import trainerSonia from './assets/PKMSprites/Trainer_Sonia.png';
+import trainerStargruntS from './assets/PKMSprites/Trainer_Stargrunt-s.png';
+import trainerStargruntV from './assets/PKMSprites/Trainer_Stargrunt-v.png';
+import trainerStargruntfS from './assets/PKMSprites/Trainer_Stargruntf-s.png';
+import trainerStargruntfV from './assets/PKMSprites/Trainer_Stargruntf-v.png';
+import trainerSteven from './assets/PKMSprites/Trainer_Steven.png';
+import trainerSwimmerGen6 from './assets/PKMSprites/Trainer_Swimmer-gen6.png';
+import trainerSwimmerGen7 from './assets/PKMSprites/Trainer_Swimmer-gen7.png';
+import trainerSwimmerfGen6 from './assets/PKMSprites/Trainer_Swimmerf-gen6.png';
+import trainerSwimmerfGen7 from './assets/PKMSprites/Trainer_Swimmerf-gen7.png';
+import trainerSycamore from './assets/PKMSprites/Trainer_Sycamore.png';
+import trainerTourist from './assets/PKMSprites/Trainer_Tourist.png';
+import trainerTouristf from './assets/PKMSprites/Trainer_Touristf.png';
+import trainerTuro from './assets/PKMSprites/Trainer_Turo.png';
+import trainerVeteranGen7 from './assets/PKMSprites/Trainer_Veteran-gen7.png';
+import trainerVeteranfGen7 from './assets/PKMSprites/Trainer_Veteranf-gen7.png';
+import trainerVolkner from './assets/PKMSprites/Trainer_Volkner.png';
+import trainerVoloGinkgo from './assets/PKMSprites/Trainer_Volo-ginkgo.png';
+import trainerVolo from './assets/PKMSprites/Trainer_Volo.png';
+import trainerWaitress from './assets/PKMSprites/Trainer_Waitress.png';
+import trainerWallace from './assets/PKMSprites/Trainer_Wallace.png';
+import trainerWorker from './assets/PKMSprites/Trainer_Worker.png';
+import trainerWorkerF from './assets/PKMSprites/Trainer_WorkerF.png';
+import trainerZinnia from './assets/PKMSprites/Trainer_Zinnia.png';
 import pokeball from './assets/PKMSprites/pokeball.png';
 import pancham from './assets/PKMSprites/Pancham.png';
 
@@ -124,8 +271,8 @@ function App() {
     { name: 'Red', src: trainerRed },
     { name: 'Leaf', src: trainerLeaf },
     { name: 'Blue', src: trainerBlue },
+    { name: 'Yellow', src: trainerYellow },
     { name: 'Ethan', src: trainerEthan },
-    { name: 'Silver', src: trainerSilver },
     { name: 'Kris', src: trainerKris },
     { name: 'Lyra', src: trainerLyra },
     { name: 'Brendan', src: trainerBrendan },
@@ -178,54 +325,206 @@ function App() {
     //{ name: 'Axel', src: trainerAxel },
     //{ name: 'Kaz', src: trainerKaz },
     // NPC / Trainer class sprites
-    { name: 'Ace (F)', src: trainerAceF },
-    { name: 'Ace (M)', src: trainerAceM },
-    { name: 'Arven', src: trainerArven },
+    // Rival sprites
+    { name: 'Silver', src: trainerSilver },
+    { name: 'Wally', src: trainerWally },
     { name: 'Barry', src: trainerBarry },
-    { name: 'Bede', src: trainerBede },
-    { name: 'Bianca', src: trainerBianca },
-    { name: 'Breeder (F)', src: trainerBreederF },
-    { name: 'Breeder (M)', src: trainerBreederM },
-    { name: 'Burglar', src: trainerBurglar },
-    { name: 'Carmine', src: trainerCarmine },
     { name: 'Cheren', src: trainerCheren },
-    { name: 'Doctor', src: trainerDoctor },
-    { name: 'Fisher', src: trainerFisher },
-    { name: 'Hiker', src: trainerHiker },
-    { name: 'Hop', src: trainerHop },
+    { name: 'Bianca', src: trainerBianca },
+    { name: 'N', src: trainerN },
     { name: 'Hugh', src: trainerHugh },
-    { name: 'Kieran', src: trainerKieran },
-    { name: 'Kieran (Unbound)', src: trainerKieran2 },
-    { name: 'Lady', src: trainerLady },
-    { name: 'Lass', src: trainerLass },
+    { name: 'Gladion', src: trainerGladion },
     { name: 'Lillie', src: trainerLillie },
     { name: 'Lillie (Hatless)', src: trainerLillie2 },
+    { name: 'Hop', src: trainerHop },
+    { name: 'Bede', src: trainerBede },
     { name: 'Marnie', src: trainerMarnie },
-    { name: 'N', src: trainerN },
     { name: 'Nemona', src: trainerNemona },
-    { name: 'Office Worker (F)', src: trainerOfficeWorkerF },
-    { name: 'Office Worker (M)', src: trainerOfficeWorkerM },
-    { name: 'Poké Fan (F)', src: trainerPokeFanF },
-    { name: 'Poké Fan (M)', src: trainerPokeFanM },
-    { name: 'Psychic (F)', src: trainerPsychicF },
-    { name: 'Psychic (M)', src: trainerPsychicM },
-    { name: 'Rancher', src: trainerRancher },
-    { name: 'Ranger (F)', src: trainerRangerF },
-    { name: 'Ranger (M)', src: trainerRangerM },
-    { name: 'Team Rocket (F)', src: trainerRocketF },
-    { name: 'Team Rocket (M)', src: trainerRocketM },
-    { name: 'Roughneck', src: trainerRoughNeck },
-    { name: 'Scientist', src: trainerScientist },
-    { name: 'Shadow Triad', src: trainerShadowTriad },
-    { name: 'Sightseer', src: trainerSightseer },
-    { name: 'Skull Grunt (F)', src: trainerSkullGruntF },
-    { name: 'Skull Grunt (M)', src: trainerSkullGruntM },
+    { name: 'Arven', src: trainerArven },
+    { name: 'Carmine', src: trainerCarmine },
+    { name: 'Kieran', src: trainerKieran },
+    { name: 'Kieran (Unbound)', src: trainerKieran2 },
     { name: 'Taunie', src: trainerTaunie },
     { name: 'Urbain', src: trainerUrbain },
-    { name: 'Veteran (F)', src: trainerVeteranF },
+    { name: 'Lida', src: trainerLida },
+    { name: 'Naveen', src: trainerNaveen },
+    // Professor sprites
+    { name: 'Professor Oak', src: trainerOak },
+    { name: 'Professor Elm', src: trainerElm },
+    { name: 'Professor Birch', src: trainerBirch },
+    { name: 'Professor Rowan', src: trainerRowan },
+    { name: 'Professor Juniper', src: trainerJuniper },
+    { name: 'Professor Sycamore', src: trainerSycamore },
+    { name: 'Professor Kukui', src: trainerKukui },
+    { name: 'Professor Sonia', src: trainerSonia },
+    { name: 'Laventon', src: trainerLaventon },
+    { name: 'Sada', src: trainerSada },
+    { name: 'Turo', src: trainerTuro },
+    { name: 'Mable', src: trainerMable },
+    // Gym Leaders sprites
+    { name: 'Brock', src: trainerBrock },
+    { name: 'Misty', src: trainerMisty },
+    { name: 'Lt. Surge', src: trainerLtsurge },
+    { name: 'Sabrina', src: trainerSabrina },
+    { name: 'Koga', src: trainerKoga },
+    { name: 'Koga (2)', src: trainerKoga2 },
+    { name: 'Morty', src: trainerMorty },
+    { name: 'Karen', src: trainerKaren },
+    { name: 'Bruno', src: trainerBruno },
+    { name: 'Lance', src: trainerLance },
+    { name: 'Flannery', src: trainerFlannery },
+    { name: 'Steven', src: trainerSteven },
+    { name: 'Wallace', src: trainerWallace },
+    { name: 'Zinnia', src: trainerZinnia },
+    { name: 'Gardenia', src: trainerGardenia },
+    { name: 'Volkner', src: trainerVolkner },
+    { name: 'Cynthia Gen 4', src: trainerCynthiaGen4 },
+    { name: 'Cynthia', src: trainerCynthia },
+    { name: 'Marley', src: trainerMarley },
+    { name: 'Elesa BW2', src: trainerElesaGen5bw2 },
+    { name: 'Elesa', src: trainerElesa },
+    { name: 'Grimsley', src: trainerGrimsley },
+    { name: 'Caitlin', src: trainerCaitlin },
+    { name: 'Alder', src: trainerAlder },
+    { name: 'Iris', src: trainerIris },
+    { name: 'Olympia', src: trainerOlympia },
+    { name: 'Diantha', src: trainerDiantha },
+    { name: 'Az', src: trainerAz },
+    { name: 'Anabel', src: trainerAnabel },
+    { name: 'Milo', src: trainerMilo },
+    { name: 'Melony', src: trainerMelony },
+    { name: 'Nessa', src: trainerNessa },
+    { name: 'Bea', src: trainerBea },
+    { name: 'Allister', src: trainerAllister },
+    { name: 'Raihan', src: trainerRaihan },
+    { name: 'Leon', src: trainerLeon },
+    { name: 'Leon (Tower)', src: trainerLeonTower },
+    { name: 'Ballguy', src: trainerBallguy },
+    { name: 'Kamado', src: trainerKamado },
+    { name: 'Irida', src: trainerIrida },
+    { name: 'Volo (Ginkgo)', src: trainerVoloGinkgo },
+    { name: 'Volo', src: trainerVolo },
+    { name: 'Iono', src: trainerIono },
+    { name: 'Larry', src: trainerLarry },
+    { name: 'Rika', src: trainerRika },
+    { name: 'Geeta', src: trainerGeeta },
+    { name: 'Mela', src: trainerMela },
+    { name: 'Lacey', src: trainerLacey },
+    { name: 'Drayton', src: trainerDrayton },
+    { name: 'Gwynn', src: trainerGwynn },
+    { name: 'Jacinthe', src: trainerJacinthe },
+    { name: 'Emma', src: trainerEmma },
+    // Villain sprites
+    { name: 'Team Rocket (M)', src: trainerRocketM },
+    { name: 'Team Rocket (F)', src: trainerRocketF },
+    { name: 'Giovanni', src: trainerGiovanni },
+    { name: 'Giovanni (2)', src: trainerGiovanni2 },
+    { name: 'Magma Grunt', src: trainerMagma },
+    { name: 'Magma Grunt (F)', src: trainerMagmaF },
+    { name: 'Magma Grunt RSE', src: trainerMagmagruntRse },
+    { name: 'Magma Grunt (F) RSE', src: trainerMagmagruntfRse },
+    { name: 'Maxie', src: trainerMaxie },
+    { name: 'Aqua Grunt RSE', src: trainerAquagruntRse },
+    { name: 'Aqua Grunt', src: trainerAquagrunt },
+    { name: 'Aqua Grunt (F) RSE', src: trainerAquagruntfRse },
+    { name: 'Aqua Grunt (F)', src: trainerAquagruntf },
+    { name: 'Archie', src: trainerArchie },
+    { name: 'Galactic Grunt', src: trainerGalacticgrunt },
+    { name: 'Galactic Grunt (F)', src: trainerGalacticgruntf },
+    { name: 'Cyrus', src: trainerCyrus },
+    { name: 'Plasma Grunt', src: trainerPlasmagrunt },
+    { name: 'Plasma Grunt 2', src: trainerPlasmagrunt2 },
+    { name: 'Plasma Grunt (F)', src: trainerPlasmagruntf },
+    { name: 'Plasma Grunt (F) 2', src: trainerPlasmagruntf2 },
+    { name: 'Shadow Triad', src: trainerShadowTriad },
+    { name: 'Ghetsis', src: trainerGhetsis },
+    { name: 'Ghetsis (2)', src: trainerGhetsis2 },
+    { name: 'Flare Grunt (M)', src: trainerFlareM },
+    { name: 'Flare Grunt (F)', src: trainerFlareF },
+    { name: 'Lysandre', src: trainerLysandre },
+    { name: 'Skull Grunt (M)', src: trainerSkullGruntM },
+    { name: 'Skull Grunt (F)', src: trainerSkullGruntF },
+    { name: 'Guzma', src: trainerGuzma },
+    { name: 'Aether Foundation', src: trainerAetherfoundation },
+    { name: 'Aether Foundation (F)', src: trainerAetherfoundationf },
+    { name: 'League Staff', src: trainerLeaguestaff },
+    { name: 'League Staff (F)', src: trainerLeaguestaffF },
+    { name: 'Star Grunt (S)', src: trainerStargruntS },
+    { name: 'Star Grunt (V)', src: trainerStargruntV },
+    { name: 'Star Grunt (F) S', src: trainerStargruntfS },
+    { name: 'Star Grunt (F) V', src: trainerStargruntfV },
+    // NPC sprites (grouped by type; male / non-F before F)
+    { name: 'Ace (M)', src: trainerAceM },
+    { name: 'Ace (F)', src: trainerAceF },
+    { name: 'Ace (M) Gen 6', src: trainerAceM6 },
+    { name: 'Ace (F) Gen 6', src: trainerAceF6 },
+    { name: 'Ace (M) Gen 6 XY', src: trainerAceM6xy },
+    { name: 'Ace (F) Gen 6 XY', src: trainerAceF6xy },
+    { name: 'Ace (M) Gen 7', src: trainerAceM7 },
+    { name: 'Ace (F) Gen 7', src: trainerAceF7 },
+    { name: 'Backpacker', src: trainerBackpacker },
+    { name: 'Backpacker (F)', src: trainerBackpackerf },
+    { name: 'Backpacker Gen 6', src: trainerBackpackerGen6 },
+    { name: 'Backpacker Gen 8', src: trainerBackpackerGen8 },
+    { name: 'Beauty Gen 6', src: trainerBeautyGen6 },
+    { name: 'Beauty Gen 6 XY', src: trainerBeautyGen6xy },
+    { name: 'Beauty Masters', src: trainerBeautyMasters },
+    { name: 'Blackbelt Gen 9', src: trainerBlackbeltGen9 },
+    { name: 'Breeder (M)', src: trainerBreederM },
+    { name: 'Breeder (F)', src: trainerBreederF },
+    { name: 'Dancer Gen 7', src: trainerDancerGen7 },
+    { name: 'Dancer Gen 8', src: trainerDancerGen8 },
+    { name: 'Roughneck', src: trainerRoughNeck },
+    { name: 'Delinquent', src: trainerDelinquent },
+    { name: 'Doctor', src: trainerDoctor },
+    { name: 'Burglar', src: trainerBurglar },
+    { name: 'Fairy Girl', src: trainerFairyGirl },
+    { name: 'Firefighter', src: trainerFirefighter },
+    { name: 'Fisher', src: trainerFisher },
+    { name: 'Gentleman', src: trainerGentleman },
+    { name: 'Guitar', src: trainerGuitar },
+    { name: 'Hex Maniac', src: trainerHexManiac },
+    { name: 'Hiker', src: trainerHiker },
+    { name: 'Kindler', src: trainerKindler },
+    { name: 'Lady', src: trainerLady },
+    { name: 'Lass', src: trainerLass },
+    { name: 'Lass 2', src: trainerLass2 },
+    { name: 'Lass 3', src: trainerLass3 },
+    { name: 'Lass 4', src: trainerLass4 },
+    { name: 'Ninja Boy', src: trainerNinjaboy },
+    { name: 'Office Worker (M)', src: trainerOfficeWorkerM },
+    { name: 'Office Worker (F)', src: trainerOfficeWorkerF },
+    { name: 'Poké Fan (M)', src: trainerPokeFanM },
+    { name: 'Poké Fan (F)', src: trainerPokeFanF },
+    { name: 'Pokémon Ranger Gen 6', src: trainerPokemonrangerGen6 },
+    { name: 'Pokémon Ranger Gen 6 XY', src: trainerPokemonrangerGen6xy },
+    { name: 'Pokémon Ranger (F) Gen 6', src: trainerPokemonrangerfGen6 },
+    { name: 'Pokémon Ranger (F) Gen 6 XY', src: trainerPokemonrangerfGen6xy },
+    { name: 'Psychic (M)', src: trainerPsychicM },
+    { name: 'Psychic (F)', src: trainerPsychicF },
+    { name: 'Rancher', src: trainerRancher },
+    { name: 'Ranger (M)', src: trainerRangerM },
+    { name: 'Ranger (F)', src: trainerRangerF },
+    { name: 'Sailor', src: trainerSailor },
+    { name: 'Schoolkid', src: trainerSchoolkid },
+    { name: 'Schoolkid (F)', src: trainerSchoolkidF },
+    { name: 'Scientist', src: trainerScientist },
+    { name: 'Sightseer', src: trainerSightseer },
+    { name: 'Sky Trainer', src: trainerSkytrainer },
+    { name: 'Sky Trainer (F)', src: trainerSkytrainerf },
+    { name: 'Swimmer Gen 6', src: trainerSwimmerGen6 },
+    { name: 'Swimmer Gen 7', src: trainerSwimmerGen7 },
+    { name: 'Swimmer (F) Gen 6', src: trainerSwimmerfGen6 },
+    { name: 'Swimmer (F) Gen 7', src: trainerSwimmerfGen7 },
+    { name: 'Tourist', src: trainerTourist },
+    { name: 'Tourist (F)', src: trainerTouristf },
     { name: 'Veteran (M)', src: trainerVeteranM },
-    { name: 'Wally', src: trainerWally },
-    { name: 'Yellow', src: trainerYellow },
+    { name: 'Veteran (F)', src: trainerVeteranF },
+    { name: 'Veteran Gen 7', src: trainerVeteranGen7 },
+    { name: 'Veteran (F) Gen 7', src: trainerVeteranfGen7 },
+    { name: 'Waitress', src: trainerWaitress },
+    { name: 'Worker', src: trainerWorker },
+    { name: 'Worker (F)', src: trainerWorkerF },
     { name: 'Youngster', src: trainerYoungster },
   ];
 
