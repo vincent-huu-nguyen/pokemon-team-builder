@@ -1598,18 +1598,22 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
           <div className="background-upload">
             <label>Background Image:</label>
             <div className="background-upload-container">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleBackgroundImageChange}
-                className="background-upload-input"
-                id="background-upload"
-              />
-              <label htmlFor="background-upload" className="background-upload-label">
-                {backgroundImage ? 'Change Background' : 'Upload Background'}
-              </label>
-              {backgroundImage && (
-                <button 
+              {!backgroundImage ? (
+                <>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBackgroundImageChange}
+                    className="background-upload-input"
+                    id="background-upload"
+                  />
+                  <label htmlFor="background-upload" className="background-upload-label">
+                    Upload Background
+                  </label>
+                </>
+              ) : (
+                <button
+                  type="button"
                   onClick={() => setBackgroundImage('')}
                   className="remove-background-btn"
                 >
