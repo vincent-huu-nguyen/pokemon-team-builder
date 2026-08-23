@@ -119,6 +119,16 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     [backgroundImage, isGradient, cardColor, gradientColor, pokeballImage]
   );
 
+  const isOfficialTrainerSprite = useMemo(
+    () => officialTrainerSprites.some((sprite) => sprite.src === trainerSprite),
+    [trainerSprite]
+  );
+
+  const openSpriteSelector = useCallback(() => {
+    setSpriteSelectorArtStyle(isOfficialTrainerSprite ? 'official' : 'pixel');
+    setShowSpriteSelector(true);
+  }, [isOfficialTrainerSprite]);
+
   const applyListBulkFromText = useCallback(async () => {
     setListBulkError('');
     const names = parsePokemonNamesFromText(listBulkText);
@@ -962,10 +972,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             )}
           </div>
           <button 
-            onClick={() => {
-              setSpriteSelectorArtStyle(artStyle);
-              setShowSpriteSelector(true);
-            }}
+            onClick={openSpriteSelector}
             className="sprite-change-btn"
           >
             Change Sprite
