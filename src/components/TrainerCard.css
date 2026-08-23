@@ -1125,6 +1125,26 @@
   transform: translateY(-1px);
 }
 
+.background-library-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-width: 120px;
+}
+
+.background-library-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
 .remove-background-btn {
   padding: 0.5rem 1rem;
   background: #ff4757;
@@ -1140,6 +1160,55 @@
 .remove-background-btn:hover {
   background: #ff3742;
   transform: translateY(-1px);
+}
+
+.background-library-modal {
+  max-width: 720px;
+}
+
+.background-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.background-library-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font: inherit;
+  text-align: center;
+}
+
+.background-library-option:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.background-library-option.selected {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.background-library-option img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.background-library-option span {
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
@@ -1198,6 +1267,51 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.sprite-selector-art-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.sprite-selector-art-toggle .art-style-buttons {
+  display: flex;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sprite-selector-art-toggle .art-style-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sprite-selector-art-toggle .art-style-btn:last-child {
+  border-right: none;
+}
+
+.sprite-selector-art-toggle .art-style-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.sprite-selector-art-toggle .art-style-btn.active {
+  background: rgba(255, 255, 255, 0.95);
+  color: #5a67d8;
+}
+
+.sprite-selector-art-toggle .art-style-btn.active:hover {
+  background: white;
+  color: #5a67d8;
 }
 
 .close-btn {
@@ -1318,6 +1432,11 @@
   
   .sprite-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .background-library-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 0.75rem;
   }
   

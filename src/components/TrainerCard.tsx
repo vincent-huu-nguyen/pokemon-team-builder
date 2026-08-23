@@ -12,6 +12,8 @@ import {
 import './TrainerCard.css';
 import { useState } from 'react';
 import trainerVincent from '../assets/PKMSprites/Trainer_Vincent.png';
+import { backgroundLibrary } from '../data/backgroundLibrary';
+import { officialTrainerSprites } from '../data/officialTrainerSprites';
 
 interface TrainerCardProps {
   trainerName: string;
@@ -68,6 +70,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [isEditingName, setIsEditingName] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showSpriteSelector, setShowSpriteSelector] = useState(false);
+  const [spriteSelectorArtStyle, setSpriteSelectorArtStyle] = useState<'pixel' | 'official'>('pixel');
   const [layoutMode, setLayoutMode] = useState<'card' | 'party' | 'list'>('card');
   const [pokemonSizes, setPokemonSizes] = useState<{ [key: number]: number }>({});
   const [selectedPokemonIndex, setSelectedPokemonIndex] = useState<number | null>(null);
@@ -87,6 +90,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [initialSize, setInitialSize] = useState(0);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [backgroundImage, setBackgroundImage] = useState<string>('');
+  const [showBackgroundLibrary, setShowBackgroundLibrary] = useState(false);
   const [showBubbles, setShowBubbles] = useState(true);
   const [syncPageBackground, setSyncPageBackground] = useState(true);
   const [showTrainerSprite, setShowTrainerSprite] = useState(true);
@@ -958,7 +962,10 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             )}
           </div>
           <button 
-            onClick={() => setShowSpriteSelector(true)}
+            onClick={() => {
+              setSpriteSelectorArtStyle(artStyle);
+              setShowSpriteSelector(true);
+            }}
             className="sprite-change-btn"
           >
             Change Sprite
@@ -1666,6 +1673,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                   Remove
                 </button>
               )}
+              {!backgroundImage && (
+                <button
+                  type="button"
+                  onClick={() => setShowBackgroundLibrary(true)}
+                  className="background-library-btn"
+                >
+                  Background Library
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1688,6 +1704,25 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               >
                 ×
               </button>
+            </div>
+
+            <div className="sprite-selector-art-toggle">
+              <div className="art-style-buttons">
+                <button
+                  type="button"
+                  className={`art-style-btn ${spriteSelectorArtStyle === 'pixel' ? 'active' : ''}`}
+                  onClick={() => setSpriteSelectorArtStyle('pixel')}
+                >
+                  Pixel Art
+                </button>
+                <button
+                  type="button"
+                  className={`art-style-btn ${spriteSelectorArtStyle === 'official' ? 'active' : ''}`}
+                  onClick={() => setSpriteSelectorArtStyle('official')}
+                >
+                  Official Art
+                </button>
+              </div>
             </div>
             
             <div className="sprite-grid">
@@ -1717,17 +1752,66 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 </label>
               </div>
 
-              {availableSprites.map((sprite, index) => (
-                <div 
-                  key={index}
-                  className={`sprite-option ${trainerSprite === sprite.src ? 'selected' : ''}`}
+              {(spriteSelectorArtStyle === 'pixel' ? availableSprites : officialTrainerSprites).map(
+                (sprite) => (
+                  <div
+                    key={sprite.src}
+                    className={`sprite-option ${trainerSprite === sprite.src ? 'selected' : ''}`}
+                    onClick={() => {
+                      onSpriteSelect(sprite.src);
+                      setShowSpriteSelector(false);
+                    }}
+                  >
+                    <img
+                      src={sprite.src}
+                      alt={sprite.name}
+                      className={spriteSelectorArtStyle === 'official' ? 'official-art' : 'pixel-art'}
+                    />
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Background Library Modal */}
+      {showBackgroundLibrary && (
+        <div
+          className="sprite-selector-overlay"
+          onClick={() => setShowBackgroundLibrary(false)}
+        >
+          <div
+            className="sprite-selector-modal background-library-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sprite-selector-header">
+              <h3>Choose a Background</h3>
+              <button
+                type="button"
+                onClick={() => setShowBackgroundLibrary(false)}
+                className="close-btn"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="background-library-grid">
+              {backgroundLibrary.map((bg) => (
+                <button
+                  type="button"
+                  key={bg.name}
+                  className={`background-library-option ${
+                    backgroundImage === bg.src ? 'selected' : ''
+                  }`}
                   onClick={() => {
-                    onSpriteSelect(sprite.src);
-                    setShowSpriteSelector(false);
+                    setBackgroundImage(bg.src);
+                    setShowBackgroundLibrary(false);
                   }}
                 >
-                  <img src={sprite.src} alt={sprite.name} />
-                </div>
+                  <img src={bg.src} alt={bg.name} />
+                  <span>{bg.name}</span>
+                </button>
               ))}
             </div>
           </div>
