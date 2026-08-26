@@ -554,7 +554,7 @@ function App() {
         <p className="credit">Created by Vincent Nguyen</p>
         <p className="discord-link">
           <a
-            href="https://discord.gg/mqrdZvBGw"
+            href="https://discord.gg/ZSrtfZzwVD"
             target="_blank"
             rel="noopener noreferrer"
           >
