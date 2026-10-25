@@ -45,6 +45,11 @@ function chunkPokemonListForDisplay<T>(items: T[], pageSize: number): T[][] {
   return out;
 }
 
+type PartyPointerTarget =
+  | { kind: 'pokemon'; index: number }
+  | { kind: 'trainer' }
+  | { kind: 'trainerName' };
+
 const TrainerCard: React.FC<TrainerCardProps> = ({
   trainerName,
   setTrainerName,
@@ -67,6 +72,14 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionBarRef = useRef<HTMLDivElement>(null);
   const listLayoutRef = useRef<HTMLDivElement>(null);
+  const pointerGestureRef = useRef<{
+    target: PartyPointerTarget;
+    wasSelected: boolean;
+    moved: boolean;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const suppressCanvasClickRef = useRef<{ target: PartyPointerTarget; until: number } | null>(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showSpriteSelector, setShowSpriteSelector] = useState(false);
@@ -580,7 +593,71 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     }
   };
 
+  const partyTargetWasSelected = (index?: number, type?: 'trainer' | 'trainerName') => {
+    if (index !== undefined) return selectedPokemonIndex === index;
+    if (type === 'trainer') return isTrainerSelected;
+    if (type === 'trainerName') return isTrainerNameSelected;
+    return false;
+  };
+
+  const beginPointerGesture = (clientX: number, clientY: number, index?: number, type?: 'trainer' | 'trainerName') => {
+    const target: PartyPointerTarget | null =
+      index !== undefined ? { kind: 'pokemon', index }
+      : type === 'trainer' ? { kind: 'trainer' }
+      : type === 'trainerName' ? { kind: 'trainerName' }
+      : null;
+
+    if (!target) {
+      pointerGestureRef.current = null;
+      return;
+    }
+
+    pointerGestureRef.current = {
+      target,
+      wasSelected: partyTargetWasSelected(index, type),
+      moved: false,
+      startX: clientX,
+      startY: clientY,
+    };
+  };
+
+  const notePointerMove = (clientX: number, clientY: number) => {
+    const gesture = pointerGestureRef.current;
+    if (!gesture || gesture.moved) return;
+    const dx = clientX - gesture.startX;
+    const dy = clientY - gesture.startY;
+    if (dx * dx + dy * dy > 16) {
+      gesture.moved = true;
+    }
+  };
+
+  const deselectPartyTarget = (target: PartyPointerTarget) => {
+    if (target.kind === 'pokemon') {
+      setSelectedPokemonIndex(null);
+    } else if (target.kind === 'trainer') {
+      setIsTrainerSelected(false);
+    } else {
+      setIsTrainerNameSelected(false);
+    }
+  };
+
+  const samePartyTarget = (a: PartyPointerTarget, b: PartyPointerTarget) => {
+    if (a.kind !== b.kind) return false;
+    if (a.kind === 'pokemon' && b.kind === 'pokemon') return a.index === b.index;
+    return true;
+  };
+
+  const shouldSuppressCanvasClick = (target: PartyPointerTarget) => {
+    const suppress = suppressCanvasClickRef.current;
+    if (!suppress || Date.now() > suppress.until || !samePartyTarget(suppress.target, target)) {
+      return false;
+    }
+    suppressCanvasClickRef.current = null;
+    return true;
+  };
+
   const handleMouseDown = (e: React.MouseEvent, index?: number, type?: 'trainer' | 'trainerName') => {
+    beginPointerGesture(e.clientX, e.clientY, index, type);
     setIsDragging(true);
     setDragStartTime(Date.now());
     
@@ -610,6 +687,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    notePointerMove(e.clientX, e.clientY);
     if (!isDragging) return;
     
     const cardRect = cardRef.current?.getBoundingClientRect();
@@ -649,15 +727,18 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     
     // Don't change selection if this is a pinch gesture (2 touches)
     if (e.touches.length === 2) {
+      if (pointerGestureRef.current) pointerGestureRef.current.moved = true;
       return;
     }
+
+    const touch = e.touches[0];
+    beginPointerGesture(touch.clientX, touch.clientY, index, type);
     
     setIsDragging(true);
     
     const cardRect = cardRef.current?.getBoundingClientRect();
     if (!cardRect) return;
     
-    const touch = e.touches[0];
     const touchX = ((touch.clientX - cardRect.left) / cardRect.width) * 100;
     const touchY = ((touch.clientY - cardRect.top) / cardRect.height) * 100;
     
@@ -682,7 +763,15 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     e.preventDefault(); // Prevent scrolling while dragging
+
+    if (e.touches.length === 1) {
+      notePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
     
+    if (e.touches.length >= 2 && pointerGestureRef.current) {
+      pointerGestureRef.current.moved = true;
+    }
+
     // Handle pinch gestures for resizing - only if something is selected
     if (e.touches.length === 2 && initialPinchDistance > 0 && (selectedPokemonIndex !== null || isTrainerSelected || isTrainerNameSelected)) {
       const currentDistance = getTouchDistance(e.touches);
@@ -733,11 +822,19 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   };
 
   const handleTouchEnd = () => {
+    const gesture = pointerGestureRef.current;
     setIsDragging(false);
     // Reset pinch state
     setInitialPinchDistance(0);
     setInitialSize(0);
-    // Don't clear the selection - keep it for size adjustment
+
+    // preventDefault on touchstart often swallows the click, so a tap on an
+    // already selected sprite deselects here. A drag keeps the selection.
+    if (gesture && !gesture.moved && gesture.wasSelected) {
+      deselectPartyTarget(gesture.target);
+      pointerGestureRef.current = null;
+      suppressCanvasClickRef.current = { target: gesture.target, until: Date.now() + 700 };
+    }
   };
 
   // Calculate distance between two touch points
@@ -750,13 +847,32 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     return Math.sqrt(dx * dx + dy * dy);
   };
 
-  const handlePokemonClick = (index: number) => {
+  const handlePokemonClick = (index: number, fromCanvas = false) => {
     // Don't handle click if we were dragging
     if (isDragging && Date.now() - dragStartTime > 100) {
       return;
     }
+
+    if (fromCanvas) {
+      if (shouldSuppressCanvasClick({ kind: 'pokemon', index })) return;
+
+      const gesture = pointerGestureRef.current;
+      pointerGestureRef.current = null;
+
+      // Press already selected this sprite. A second tap with no drag clears it.
+      if (gesture?.moved) {
+        setSelectionHistory(prev => [...prev.filter(item => item !== index), index]);
+        return;
+      }
+      if (gesture?.wasSelected && gesture.target.kind === 'pokemon' && gesture.target.index === index) {
+        setSelectedPokemonIndex(null);
+        return;
+      }
+    } else if (selectedPokemonIndex === index) {
+      setSelectedPokemonIndex(null);
+      return;
+    }
     
-    // Select this Pokemon (last clicked sprite stays selected; deselect by clicking empty space on card)
     setSelectedPokemonIndex(index);
     setIsTrainerSelected(false);
     setIsTrainerNameSelected(false);
@@ -764,13 +880,31 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     setSelectionHistory(prev => [...prev.filter(item => item !== index), index]);
   };
 
-  const handleTrainerClick = () => {
+  const handleTrainerClick = (fromCanvas = false) => {
     // Don't handle click if we were dragging
     if (isDragging && Date.now() - dragStartTime > 100) {
       return;
     }
+
+    if (fromCanvas) {
+      if (shouldSuppressCanvasClick({ kind: 'trainer' })) return;
+
+      const gesture = pointerGestureRef.current;
+      pointerGestureRef.current = null;
+
+      if (gesture?.moved) {
+        setSelectionHistory(prev => [...prev.filter(item => item !== 'trainer'), 'trainer']);
+        return;
+      }
+      if (gesture?.wasSelected && gesture.target.kind === 'trainer') {
+        setIsTrainerSelected(false);
+        return;
+      }
+    } else if (isTrainerSelected) {
+      setIsTrainerSelected(false);
+      return;
+    }
     
-    // Select the trainer (last clicked stays selected; deselect by clicking empty space on card)
     setSelectedPokemonIndex(null);
     setIsTrainerSelected(true);
     setIsTrainerNameSelected(false);
@@ -778,13 +912,31 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
     setSelectionHistory(prev => [...prev.filter(item => item !== 'trainer'), 'trainer']);
   };
 
-  const handleTrainerNameClick = () => {
+  const handleTrainerNameClick = (fromCanvas = false) => {
     // Don't handle click if we were dragging
     if (isDragging && Date.now() - dragStartTime > 100) {
       return;
     }
+
+    if (fromCanvas) {
+      if (shouldSuppressCanvasClick({ kind: 'trainerName' })) return;
+
+      const gesture = pointerGestureRef.current;
+      pointerGestureRef.current = null;
+
+      if (gesture?.moved) {
+        setSelectionHistory(prev => [...prev.filter(item => item !== 'trainerName'), 'trainerName']);
+        return;
+      }
+      if (gesture?.wasSelected && gesture.target.kind === 'trainerName') {
+        setIsTrainerNameSelected(false);
+        return;
+      }
+    } else if (isTrainerNameSelected) {
+      setIsTrainerNameSelected(false);
+      return;
+    }
     
-    // Select the trainer name (last clicked stays selected; deselect by clicking empty space on card)
     setSelectedPokemonIndex(null);
     setIsTrainerNameSelected(true);
     setIsTrainerSelected(false);
@@ -1249,7 +1401,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 }}
                 onMouseDown={(e) => handleMouseDown(e, undefined, 'trainerName')}
                 onTouchStart={(e) => handleTouchStart(e, undefined, 'trainerName')}
-                onClick={handleTrainerNameClick}
+                onClick={() => handleTrainerNameClick(true)}
               >
                 <div className="trainer-name-display">
                   <h2 
@@ -1278,7 +1430,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 }}
                 onMouseDown={(e) => handleMouseDown(e, undefined, 'trainer')}
                 onTouchStart={(e) => handleTouchStart(e, undefined, 'trainer')}
-                onClick={handleTrainerClick}
+                onClick={() => handleTrainerClick(true)}
               >
                 <div className="trainer-sprite-container">
                   <div className="sprite-wrapper">
@@ -1318,7 +1470,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                   }}
                   onMouseDown={(e) => handleMouseDown(e, index)}
                   onTouchStart={(e) => handleTouchStart(e, index)}
-                  onClick={() => handlePokemonClick(index)}
+                  onClick={() => handlePokemonClick(index, true)}
                 >
                                     <img 
                     src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image} 
@@ -1357,13 +1509,13 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         <div className="selection-bar" ref={selectionBarRef}>
           <button 
             className={`selection-btn ${isTrainerNameSelected ? 'selected' : ''} ${!showTrainerName ? 'hidden-item' : ''}`}
-            onClick={handleTrainerNameClick}
+            onClick={() => handleTrainerNameClick()}
           >
             <span className="trainer-name-btn">Name</span>
           </button>
           <button 
             className={`selection-btn ${isTrainerSelected ? 'selected' : ''} ${!showTrainerSprite ? 'hidden-item' : ''}`}
-            onClick={handleTrainerClick}
+            onClick={() => handleTrainerClick()}
           >
             <img 
               src={trainerSprite} 
@@ -1398,7 +1550,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
       {layoutMode === 'party' && (
         <div className="selection-bar-hint">
           <p>
-            💡 <strong>Tip:</strong> Click items to select and drag them. Adjust size, flip, and rotate when selected. Most recent selection appears on top.
+            💡 <strong>Tip:</strong> Click an item to select it, and click it again to deselect. Drag to move it. Adjust size, flip, and rotate when selected. Most recent selection appears on top.
           </p>
         </div>
       )}
