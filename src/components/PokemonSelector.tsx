@@ -1258,11 +1258,17 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
     setExpandedGenerations(newExpanded);
   };
 
+  const generations = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  const allGenerationsExpanded = generations.every((generation) => expandedGenerations.has(generation));
+
+  const toggleAllGenerations = () => {
+    setExpandedGenerations(allGenerationsExpanded ? new Set() : new Set(generations));
+  };
+
   const getPokemonByGeneration = (generation: number) => {
     return filteredPokemon.filter(pokemon => pokemon.generation === generation);
   };
-
-  const generations = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   if (loading) {
     return (
@@ -1341,6 +1347,13 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
             ))}
           </select>
         </div>
+        <button
+          type="button"
+          className="expand-all-btn"
+          onClick={toggleAllGenerations}
+        >
+          {allGenerationsExpanded ? 'Collapse all' : 'Expand all'}
+        </button>
       </div>
 
       <div className="pokemon-list">
@@ -1373,6 +1386,7 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
                         src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}
                         alt={pokemon.name}
                         className="pokemon-option-sprite"
+                        loading="lazy"
                       />
                       <span className="pokemon-option-name">
                         {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
