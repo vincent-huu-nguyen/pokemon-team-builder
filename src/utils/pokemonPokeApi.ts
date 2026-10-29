@@ -185,19 +185,86 @@ export async function fetchPokemonByNameForList(raw: string): Promise<Pokemon> {
 }
 
 export function parsePokemonNamesFromText(text: string): string[] {
-  return text
-    .split(/[\n,;|]+/u)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
+  const tokens: string[] = [];
+  let current = '';
+  let depth = 0;
+  const push = () => {
+    const trimmed = current.trim();
+    if (trimmed) tokens.push(trimmed);
+    current = '';
+  };
+
+  for (const char of text) {
+    if (char === '(') {
+      depth += 1;
+      current += char;
+      continue;
+    }
+    if (char === ')') {
+      if (depth > 0) depth -= 1;
+      current += char;
+      continue;
+    }
+    if (char === '\n' || char === ';' || char === '|' || (char === ',' && depth === 0)) {
+      push();
+      continue;
+    }
+    if (char === '\r') continue;
+    current += char;
+  }
+  push();
+  return tokens;
 }
 
-export type PokemonListSortMode = 'pokedex' | 'alphabetical';
+export interface PokemonListTextEntry {
+  name: string;
+  raw: string;
+  count: number | null;
+  countLabel: string | null;
+}
+
+const LIST_COUNT_PATTERN =
+  /^(.*?)(?:\s*\(\s*([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*\))\s*$/;
+
+/** Splits "Pikachu (40)" into the lookup name and the parenthetical number. */
+export function parsePokemonListEntries(text: string): PokemonListTextEntry[] {
+  return parsePokemonNamesFromText(text).map((token) => {
+    const match = token.match(LIST_COUNT_PATTERN);
+    if (!match) return { name: token, raw: token, count: null, countLabel: null };
+    const name = match[1].trim();
+    const countLabel = match[2];
+    const count = Number(countLabel.replace(/,/g, ''));
+    if (!name || !Number.isFinite(count)) {
+      return { name: token, raw: token, count: null, countLabel: null };
+    }
+    return { name, raw: token, count, countLabel };
+  });
+}
+
+export function formatPokemonListLabel(pokemon: Pokemon): string {
+  const name = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+  if (!pokemon.listCountLabel) return name;
+  return `${name} (${pokemon.listCountLabel})`;
+}
+
+export type PokemonListSortMode = 'pokedex' | 'alphabetical' | 'number';
 
 export function sortPokemonForList(
   pokemon: Pokemon[],
   mode: PokemonListSortMode
 ): Pokemon[] {
   const copy = [...pokemon];
+  if (mode === 'number') {
+    copy.sort((a, b) => {
+      const aMissing = a.listCount == null;
+      const bMissing = b.listCount == null;
+      if (aMissing && bMissing) return 0;
+      if (aMissing) return 1;
+      if (bMissing) return -1;
+      return b.listCount! - a.listCount!;
+    });
+    return copy;
+  }
   if (mode === 'alphabetical') {
     copy.sort((a, b) => {
       const byName = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });

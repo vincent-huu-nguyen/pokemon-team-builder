@@ -4,6 +4,8 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  position: relative;
+  z-index: 1;
 }
 
 .tier-list {
@@ -18,6 +20,93 @@
   position: relative;
   overflow: hidden;
   color: white;
+}
+
+.tier-resize-handle-right:hover::after,
+.tier-resize-handle-bottom:hover::after,
+.tier-resize-handle-right:focus-visible::after,
+.tier-resize-handle-bottom:focus-visible::after {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.tier-resize-handle-corner:hover::after,
+.tier-resize-handle-corner:focus-visible::after {
+  border-color: white;
+}
+
+.tier-list.is-resizing {
+  user-select: none;
+}
+
+.tier-resize-handle {
+  position: absolute;
+  z-index: 4;
+  touch-action: none;
+}
+
+.tier-resize-handle:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: -2px;
+}
+
+.tier-resize-handle-right {
+  top: 18px;
+  right: 0;
+  bottom: 18px;
+  width: 14px;
+  cursor: ew-resize;
+}
+
+.tier-resize-handle-right::after,
+.tier-resize-handle-bottom::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.tier-resize-handle-right::after {
+  top: 50%;
+  right: 4px;
+  width: 4px;
+  height: 42px;
+  transform: translateY(-50%);
+}
+
+.tier-resize-handle-bottom {
+  left: 18px;
+  right: 18px;
+  bottom: 0;
+  height: 14px;
+  cursor: ns-resize;
+}
+
+.tier-resize-handle-bottom::after {
+  left: 50%;
+  bottom: 4px;
+  width: 42px;
+  height: 4px;
+  transform: translateX(-50%);
+}
+
+.tier-resize-handle-corner {
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+}
+
+.tier-resize-handle-corner::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgba(255, 255, 255, 0.7);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 0 0 2px 0;
 }
 
 .tier-list-header h2 {
@@ -200,7 +289,7 @@
 
 .tier-tile {
   position: relative;
-  width: 88px;
+  width: 112px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -478,7 +567,7 @@
   }
 
   .tier-tile {
-    width: 84px;
+    width: 104px;
   }
 
   .tier-add-confirm,

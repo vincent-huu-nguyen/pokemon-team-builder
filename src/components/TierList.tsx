@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp, Plus, Trash2, X } from 'lucide-react';
 import { Pokemon } from '../types/Pokemon';
-import { parsePokemonNamesFromText } from '../utils/pokemonPokeApi';
+import { formatPokemonListLabel, parsePokemonListEntries, parsePokemonNamesFromText, sortPokemonForList } from '../utils/pokemonPokeApi';
 import {
   buildPokemonLookup,
   findPokemonInLookup,
@@ -29,6 +29,9 @@ interface TierListProps {
 }
 
 const STORAGE_KEY = 'ptb-tier-list';
+const SIZE_KEY = 'ptb-tier-list-size';
+const MIN_CARD_WIDTH = 360;
+const MIN_CARD_HEIGHT = 220;
 
 const DEFAULT_TIER_DEFS: { name: string; color: string }[] = [
   { name: 'S Tier', color: '#e74c3c' },
@@ -126,6 +129,47 @@ function nextTierColor(tiers: TierRow[]): string {
   return COLOR_CHOICES.find((color) => !used.has(color)) ?? COLOR_CHOICES[tiers.length % COLOR_CHOICES.length];
 }
 
+function withListCount(pokemon: Pokemon, count: number | null, countLabel: string | null): Pokemon {
+  if (count == null || !countLabel) return pokemon;
+  return { ...pokemon, listCount: count, listCountLabel: countLabel };
+}
+
+type CardSize = { width: number | null; height: number | null };
+type ResizeAxis = 'x' | 'y' | 'both';
+
+function readStoredSize(value: unknown, min: number): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < min) return null;
+  return value;
+}
+
+function loadCardSize(): CardSize {
+  try {
+    const raw = localStorage.getItem(SIZE_KEY);
+    if (!raw) return { width: null, height: null };
+    const parsed = JSON.parse(raw) as Partial<CardSize>;
+    return {
+      width: readStoredSize(parsed.width, MIN_CARD_WIDTH),
+      height: readStoredSize(parsed.height, MIN_CARD_HEIGHT),
+    };
+  } catch {
+    return { width: null, height: null };
+  }
+}
+
+function maxCardWidth(left = 0): number {
+  if (typeof window === 'undefined') return 1400;
+  return Math.max(MIN_CARD_WIDTH, window.innerWidth - left - 16);
+}
+
+function maxCardHeight(): number {
+  if (typeof window === 'undefined') return 900;
+  return Math.max(MIN_CARD_HEIGHT, Math.round(window.innerHeight * 1.5));
+}
+
+function clampSize(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
 type DragOrigin = { tierId: string; index: number };
 
 const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles }) => {
@@ -145,12 +189,92 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
   const addPokemonToTierRef = useRef<(tierId: string, incoming: Pokemon[]) => { added: number; moved: number }>(() => ({ added: 0, moved: 0 }));
   const tiersRef = useRef(tiers);
   tiersRef.current = tiers;
+  const cardRef = useRef<HTMLElement>(null);
+  const [cardSize, setCardSize] = useState<CardSize>(loadCardSize);
+  const [resizing, setResizing] = useState(false);
+  const resizeCleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => subscribePokemonCatalog(setCatalog), []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tiers));
   }, [tiers]);
+
+  useEffect(() => {
+    localStorage.setItem(SIZE_KEY, JSON.stringify(cardSize));
+  }, [cardSize]);
+
+  useEffect(() => () => resizeCleanupRef.current?.(), []);
+
+  const nudgeCard = (axis: ResizeAxis, deltaX: number, deltaY: number) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const bounds = card.getBoundingClientRect();
+    setCardSize((current) => {
+      const next = { ...current };
+      if (axis === 'x' || axis === 'both') {
+        const base = current.width ?? bounds.width;
+        next.width = clampSize(base + deltaX, MIN_CARD_WIDTH, Math.max(maxCardWidth(bounds.left), base));
+      }
+      if (axis === 'y' || axis === 'both') {
+        const base = Math.max(current.height ?? 0, bounds.height);
+        next.height = clampSize(base + deltaY, MIN_CARD_HEIGHT, Math.max(maxCardHeight(), base));
+      }
+      return next;
+    });
+  };
+
+  const startResize = (axis: ResizeAxis) => (event: React.PointerEvent<HTMLElement>) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const card = cardRef.current;
+    if (!card) return;
+    const bounds = card.getBoundingClientRect();
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startWidth = bounds.width;
+    const startHeight = bounds.height;
+    const widthLimit = Math.max(maxCardWidth(bounds.left), startWidth);
+    const heightLimit = Math.max(maxCardHeight(), startHeight);
+    resizeCleanupRef.current?.();
+    const previousCursor = document.body.style.cursor;
+    const previousUserSelect = document.body.style.userSelect;
+    document.body.style.cursor = axis === 'x' ? 'ew-resize' : axis === 'y' ? 'ns-resize' : 'nwse-resize';
+    document.body.style.userSelect = 'none';
+    setResizing(true);
+
+    const onMove = (moveEvent: PointerEvent) => {
+      const next: Partial<CardSize> = {};
+      if (axis === 'x' || axis === 'both') {
+        next.width = clampSize(startWidth + moveEvent.clientX - startX, MIN_CARD_WIDTH, widthLimit);
+      }
+      if (axis === 'y' || axis === 'both') {
+        next.height = clampSize(startHeight + moveEvent.clientY - startY, MIN_CARD_HEIGHT, heightLimit);
+      }
+      setCardSize((current) => ({ ...current, ...next }));
+    };
+    const onUp = () => {
+      document.body.style.cursor = previousCursor;
+      document.body.style.userSelect = previousUserSelect;
+      setResizing(false);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      resizeCleanupRef.current = null;
+    };
+    resizeCleanupRef.current = onUp;
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+  };
+
+  const resetCardAxis = (axis: ResizeAxis) => {
+    setCardSize((current) => ({
+      width: axis === 'y' ? current.width : null,
+      height: axis === 'x' ? current.height : null,
+    }));
+  };
 
   useEffect(() => {
     if (!targetTierId) return;
@@ -176,20 +300,35 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
     });
   };
 
-  const addPokemonToTier = (tierId: string, incoming: Pokemon[]) => {
+  const addPokemonToTier = (tierId: string, incoming: Pokemon[], options?: { sortByCount?: boolean }) => {
     const target = tiers.find((tier) => tier.id === tierId);
-    if (!target || incoming.length === 0) return { added: 0, moved: 0 };
+    if (!target || incoming.length === 0) return { added: 0, moved: 0, updated: 0 };
 
-    const alreadyHere = new Set(target.pokemon.map(pokemonIdentity));
+    const alreadyHere = new Map(target.pokemon.map((pokemon) => [pokemonIdentity(pokemon), pokemon]));
     const accepted: Pokemon[] = [];
     const acceptedIds = new Set<string>();
+    const countUpdates = new Map<string, Pokemon>();
     incoming.forEach((pokemon) => {
       const id = pokemonIdentity(pokemon);
-      if (alreadyHere.has(id) || acceptedIds.has(id)) return;
+      if (acceptedIds.has(id)) return;
+      const existing = alreadyHere.get(id);
+      if (existing) {
+        if (
+          pokemon.listCount != null
+          && (existing.listCount !== pokemon.listCount || existing.listCountLabel !== pokemon.listCountLabel)
+        ) {
+          countUpdates.set(id, pokemon);
+        }
+        return;
+      }
       acceptedIds.add(id);
       accepted.push(pokemon);
     });
-    if (accepted.length === 0) return { added: 0, moved: 0 };
+
+    const sortByCount = Boolean(options?.sortByCount);
+    if (accepted.length === 0 && countUpdates.size === 0 && !sortByCount) {
+      return { added: 0, moved: 0, updated: 0 };
+    }
 
     const movedIds = new Set<string>();
     tiers.forEach((tier) => {
@@ -202,15 +341,22 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
 
     setTiers((prev) => prev.map((tier) => {
       if (tier.id === tierId) {
-        return { ...tier, pokemon: [...tier.pokemon, ...accepted] };
+        const updated = tier.pokemon.map((pokemon) => {
+          const replacement = countUpdates.get(pokemonIdentity(pokemon));
+          if (!replacement || replacement.listCount == null || !replacement.listCountLabel) return pokemon;
+          return { ...pokemon, listCount: replacement.listCount, listCountLabel: replacement.listCountLabel };
+        });
+        const pokemon = [...updated, ...accepted];
+        return { ...tier, pokemon: sortByCount ? sortPokemonForList(pokemon, 'number') : pokemon };
       }
+      if (acceptedIds.size === 0) return tier;
       return {
         ...tier,
         pokemon: tier.pokemon.filter((pokemon) => !acceptedIds.has(pokemonIdentity(pokemon))),
       };
     }));
 
-    return { added: accepted.length, moved: movedIds.size };
+    return { added: accepted.length, moved: movedIds.size, updated: countUpdates.size };
   };
 
   addPokemonToTierRef.current = addPokemonToTier;
@@ -242,21 +388,26 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
       return;
     }
 
-    const names = parsePokemonNamesFromText(draft);
-    const seen = new Set<string>();
+    const entries = parsePokemonListEntries(draft);
     const recognized: Pokemon[] = [];
     const unrecognized: string[] = [];
+    const seen = new Map<string, number>();
 
-    names.forEach((name) => {
-      const match = findPokemonInLookup(lookup, name);
+    entries.forEach((entry) => {
+      const match = findPokemonInLookup(lookup, entry.name);
       if (!match) {
-        unrecognized.push(name);
+        unrecognized.push(entry.raw);
         return;
       }
+      const pokemon = withListCount(match, entry.count, entry.countLabel);
       const id = pokemonIdentity(match);
-      if (seen.has(id)) return;
-      seen.add(id);
-      recognized.push(match);
+      const previousIndex = seen.get(id);
+      if (previousIndex == null) {
+        seen.set(id, recognized.length);
+        recognized.push(pokemon);
+        return;
+      }
+      if (entry.count != null) recognized[previousIndex] = pokemon;
     });
 
     if (recognized.length === 0) {
@@ -266,7 +417,8 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
       return;
     }
 
-    const { added, moved } = addPokemonToTier(tierId, recognized);
+    const sortByCount = recognized.some((pokemon) => pokemon.listCount != null);
+    const { added, moved, updated } = addPokemonToTier(tierId, recognized, { sortByCount });
     const stayed = recognized.length - added;
     const tierName = tiers.find((tier) => tier.id === tierId)?.name ?? 'this tier';
     const parts: string[] = [];
@@ -274,6 +426,8 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
       parts.push(moved > 0
         ? `Added ${added} Pokémon to ${tierName} (${moved} moved from another tier).`
         : `Added ${added} Pokémon to ${tierName}.`);
+    } else if (updated > 0) {
+      parts.push(`Updated the numbers in ${tierName}.`);
     } else if (stayed > 0) {
       parts.push(`Those Pokémon are already in ${tierName}.`);
     }
@@ -287,8 +441,11 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
   const selectSuggestion = (pokemon: Pokemon) => {
     const tierId = tiers.find((tier) => tier.id === targetTierId)?.id;
     if (!tierId) return;
-    const { added, moved } = addPokemonToTier(tierId, [pokemon]);
-    const label = formatPokemonLabel(pokemon.name);
+    const entries = parsePokemonListEntries(draft);
+    const entry = entries.length === 1 ? entries[0] : null;
+    const picked = entry ? withListCount(pokemon, entry.count, entry.countLabel) : pokemon;
+    const { added, moved } = addPokemonToTier(tierId, [picked], { sortByCount: picked.listCount != null });
+    const label = formatPokemonListLabel(picked);
     const tierName = tiers.find((tier) => tier.id === tierId)?.name ?? 'this tier';
     const message = added === 0
       ? `${label} is already in ${tierName}.`
@@ -365,36 +522,51 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
   };
 
   const targetTier = tiers.find((tier) => tier.id === targetTierId);
-  const singleQuery = parsePokemonNamesFromText(draft).length <= 1 ? draft.trim() : '';
+  const draftEntries = parsePokemonListEntries(draft);
+  const singleQuery = draftEntries.length <= 1 ? (draftEntries[0]?.name ?? '').trim() : '';
   const suggestions = catalog.ready && singleQuery ? searchPokemon(catalog.pokemon, singleQuery) : [];
-  const previewNames = parsePokemonNamesFromText(draft);
-  const previewSeen = new Set<string>();
+  const previewSeen = new Map<string, number>();
   const previewRecognized: Pokemon[] = [];
   const previewUnknown: string[] = [];
   if (catalog.ready) {
-    previewNames.forEach((name) => {
-      const match = findPokemonInLookup(lookup, name);
+    draftEntries.forEach((entry) => {
+      const match = findPokemonInLookup(lookup, entry.name);
       if (!match) {
-        previewUnknown.push(name);
+        previewUnknown.push(entry.raw);
         return;
       }
+      const pokemon = withListCount(match, entry.count, entry.countLabel);
       const id = pokemonIdentity(match);
-      if (previewSeen.has(id)) return;
-      previewSeen.add(id);
-      previewRecognized.push(match);
+      const previousIndex = previewSeen.get(id);
+      if (previousIndex == null) {
+        previewSeen.set(id, previewRecognized.length);
+        previewRecognized.push(pokemon);
+        return;
+      }
+      if (entry.count != null) previewRecognized[previousIndex] = pokemon;
     });
   }
+  const previewDisplay = previewRecognized.some((pokemon) => pokemon.listCount != null)
+    ? sortPokemonForList(previewRecognized, 'number')
+    : previewRecognized;
 
   return (
-    <div className="tier-list-layout">
+    <div
+      className="tier-list-layout"
+      style={cardSize.width != null ? { width: cardSize.width, alignSelf: 'flex-start', maxWidth: 'none' } : undefined}
+    >
     <section
-      className={`tier-list ${showBubbles ? 'show-bubbles' : 'no-bubbles'}`}
-      style={surfaceStyle}
+      ref={cardRef}
+      className={`tier-list ${showBubbles ? 'show-bubbles' : 'no-bubbles'} ${resizing ? 'is-resizing' : ''}`}
+      style={{
+        ...surfaceStyle,
+        ...(cardSize.height != null ? { minHeight: cardSize.height } : null),
+      }}
       aria-label="Tier list"
     >
       <header className="tier-list-header">
         <h2>Tier List</h2>
-        <p>Drag Pokémon to reorder them or move them between tiers.</p>
+        <p>Drag Pokémon to reorder them or move them between tiers. Drag the card edge to resize it.</p>
       </header>
 
       {tiers.map((tier, tierIndex) => {
@@ -542,7 +714,7 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
                     <button
                       type="button"
                       className="tier-tile-remove"
-                      aria-label={`Remove ${formatPokemonLabel(pokemon.name)}`}
+                      aria-label={`Remove ${formatPokemonListLabel(pokemon)}`}
                       onClick={() => removePokemon(tier.id, index)}
                     >
                       <X size={12} />
@@ -553,7 +725,7 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
                       className={`tier-tile-sprite ${artStyle === 'official' ? 'official-art' : 'pixel-art'}`}
                       draggable={false}
                     />
-                    <span className="tier-tile-name">{formatPokemonLabel(pokemon.name)}</span>
+                    <span className="tier-tile-name">{formatPokemonListLabel(pokemon)}</span>
                   </div>
                 ))}
               </div>
@@ -566,6 +738,66 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
         <Plus size={16} />
         Add Tier
       </button>
+      <div
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Drag to resize the tier list width. Double-click to reset."
+        tabIndex={0}
+        className="tier-resize-handle tier-resize-handle-right"
+        onPointerDown={startResize('x')}
+        onDoubleClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          resetCardAxis('x');
+        }}
+        onKeyDown={(event) => {
+          const step = event.shiftKey ? 48 : 16;
+          if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+          event.preventDefault();
+          nudgeCard('x', event.key === 'ArrowRight' ? step : -step, 0);
+        }}
+      />
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Drag to resize the tier list height. Double-click to reset."
+        tabIndex={0}
+        className="tier-resize-handle tier-resize-handle-bottom"
+        onPointerDown={startResize('y')}
+        onDoubleClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          resetCardAxis('y');
+        }}
+        onKeyDown={(event) => {
+          const step = event.shiftKey ? 48 : 16;
+          if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+          event.preventDefault();
+          nudgeCard('y', 0, event.key === 'ArrowDown' ? step : -step);
+        }}
+      />
+      <div
+        role="separator"
+        aria-label="Drag to resize the tier list. Double-click to reset."
+        tabIndex={0}
+        className="tier-resize-handle tier-resize-handle-corner"
+        onPointerDown={startResize('both')}
+        onDoubleClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          resetCardAxis('both');
+        }}
+        onKeyDown={(event) => {
+          const step = event.shiftKey ? 48 : 16;
+          if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            nudgeCard('x', event.key === 'ArrowRight' ? step : -step, 0);
+          } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            nudgeCard('y', 0, event.key === 'ArrowDown' ? step : -step);
+          }
+        }}
+      />
     </section>
 
     <div className="tier-add-panel">
@@ -611,7 +843,7 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
         </div>
       ) : null}
       <label className="tier-add-label" htmlFor="tier-add-text">
-        Paste or type Pokémon names (separate with commas, new lines, or semicolons).
+        Paste or type Pokémon names with an optional number in parentheses, such as Pikachu (40). Separate with commas, new lines, or semicolons.
       </label>
       <div className="tier-add-input-wrap">
         <textarea
@@ -619,7 +851,7 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
           className="tier-add-text"
           rows={4}
           value={draft}
-          placeholder="Enter Pokémon names separated by commas or new lines..."
+          placeholder={'Pikachu (40)\nCharizard (12)'}
           onChange={(event) => {
             setDraft(event.target.value);
             setNotice('');
@@ -649,14 +881,14 @@ const TierList: React.FC<TierListProps> = ({ artStyle, surfaceStyle, showBubbles
       </div>
       {catalog.ready && previewRecognized.length > 0 ? (
         <div className="tier-add-preview" aria-label="Recognized Pokémon">
-          {previewRecognized.map((pokemon) => (
+          {previewDisplay.map((pokemon) => (
             <span key={pokemonIdentity(pokemon)} className="tier-add-chip">
               <img
                 src={pokemonSpriteSrc(pokemon, artStyle)}
                 alt=""
                 className={artStyle === 'official' ? 'official-art' : 'pixel-art'}
               />
-              {formatPokemonLabel(pokemon.name)}
+              {formatPokemonListLabel(pokemon)}
             </span>
           ))}
         </div>
