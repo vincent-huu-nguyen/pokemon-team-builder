@@ -14,6 +14,9 @@ import { useState } from 'react';
 import trainerVincent from '../assets/PKMSprites/Trainer_Vincent.png';
 import { backgroundLibrary } from '../data/backgroundLibrary';
 import { officialTrainerSprites } from '../data/officialTrainerSprites';
+import TierList from './TierList';
+
+type LayoutMode = 'card' | 'party' | 'tier' | 'list';
 
 interface TrainerCardProps {
   trainerName: string;
@@ -84,7 +87,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [showSpriteSelector, setShowSpriteSelector] = useState(false);
   const [spriteSelectorArtStyle, setSpriteSelectorArtStyle] = useState<'pixel' | 'official'>('pixel');
-  const [layoutMode, setLayoutMode] = useState<'card' | 'party' | 'list'>('card');
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>('card');
   const [pokemonSizes, setPokemonSizes] = useState<{ [key: number]: number }>({});
   const [selectedPokemonIndex, setSelectedPokemonIndex] = useState<number | null>(null);
   const [isTrainerSelected, setIsTrainerSelected] = useState(false);
@@ -1073,7 +1076,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 name="layout"
                 value="card"
                 checked={layoutMode === 'card'}
-                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party' | 'list')}
+                onChange={(e) => setLayoutMode(e.target.value as LayoutMode)}
               />
               Trainer Card
             </label>
@@ -1083,7 +1086,7 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
                 name="layout"
                 value="party"
                 checked={layoutMode === 'party'}
-                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party' | 'list')}
+                onChange={(e) => setLayoutMode(e.target.value as LayoutMode)}
               />
               Trainer Party
             </label>
@@ -1091,9 +1094,19 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
               <input
                 type="radio"
                 name="layout"
+                value="tier"
+                checked={layoutMode === 'tier'}
+                onChange={(e) => setLayoutMode(e.target.value as LayoutMode)}
+              />
+              Tier List
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="layout"
                 value="list"
                 checked={layoutMode === 'list'}
-                onChange={(e) => setLayoutMode(e.target.value as 'card' | 'party' | 'list')}
+                onChange={(e) => setLayoutMode(e.target.value as LayoutMode)}
               />
               Pokemon List
             </label>
@@ -1286,6 +1299,8 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
             ) : null}
           </div>
         </>
+      ) : layoutMode === 'tier' ? (
+        <TierList artStyle={artStyle} surfaceStyle={cardSurfaceStyle} showBubbles={showBubbles} />
       ) : (
       <div
         ref={cardRef}
@@ -1846,10 +1861,12 @@ const TrainerCard: React.FC<TrainerCardProps> = ({
         </div>
       </div>
       
-      <button onClick={downloadCard} className="download-btn" disabled={isDownloading}>
-        <Download size={16} />
-        {isDownloading ? 'Processing...' : 'Download Card'}
-      </button>
+      {layoutMode !== 'tier' && (
+        <button onClick={downloadCard} className="download-btn" disabled={isDownloading}>
+          <Download size={16} />
+          {isDownloading ? 'Processing...' : 'Download Card'}
+        </button>
+      )}
       
       {/* Sprite Selector Modal */}
       {showSpriteSelector && (

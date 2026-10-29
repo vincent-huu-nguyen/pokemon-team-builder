@@ -4,6 +4,8 @@ import { Pokemon } from '../types/Pokemon';
 import megaGreninjaUpsideDownPixel from '../assets/PKMSprites/Mega_Greninja_UpsideDown.png';
 import megaTatsugiriPixel from '../assets/PKMSprites/Mega_Tatsugiri.png';
 import './PokemonSelector.css';
+import { publishPokemonCatalog } from '../utils/pokemonCatalog';
+import { addPokemonToSelectedTier } from '../utils/tierSelection';
 
 declare const require: any;
 
@@ -168,6 +170,10 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
     // We intentionally only run this once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    publishPokemonCatalog(pokemonList, !loading && pokemonList.length > 0);
+  }, [pokemonList, loading]);
 
   const fetchAllPokemon = async () => {
     try {
@@ -1380,7 +1386,10 @@ const PokemonSelector: React.FC<PokemonSelectorProps> = ({ onPokemonSelect, artS
                     <div
                       key={pokemon.id}
                       className="pokemon-option"
-                      onClick={() => onPokemonSelect(pokemon)}
+                      onClick={() => {
+                        if (addPokemonToSelectedTier(pokemon)) return;
+                        onPokemonSelect(pokemon);
+                      }}
                     >
                       <img
                         src={artStyle === 'official' ? (pokemon.officialArtwork || pokemon.image) : pokemon.image}

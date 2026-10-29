@@ -21,6 +21,8 @@
 
 .layout-toggle {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
   background: rgba(255, 255, 255, 0.1);
   padding: 0.5rem;
@@ -465,7 +467,8 @@
   line-height: 1.1;
 }
 
-.trainer-card.show-bubbles::before {
+.trainer-card.show-bubbles::before,
+.tier-list.show-bubbles::before {
   content: '';
   position: absolute;
   top: 0;
